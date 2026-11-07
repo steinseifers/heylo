@@ -46,6 +46,8 @@ if CommandLine.arguments.contains("--storagetest") {
     show(StorageManager.report(db: db, accountIds: ids))
     exit(0)
 }
+// `Inkwell --probe`: read-only server capability report (see Probe.swift).
+if CommandLine.arguments.contains("--probe") { Probe.run() }
 if CommandLine.arguments.contains("--selftest") {
     SelfTest.run()
 }
