@@ -4,49 +4,32 @@ struct RootView: View {
     @Bindable var store: MailStore
     @Environment(\.openWindow) private var openWindow
     @Environment(\.openSettings) private var openSettings
-    @Environment(\.colorScheme) private var scheme
-    @AppStorage("sidebarHidden") private var sidebarHidden = false
-    @AppStorage("listWidth3") private var listWidth: Double = 384
+    @State private var columns = NavigationSplitViewVisibility.all
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var accent: Color { Theme.accent(store.settings.accentHex) }
-    private var solid: Bool { store.settings.windowBackground == .solid }
 
+    /// Standard three-column split view (sidebar, message list, conversation): the system provides the
+    /// sidebar toggle, column resizing, vibrancy and, on current macOS, the glass material.
     var body: some View {
-        ZStack {
-            if solid {
-                Theme.ground(scheme).ignoresSafeArea()
-            } else {
-                VisualEffectBackground(mode: store.settings.windowBackground).ignoresSafeArea()
-                // Soft tint so cards read as glass over busy wallpapers.
-                LinearGradient(colors: [accent.opacity(scheme == .dark ? 0.05 : 0.12), .purple.opacity(0.06)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    .ignoresSafeArea()
+        NavigationSplitView(columnVisibility: $columns) {
+            SidebarView(store: store)
+                .navigationSplitViewColumnWidth(min: 190, ideal: 220, max: 320)
+        } content: {
+            ThreadListView(store: store)
+                .navigationSplitViewColumnWidth(min: 300, ideal: 380, max: 540)
+        } detail: {
+            detail
+        }
+        .overlay(alignment: .top) {
+            if let t = store.toast {
+                ToastView(toast: t) { store.performUndo() }
+                    .padding(.top, 14)
+                    .transition(.move(edge: .top).combined(with: .opacity))
             }
-            HStack(spacing: Theme.gap) {
-                if !sidebarHidden {
-                    // On the solid ground the sidebar sits directly on the window; glass modes keep its card.
-                    Group {
-                        if solid { SidebarView(store: store) { withAnimation(.snappy) { sidebarHidden = true } } }
-                        else { Card(sidebar: true) { SidebarView(store: store) { withAnimation(.snappy) { sidebarHidden = true } } } }
-                    }
-                        .frame(width: 212)
-                        .transition(.move(edge: .leading).combined(with: .opacity))
-                }
-                Card { ThreadListView(store: store, sidebarHidden: sidebarHidden) { withAnimation(.snappy) { sidebarHidden = false } } }
-                    .frame(width: listWidth)
-                    .overlay(alignment: .trailing) { resizeHandle }
-                detail
-                    .frame(maxWidth: .infinity)
-            }
-            .padding(Theme.gap)
-            .overlay(alignment: .top) {
-                if let t = store.toast {
-                    ToastView(toast: t) { store.performUndo() }
-                        .padding(.top, 14)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                }
-            }
-            .animation(.spring(duration: 0.3), value: store.toast)
-
+        }
+        .animation(reduceMotion ? nil : .spring(duration: 0.3), value: store.toast)
+        .overlay {
             if store.searchPresented {
                 ZStack(alignment: .top) {
                     Color.black.opacity(0.12).ignoresSafeArea().onTapGesture { store.searchPresented = false }
@@ -54,8 +37,6 @@ struct RootView: View {
                 }
             }
         }
-        .ignoresSafeArea()
-        .background(WindowConfigurator())
         .environment(\.accent, accent)
         .environment(\.onAccent, Theme.onAccent(store.settings.accentHex))
         .environment(\.accentFill, Theme.accentFill(store.settings.accentHex))
@@ -64,55 +45,21 @@ struct RootView: View {
         .onAppear { store.openCompose = { id in openWindow(id: "compose", value: id) } }
     }
 
-    private var resizeHandle: some View {
-        Color.clear.frame(width: 8).contentShape(Rectangle())
-            .offset(x: Theme.gap / 2 + 4)
-            .onHover { if $0 { NSCursor.resizeLeftRight.push() } else { NSCursor.pop() } }
-            .gesture(DragGesture().onChanged { v in listWidth = min(520, max(300, listWidth + v.translation.width)) })
-    }
-
     @ViewBuilder private var detail: some View {
         if let t = store.focusedThread ?? (store.selection.count == 1 ? store.selectedThreads.first : nil) {
             ConversationView(thread: t, store: store).id(t.id)
-        } else {
-            VStack(spacing: Theme.gap) {
-                Card {
-                    Group {
-                        if store.selection.count > 1 {
-                            let ts = store.selectedThreads
-                            VStack(spacing: 14) {
-                                Image(systemName: "square.stack.3d.up.fill").font(.system(size: 40)).foregroundStyle(.tertiary)
-                                Text("\(ts.count) conversations selected").font(.title3)
-                                HStack {
-                                    Button("Archive") { Task { await store.archive(ts) } }
-                                    Button("Trash") { Task { await store.trash(ts) } }
-                                    Button(ts.contains(where: \.unread) ? "Mark Read" : "Mark Unread") { Task { await store.toggleRead(ts) } }
-                                    Menu("Snooze") { SnoozeMenu { store.snooze(ts, until: $0) } }.fixedSize()
-                                }
-                            }
-                        } else {
-                            VStack(spacing: 10) {
-                                Image(systemName: "tray").font(.system(size: 34, weight: .light)).foregroundStyle(.tertiary)
-                                Text("No conversation selected").font(.system(size: 14)).foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                Card {
-                    HStack {
-                        Text("Reply…").font(.system(size: 13.5)).foregroundStyle(.tertiary)
-                        Spacer()
-                        ForEach(["paperclip", "textformat", "clock"], id: \.self) { i in
-                            Image(systemName: i).font(.system(size: 12)).foregroundStyle(.tertiary)
-                                .frame(width: 28, height: 28).background(Theme.field(scheme), in: Circle())
-                        }
-                        Image(systemName: "arrow.up").font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.onAccent(store.settings.accentHex))
-                            .frame(width: 28, height: 28).background(Theme.accentFill(store.settings.accentHex).opacity(0.4), in: Circle())
-                    }
-                    .padding(.horizontal, 12).padding(.vertical, 8)
-                }
+        } else if store.selection.count > 1 {
+            let ts = store.selectedThreads
+            ContentUnavailableView {
+                Label("\(ts.count) conversations selected", systemImage: "square.stack.3d.up")
+            } actions: {
+                Button("Archive") { Task { await store.archive(ts) } }
+                Button("Move to Trash") { Task { await store.trash(ts) } }
+                Button(ts.contains(where: \.unread) ? "Mark as Read" : "Mark as Unread") { Task { await store.toggleRead(ts) } }
+                Menu("Snooze") { SnoozeMenu { store.snooze(ts, until: $0) } }
             }
+        } else {
+            ContentUnavailableView("No conversation selected", systemImage: "tray")
         }
     }
 }

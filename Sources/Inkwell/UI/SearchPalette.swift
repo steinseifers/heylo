@@ -59,9 +59,9 @@ struct SearchPalette: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass").font(.system(size: 17)).foregroundStyle(.secondary)
+                Image(systemName: "magnifyingglass").font(.title2).foregroundStyle(.secondary)
                 TextField("Search everything", text: $query)
-                    .textFieldStyle(.plain).font(.system(size: 20))
+                    .textFieldStyle(.plain).font(.title)
                     .focused($focused)
                     .onSubmit(runHighlighted)
                     .onKeyPress(.downArrow) { move(1); return .handled }
@@ -95,9 +95,9 @@ struct SearchPalette: View {
                                 ForEach(Array(cmds.enumerated()), id: \.element.id) { i, c in
                                     row(index: i) {
                                         Image(systemName: c.icon).frame(width: 24).foregroundStyle(.secondary)
-                                        Text(c.title).font(.system(size: 14))
+                                        Text(c.title).font(.body)
                                         Spacer()
-                                        Text(c.shortcut).font(.system(size: 12)).foregroundStyle(.secondary)
+                                        Text(c.shortcut).font(.callout).foregroundStyle(.secondary)
                                     } action: { run(c) }
                                     .id(i)
                                 }
@@ -111,21 +111,21 @@ struct SearchPalette: View {
                                         AvatarView(address: m.from, size: 30)
                                         VStack(alignment: .leading, spacing: 2) {
                                             HStack(spacing: 4) {
-                                                Text(m.from.display).font(.system(size: 14, weight: .semibold)).lineLimit(1)
-                                                Text("· \(m.subject)").font(.system(size: 14)).lineLimit(1)
+                                                Text(m.from.display).font(.body.weight(.semibold)).lineLimit(1)
+                                                Text("· \(m.subject)").font(.body).lineLimit(1)
                                                 Spacer()
                                                 if !local.contains(where: { $0.id == m.id }) {
                                                     Text("Found on the server · \(store.account(m.accountId)?.label ?? "") \(m.date.formatted(.dateTime.year()))")
-                                                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                                                        .font(.subheadline).foregroundStyle(.secondary)
                                                 }
                                             }
-                                            Text(highlight(m.snippet)).font(.system(size: 13)).foregroundStyle(.secondary).lineLimit(1)
+                                            Text(highlight(m.snippet)).font(.body).foregroundStyle(.secondary).lineLimit(1)
                                         }
                                     } action: { open(m) }
                                     .id(i)
                                 }
                             } else if !query.isEmpty && !query.hasPrefix(">") && !searchingServer && commands.isEmpty {
-                                Text("No results").font(.system(size: 14)).foregroundStyle(.secondary).padding(20)
+                                Text("No results").font(.body).foregroundStyle(.secondary).padding(20)
                             }
                         }
                         .padding(8)
@@ -135,11 +135,11 @@ struct SearchPalette: View {
                 }
             }
             HStack {
-                Text("↑↓ navigate   ↵ open   esc close").font(.system(size: 11.5)).foregroundStyle(.secondary)
+                Text("↑↓ navigate   ↵ open   esc close").font(.subheadline).foregroundStyle(.secondary)
                 Spacer()
                 if !query.isEmpty && !query.hasPrefix(">") {
                     Text("\(scoped.count) result\(scoped.count == 1 ? "" : "s") · \(scope == nil ? "every account" : store.account(scope!)?.label ?? "")\(remote.isEmpty ? ", on this Mac" : " + server")")
-                        .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                        .font(.subheadline).foregroundStyle(.secondary)
                 }
             }
             .padding(.horizontal, 16).padding(.vertical, 9)
@@ -158,7 +158,7 @@ struct SearchPalette: View {
 
     private func chip(_ title: String, active: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(title).font(.system(size: 12.5, weight: .medium))
+            Text(title).font(.callout.weight(.medium))
                 .foregroundStyle(active ? accent : .secondary)
                 .padding(.horizontal, 10).padding(.vertical, 4)
                 .background(active ? accent.opacity(0.14) : Theme.field(scheme), in: Capsule())
@@ -191,7 +191,7 @@ struct SearchPalette: View {
     private var rowCount: Int { min(commands.count, 6) + min(scoped.count, 60) }
 
     private func sectionHeader(_ s: String) -> some View {
-        Text(s.uppercased()).font(.system(size: 11, weight: .semibold)).foregroundStyle(.secondary).padding(.horizontal, 10).padding(.top, 6).padding(.bottom, 2)
+        Text(s.uppercased()).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, 10).padding(.top, 6).padding(.bottom, 2)
     }
 
     private func row<C: View>(index: Int, @ViewBuilder content: () -> C, action: @escaping () -> Void) -> some View {

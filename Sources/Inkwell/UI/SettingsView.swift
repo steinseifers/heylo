@@ -579,7 +579,7 @@ struct SignaturesSettings: View {
         Form {
             ForEach($store.settings.accounts) { $a in
                 Section {
-                    TextEditor(text: $a.signature).font(.system(size: 13)).frame(height: 70)
+                    TextEditor(text: $a.signature).font(.body).frame(height: 70)
                     Toggle("Add to replies", isOn: $a.signatureOnReplies)
                     ForEach($a.aliases) { $al in
                         VStack(alignment: .leading, spacing: 4) {

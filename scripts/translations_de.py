@@ -95,6 +95,10 @@ EXTRA = {
 "Can't encrypt: no certificate for %@": "Verschlüsseln nicht möglich: kein Zertifikat für %@",
 "A scheduled message was claimed but never finished. It may or may not have been sent. Check Sent; the message is still in Drafts.": "Eine geplante Nachricht wurde reserviert, aber nie abgeschlossen. Sie ist möglicherweise gesendet worden. Prüfe „Gesendet“; die Nachricht liegt noch in den Entwürfen.",
 "This message is already being sent.": "Diese Nachricht wird gerade gesendet.",
+"Archive (E)": "Archivieren (E)", "More": "Mehr", "Move to Trash (#)": "In den Papierkorb legen (#)", "Redo": "Wiederholen",
+"Send (⌘↩)": "Senden (⌘↩)", "Snooze (H)": "Wiedervorlage (H)", "Tab": "Reiter",
+"Unflag (F)": "Markierung entfernen (F)", "Flag (F)": "Markieren (F)",
+"Primary": "Primär", "Updates": "Mitteilungen", "Promos": "Werbung", "All": "Alle",
 }
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ struct InkwellApp: App {
             RootView(store: store)
                 .frame(minWidth: 980, maxWidth: .infinity, minHeight: 600, maxHeight: .infinity)
         }
-        .windowStyle(.hiddenTitleBar)
+        .windowToolbarStyle(.unified)
         .windowResizability(.contentMinSize)
         .defaultSize(width: 1240, height: 780)
         .commands { AppCommands(store: store) }
@@ -39,6 +39,11 @@ struct AppCommands: Commands {
             Button("New Message") { store.compose() }.keyboardShortcut("n")
             Button("Check for New Mail") { store.syncAll() }.keyboardShortcut("n", modifiers: [.command, .shift])
         }
+        CommandGroup(replacing: .undoRedo) {
+            // ⌘Z undoes text edits when a text field has focus, otherwise the last mail action (move, archive, …).
+            Button("Undo") { if !NSApp.sendAction(Selector(("undo:")), to: nil, from: nil) { store.performUndo() } }.keyboardShortcut("z")
+            Button("Redo") { NSApp.sendAction(Selector(("redo:")), to: nil, from: nil) }.keyboardShortcut("z", modifiers: [.command, .shift])
+        }
         CommandGroup(after: .textEditing) {
             Button("Search & Commands…") { store.searchPresented.toggle() }.keyboardShortcut("k")
         }
@@ -64,8 +69,6 @@ struct AppCommands: Commands {
             Button("Snooze Until Tomorrow") { store.snooze(store.currentThreads, until: SnoozeChoice.tomorrow.date) }
             Button("Mute Conversation") { let t = store.currentThreads; Task { await store.mute(t) } }
             Button("Report Spam") { let t = store.currentThreads; Task { await store.reportSpam(t) } }
-            Divider()
-            Button("Undo") { store.performUndo() }.keyboardShortcut("z", modifiers: [.command, .option])
         }
     }
 }
@@ -115,6 +118,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 let w = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 720, height: 900), styleMask: [.borderless], backing: .buffered, defer: false)
                 w.contentView = host; w.orderFrontRegardless()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                    if let rep = host.bitmapImageRepForCachingDisplay(in: host.bounds) {
+                        host.cacheDisplay(in: host.bounds, to: rep)
+                        try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
+                    }
+                    exit(0)
+                }
+            }
+            if let path = ProcessInfo.processInfo.environment["INKWELL_SIDEBAR_SNAPSHOT"] {
+                // Debug: render the sidebar alone (window snapshots don't capture sidebar lists reliably).
+                let host = NSHostingView(rootView: SidebarView(store: store).frame(width: 240, height: 700))
+                let w = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 240, height: 700), styleMask: [.titled], backing: .buffered, defer: false)
+                w.contentView = host; w.orderFrontRegardless()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     if let rep = host.bitmapImageRepForCachingDisplay(in: host.bounds) {
                         host.cacheDisplay(in: host.bounds, to: rep)
                         try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))

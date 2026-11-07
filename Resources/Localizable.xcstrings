@@ -376,6 +376,17 @@
         }
       }
     },
+    "All": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle"
+          }
+        }
+      }
+    },
     "All Inboxes": {
       "extractionState": "manual",
       "localizations": {
@@ -438,6 +449,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Archivieren"
+          }
+        }
+      }
+    },
+    "Archive (E)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivieren (E)"
           }
         }
       }
@@ -948,6 +970,17 @@
         }
       }
     },
+    "Flag (F)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markieren (F)"
+          }
+        }
+      }
+    },
     "Flagged": {
       "extractionState": "manual",
       "localizations": {
@@ -1300,6 +1333,17 @@
         }
       }
     },
+    "More": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mehr"
+          }
+        }
+      }
+    },
     "Move Down": {
       "extractionState": "manual",
       "localizations": {
@@ -1340,6 +1384,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "In den Papierkorb legen"
+          }
+        }
+      }
+    },
+    "Move to Trash (#)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In den Papierkorb legen (#)"
           }
         }
       }
@@ -1663,6 +1718,17 @@
         }
       }
     },
+    "Primary": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primär"
+          }
+        }
+      }
+    },
     "Print…": {
       "extractionState": "manual",
       "localizations": {
@@ -1681,6 +1747,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Datenschutz"
+          }
+        }
+      }
+    },
+    "Promos": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Werbung"
           }
         }
       }
@@ -1714,6 +1791,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zitierter Text"
+          }
+        }
+      }
+    },
+    "Redo": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederholen"
           }
         }
       }
@@ -2059,6 +2147,17 @@
         }
       }
     },
+    "Send (⌘↩)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden (⌘↩)"
+          }
+        }
+      }
+    },
     "Send Now": {
       "extractionState": "manual",
       "localizations": {
@@ -2378,6 +2477,17 @@
         }
       }
     },
+    "Snooze (H)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedervorlage (H)"
+          }
+        }
+      }
+    },
     "Snooze Until Tomorrow": {
       "extractionState": "manual",
       "localizations": {
@@ -2495,6 +2605,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "System"
+          }
+        }
+      }
+    },
+    "Tab": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiter"
           }
         }
       }
@@ -2774,6 +2895,17 @@
         }
       }
     },
+    "Unflag (F)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markierung entfernen (F)"
+          }
+        }
+      }
+    },
     "Unread": {
       "extractionState": "manual",
       "localizations": {
@@ -2847,6 +2979,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ abbestellt"
+          }
+        }
+      }
+    },
+    "Updates": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitteilungen"
           }
         }
       }

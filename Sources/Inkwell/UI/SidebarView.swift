@@ -1,174 +1,73 @@
 import SwiftUI
 
-/// Sidebar from the Graphite design: sits on the window ground, compose button on top,
-/// mailbox rows with a raised pill for the selection, accounts, and the "who's signed in" footer.
+/// Native sidebar: a `List` in the sidebar style (system vibrancy, selection and badges), grouped like Apple Mail:
+/// mailboxes, then accounts with their folders.
 struct SidebarView: View {
     @Bindable var store: MailStore
-    var collapse: () -> Void
     @Environment(\.openSettings) private var openSettings
-    @Environment(\.accent) private var accent
-    @Environment(\.onAccent) private var onAccent
-    @Environment(\.accentFill) private var accentFill
-    @Environment(\.colorScheme) private var scheme
     @State private var showSubscriptions = false
     @State private var showSyncing = false
     @AppStorage("expandedAccounts") private var expandedRaw = ""
     private var expanded: Set<String> { Set(expandedRaw.split(separator: ",").map(String.init)) }
-    private func toggle(_ id: UUID) {
-        var e = expanded; let k = id.uuidString
-        if e.contains(k) { e.remove(k) } else { e.insert(k) }
-        withAnimation(.snappy) { expandedRaw = e.sorted().joined(separator: ",") }
+    private func expansion(_ id: UUID) -> Binding<Bool> {
+        Binding(get: { expanded.contains(id.uuidString) }, set: { on in
+            var e = expanded
+            if on { e.insert(id.uuidString) } else { e.remove(id.uuidString) }
+            expandedRaw = e.sorted().joined(separator: ",")
+        })
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Color.clear.frame(height: 36)   // traffic lights sit here
-
-            Button { store.compose() } label: {
-                HStack {
-                    Text("New message").font(.system(size: 13, weight: .semibold))
-                    Spacer()
-                    Text("⌘N").font(.system(size: 11)).opacity(0.7)
-                }
-                .foregroundStyle(onAccent)
-                .padding(.horizontal, 12).padding(.vertical, 9)
-                .background(accentFill, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 1) {
-                    navRow(.allInboxes, "tray", "Inbox", count: store.unreadCounts.values.reduce(0, +))
-                    navRow(.toReply, "arrowshape.turn.up.left", "To reply", count: store.toReplyCount)
-                    navRow(.flagged, "flag", "Flagged", count: store.flaggedCount)
-                    navRow(.snoozed, "clock", "Snoozed", count: store.snoozedCount)
-                    navRow(.allRole(.sent), "paperplane", "Sent")
-                    navRow(.scheduled, "calendar.badge.clock", "Scheduled")
-                    subscriptionsRow
-
-                    Text("ACCOUNTS")
-                        .font(.system(size: 11, weight: .semibold)).tracking(0.66)
-                        .foregroundStyle(Theme.faint)
-                        .padding(.horizontal, 10).padding(.top, 22).padding(.bottom, 6)
-                    ForEach(store.accounts) { acct in
-                        accountRow(acct)
-                        if expanded.contains(acct.id.uuidString) {
-                            VStack(alignment: .leading, spacing: 1) {
-                                ForEach(folderTree(acct)) { n in
-                                    folderRow(acct, n)
-                                }
-                            }
-                            .padding(.leading, 18)
-                        }
-                    }
-                    Button { openSettings() } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "plus").font(.system(size: 9, weight: .bold)).frame(width: 8)
-                            Text("Add account").font(.system(size: 13))
-                            Spacer()
-                        }
-                        .foregroundStyle(Theme.faint)
-                        .padding(.horizontal, 10).padding(.vertical, 7)
-                        .contentShape(Rectangle())
-                    }
+        List(selection: Binding<Mailbox?>(get: { store.mailbox }, set: { if let m = $0 { store.mailbox = m } })) {
+            Section {
+                mailboxRow(.allInboxes, "tray", "Inbox", count: store.unreadCounts.values.reduce(0, +))
+                mailboxRow(.toReply, "arrowshape.turn.up.left", "To reply", count: store.toReplyCount)
+                mailboxRow(.flagged, "flag", "Flagged", count: store.flaggedCount)
+                mailboxRow(.snoozed, "clock", "Snoozed", count: store.snoozedCount)
+                mailboxRow(.allRole(.sent), "paperplane", "Sent")
+                mailboxRow(.scheduled, "calendar.badge.clock", "Scheduled")
+                Button { showSubscriptions = true } label: { Label("Subscriptions", systemImage: "newspaper") }
                     .buttonStyle(.plain)
-                }
-                .padding(.top, 12)
+                    .popover(isPresented: $showSubscriptions, arrowEdge: .trailing) { SubscriptionsSettings(store: store).frame(width: 460, height: 480) }
             }
-            .scrollIndicators(.never)
-
-            footer
+            Section("Accounts") {
+                ForEach(store.accounts) { acct in
+                    DisclosureGroup(isExpanded: expansion(acct.id)) {
+                        ForEach(folderTree(acct)) { n in folderRow(acct, n) }
+                    } label: { accountLabel(acct) }
+                }
+                Button { openSettings() } label: { Label("Add account", systemImage: "plus") }.buttonStyle(.plain).foregroundStyle(.secondary)
+            }
         }
-        .padding(.horizontal, 10).padding(.bottom, 12)
+        .listStyle(.sidebar)
+        .safeAreaInset(edge: .bottom, spacing: 0) { footer }
     }
 
     // MARK: rows
 
-    private func isSelected(_ m: Mailbox) -> Bool { store.mailbox == m }
-
-    private func isInAccount(_ id: UUID) -> Bool {
-        switch store.mailbox {
-        case .accountInbox(let a): return a == id
-        case .folder(let a, _): return a == id
-        default: return false
-        }
+    private func mailboxRow(_ m: Mailbox, _ icon: String, _ title: LocalizedStringKey, count: Int = 0) -> some View {
+        Label(title, systemImage: icon)
+            .badge(count)
+            .tag(m)
+            .dropDestination(for: String.self) { ids, _ in handleDrop(ids, onto: m); return true }
     }
 
-    @ViewBuilder private func pill(_ selected: Bool) -> some View {
-        let shape = RoundedRectangle(cornerRadius: Theme.rowRadius, style: .continuous)
-        if selected {
-            shape.fill(Theme.raised).shadow(color: .black.opacity(scheme == .dark ? 0 : 0.08), radius: 1, y: 1)
-        } else {
-            shape.fill(.clear)
-        }
-    }
-
-    private func navRow(_ m: Mailbox, _ icon: String, _ title: String, count: Int = 0) -> some View {
-        let sel = isSelected(m)
-        return HStack(spacing: 10) {
-            Image(systemName: icon).font(.system(size: 13, weight: .regular))
-                .foregroundStyle(sel ? Theme.ink : Theme.muted).frame(width: 16)
-            Text(title).font(.system(size: 13, weight: sel ? .semibold : .regular)).foregroundStyle(Theme.ink)
-            Spacer(minLength: 4)
-            if count > 0 {
-                Text("\(count)").font(.system(size: 12, weight: sel ? .semibold : .regular)).monospacedDigit()
-                    .foregroundStyle(sel ? accent : Theme.muted)
-            }
-        }
-        .padding(.horizontal, 10).padding(.vertical, 7)
-        .background(pill(sel))
-        .contentShape(Rectangle())
-        .onTapGesture { store.mailbox = m }
-        .dropDestination(for: String.self) { ids, _ in handleDrop(ids, onto: m); return true }
-    }
-
-    private var subscriptionsRow: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "newspaper").font(.system(size: 13)).foregroundStyle(Theme.muted).frame(width: 16)
-            Text("Subscriptions").font(.system(size: 13)).foregroundStyle(Theme.ink)
-            Spacer()
-        }
-        .padding(.horizontal, 10).padding(.vertical, 7)
-        .contentShape(Rectangle())
-        .onTapGesture { showSubscriptions = true }
-        .popover(isPresented: $showSubscriptions, arrowEdge: .trailing) {
-            SubscriptionsSettings(store: store).frame(width: 460, height: 480)
-        }
-    }
-
-    private func accountRow(_ acct: Account) -> some View {
+    private func accountLabel(_ acct: Account) -> some View {
         let m = Mailbox.accountInbox(acct.id)
-        let sel = isSelected(m)
-        return HStack(spacing: 10) {
-            ZStack {
-                if store.accountErrors[acct.id] != nil {
-                    Image(systemName: "exclamationmark.circle.fill").font(.system(size: 9)).foregroundStyle(.orange)
-                } else {
-                    Circle().fill(acct.color).frame(width: 8, height: 8)
-                }
+        return Label {
+            Text(acct.label).lineLimit(1)
+        } icon: {
+            if store.accountErrors[acct.id] != nil {
+                Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
+            } else {
+                Image(systemName: "circle.fill").foregroundStyle(acct.color).imageScale(.small)
             }
-            .frame(width: 16)
-            .help(store.accountErrors[acct.id] ?? acct.email)
-            Text(acct.label).font(.system(size: 13, weight: sel ? .semibold : .regular)).foregroundStyle(Theme.ink).lineLimit(1)
-            Spacer(minLength: 4)
-            if let n = store.unreadCounts[acct.id], n > 0 {
-                Text("\(n)").font(.system(size: 12)).monospacedDigit().foregroundStyle(Theme.muted)
-            }
-            Button { toggle(acct.id) } label: {
-                Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold)).foregroundStyle(Theme.faint)
-                    .rotationEffect(.degrees(expanded.contains(acct.id.uuidString) ? 90 : 0))
-                    .frame(width: 16, height: 16).contentShape(Rectangle())
-            }
-            .buttonStyle(.plain).help(expanded.contains(acct.id.uuidString) ? "Hide folders" : "Show folders")
         }
-        .padding(.horizontal, 10).padding(.vertical, 7)
-        .background(pill(sel))
-        .contentShape(Rectangle())
-        .onTapGesture { store.mailbox = m }
+        .badge(store.unreadCounts[acct.id] ?? 0)
+        .tag(m)
+        .help(store.accountErrors[acct.id] ?? acct.email)
         .draggable("acct:" + acct.id.uuidString) {
-            HStack(spacing: 8) { Circle().fill(acct.color).frame(width: 8, height: 8); Text(acct.label).font(.system(size: 13)) }
-                .padding(.horizontal, 10).padding(.vertical, 6).background(Theme.cardFill, in: RoundedRectangle(cornerRadius: 8))
+            Label(acct.label, systemImage: "circle.fill").foregroundStyle(acct.color).padding(6)
         }
         .dropDestination(for: String.self) { ids, _ in
             // Another account dropped here: reorder. Mail dropped here: move it to this inbox.
@@ -189,45 +88,22 @@ struct SidebarView: View {
 
     private func folderRow(_ acct: Account, _ n: FolderNode) -> some View {
         let m = Mailbox.folder(accountId: acct.id, path: n.folder.path)
-        let sel = isSelected(m)
-        return HStack(spacing: 8) {
-            Image(systemName: icon(n.folder.role)).font(.system(size: 11)).foregroundStyle(Theme.muted).frame(width: 14)
-            Text(MUTF7.decode(n.folder.displayName)).font(.system(size: 12.5, weight: sel ? .semibold : .regular)).foregroundStyle(Theme.ink).lineLimit(1)
-            Spacer()
-        }
-        .padding(.leading, 10 + CGFloat(n.depth) * 12).padding(.trailing, 10).padding(.vertical, 5)
-        .background(pill(sel))
-        .contentShape(Rectangle())
-        .onTapGesture { store.mailbox = m }
-        .dropDestination(for: String.self) { ids, _ in handleDrop(ids, onto: m); return true }
+        return Label(MUTF7.decode(n.folder.displayName), systemImage: icon(n.folder.role))
+            .padding(.leading, CGFloat(n.depth) * 10)
+            .tag(m)
+            .dropDestination(for: String.self) { ids, _ in handleDrop(ids, onto: m); return true }
     }
 
     // MARK: footer
 
+    /// Sync status, like the line under the mailbox list in Apple Mail.
     private var footer: some View {
-        let first = store.accounts.first
-        let name = first.map { $0.displayName.isEmpty ? $0.label : $0.displayName } ?? "No account"
-        let initials = name.split(separator: " ").prefix(2).compactMap(\.first).map(String.init).joined().uppercased()
-        return HStack(spacing: 10) {
-            Text(initials.isEmpty ? "?" : initials).font(.system(size: 11, weight: .semibold)).foregroundStyle(onAccent)
-                .frame(width: 26, height: 26).background(accentFill, in: Circle())
-            VStack(alignment: .leading, spacing: 0) {
-                Text(name).font(.system(size: 12.5, weight: .semibold)).foregroundStyle(Theme.ink).lineLimit(1)
-                TimelineView(.periodic(from: .now, by: 30)) { ctx in
-                    Text(status(at: ctx.date)).font(.system(size: 11)).foregroundStyle(Theme.muted).lineLimit(1)
-                }
-            }
-            Spacer(minLength: 4)
-            Button(action: collapse) {
-                Image(systemName: "sidebar.left").font(.system(size: 12)).foregroundStyle(Theme.muted)
-                    .frame(width: 24, height: 24).contentShape(Rectangle())
-            }
-            .buttonStyle(.plain).help("Hide sidebar")
+        TimelineView(.periodic(from: .now, by: 30)) { ctx in
+            Text(status(at: ctx.date)).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 14).padding(.vertical, 8)
         }
-        .padding(10)
-        .overlay(alignment: .top) { Rectangle().fill(Theme.hairline).frame(height: 1) }
-        // Most syncs (new-mail pushes, the 60 s refresh) finish in well under a second; only say
-        // "Syncing…" for ones that take a while, so the footer doesn't flicker on every check.
+        // Most syncs finish in well under a second; only say "Syncing…" for ones that take a while.
         .task(id: store.syncing.isEmpty) {
             if store.syncing.isEmpty { showSyncing = false; return }
             try? await Task.sleep(for: .seconds(1.5))

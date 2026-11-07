@@ -67,12 +67,12 @@ struct StorageSettings: View {
                             .font(.system(size: 34, weight: .bold)).tracking(-0.6).foregroundStyle(Theme.ink)
                             .contentTransition(.numericText())
                         if let r = report {
-                            Text("· \(r.emails) emails · \(r.downloaded) downloaded").font(.system(size: 13)).foregroundStyle(Theme.muted)
+                            Text("· \(r.emails) emails · \(r.downloaded) downloaded").font(.body).foregroundStyle(Theme.muted)
                         }
                     }
                 }
                 Spacer()
-                Text("Mail on your server isn’t counted").font(.system(size: 12)).foregroundStyle(Theme.muted)
+                Text("Mail on your server isn’t counted").font(.callout).foregroundStyle(Theme.muted)
             }
             bar
             HStack(spacing: 22) {
@@ -106,8 +106,8 @@ struct StorageSettings: View {
     private func legend(_ title: String, _ value: Int64?, _ color: Color) -> some View {
         HStack(spacing: 7) {
             RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 8, height: 8)
-            Text(title).font(.system(size: 12)).foregroundStyle(Theme.ink2)
-            Text(value.map(Self.bytes) ?? "—").font(.system(size: 12)).foregroundStyle(Theme.muted).monospacedDigit()
+            Text(title).font(.callout).foregroundStyle(Theme.ink2)
+            Text(value.map(Self.bytes) ?? "—").font(.callout).foregroundStyle(Theme.muted).monospacedDigit()
         }
     }
 
@@ -127,15 +127,15 @@ struct StorageSettings: View {
                 HStack {
                     HStack(spacing: 10) {
                         Circle().fill(a?.color ?? .gray).frame(width: 9, height: 9)
-                        Text(a?.label ?? "Account").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
-                        Text(a?.email ?? "").font(.system(size: 13)).foregroundStyle(Theme.muted).lineLimit(1)
+                        Text(a?.label ?? "Account").font(.body.weight(.medium)).foregroundStyle(Theme.ink)
+                        Text(a?.email ?? "").font(.body).foregroundStyle(Theme.muted).lineLimit(1)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(u.emails)").frame(width: 90, alignment: .trailing).foregroundStyle(Theme.ink2)
                     Text(u.oldest.map { $0.formatted(.dateTime.month(.abbreviated).year()) } ?? "—").frame(width: 90, alignment: .trailing).foregroundStyle(Theme.ink2)
                     Text(Self.bytes(u.bytes)).fontWeight(.medium).frame(width: 90, alignment: .trailing).foregroundStyle(Theme.ink)
                 }
-                .font(.system(size: 13)).monospacedDigit()
+                .font(.body).monospacedDigit()
                 .padding(.vertical, 11)
                 if i < rows.count - 1 { Divider().overlay(Theme.hairline.opacity(0.6)) }
             }
@@ -145,18 +145,18 @@ struct StorageSettings: View {
     private var cleanUpCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Free up space").font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.ink)
+                Text("Free up space").font(.title3.weight(.semibold)).foregroundStyle(Theme.ink)
                 Text("Removes downloaded copies from this Mac only. Every email stays on your mail server and downloads again when you open it.")
-                    .font(.system(size: 13)).lineSpacing(3).foregroundStyle(Theme.ink2).fixedSize(horizontal: false, vertical: true)
+                    .font(.body).lineSpacing(3).foregroundStyle(Theme.ink2).fixedSize(horizontal: false, vertical: true)
             }
             HStack(spacing: 10) {
-                Text("Remove emails older than").font(.system(size: 13)).foregroundStyle(Theme.ink)
+                Text("Remove emails older than").font(.body).foregroundStyle(Theme.ink)
                 Picker("", selection: $store.settings.storageMonths) {
                     Text("1 month").tag(1); Text("3 months").tag(3); Text("6 months").tag(6)
                     Text("1 year").tag(12); Text("2 years").tag(24)
                 }
                 .labelsHidden().fixedSize()
-                Text("from").font(.system(size: 13)).foregroundStyle(Theme.muted)
+                Text("from").font(.body).foregroundStyle(Theme.muted)
                 Picker("", selection: $accountFilter) {
                     Text("All accounts").tag(UUID?.none)
                     ForEach(store.settings.accounts) { a in Text(a.label).tag(UUID?.some(a.id)) }
@@ -171,26 +171,26 @@ struct StorageSettings: View {
                     store.settings.storageEntireEmails = true
                 }
                 Toggle("Keep flagged and snoozed emails", isOn: $store.settings.storageKeepImportant)
-                    .toggleStyle(.checkbox).font(.system(size: 13)).padding(.top, 3)
+                    .toggleStyle(.checkbox).font(.body).padding(.top, 3)
             }
             Divider().overlay(Theme.hairline)
             HStack(alignment: .center) {
                 if let working {
                     ProgressView().controlSize(.small)
-                    Text(working).font(.system(size: 13)).foregroundStyle(Theme.ink2)
+                    Text(working).font(.body).foregroundStyle(Theme.ink2)
                 } else if let e = estimate, e.emails > 0 {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text("Frees about").font(.system(size: 13)).foregroundStyle(Theme.ink2)
-                        Text(Self.bytes(e.bytes)).font(.system(size: 17, weight: .bold)).tracking(-0.2).foregroundStyle(Theme.ink)
-                        Text("from \(e.emails) email\(e.emails == 1 ? "" : "s")").font(.system(size: 13)).foregroundStyle(Theme.muted)
+                        Text("Frees about").font(.body).foregroundStyle(Theme.ink2)
+                        Text(Self.bytes(e.bytes)).font(.title2.weight(.bold)).tracking(-0.2).foregroundStyle(Theme.ink)
+                        Text("from \(e.emails) email\(e.emails == 1 ? "" : "s")").font(.body).foregroundStyle(Theme.muted)
                     }
                 } else {
                     Text(lastResult ?? (estimate == nil ? "Calculating…" : "Nothing to clean up with these settings"))
-                        .font(.system(size: 13)).foregroundStyle(Theme.muted)
+                        .font(.body).foregroundStyle(Theme.muted)
                 }
                 Spacer()
                 Button { confirming = true } label: {
-                    Text("Clean Up…").font(.system(size: 13, weight: .semibold)).foregroundStyle(.white)
+                    Text("Clean Up…").font(.body.weight(.semibold)).foregroundStyle(.white)
                         .padding(.horizontal, 16).padding(.vertical, 7)
                         .background(accentFill, in: RoundedRectangle(cornerRadius: 8))
                 }
@@ -208,8 +208,8 @@ struct StorageSettings: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Clean up automatically").font(.system(size: 13)).foregroundStyle(Theme.ink)
-                    Text("Once a day, using the settings above").font(.system(size: 12)).foregroundStyle(Theme.muted)
+                    Text("Clean up automatically").font(.body).foregroundStyle(Theme.ink)
+                    Text("Once a day, using the settings above").font(.callout).foregroundStyle(Theme.muted)
                 }
                 Spacer()
                 Toggle("", isOn: $store.settings.storageAutoClean).toggleStyle(.switch).labelsHidden().controlSize(.small)
@@ -225,7 +225,7 @@ struct StorageSettings: View {
                 }
                 Spacer()
                 Button("Show in Finder") { NSWorkspace.shared.activateFileViewerSelecting([Paths.database]) }
-                    .buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(Theme.muted)
+                    .buttonStyle(.plain).font(.body).foregroundStyle(Theme.muted)
             }
         }
     }
@@ -233,7 +233,7 @@ struct StorageSettings: View {
     // MARK: pieces
 
     private func sectionLabel(_ s: String) -> some View {
-        Text(s).font(.system(size: 11, weight: .semibold)).tracking(0.66).foregroundStyle(Theme.muted)
+        Text(s).font(.subheadline.weight(.semibold)).tracking(0.66).foregroundStyle(Theme.muted)
     }
 
     private func radio(_ on: Bool, _ title: String, _ detail: String, _ select: @escaping () -> Void) -> some View {
@@ -246,8 +246,8 @@ struct StorageSettings: View {
                 }
                 .frame(width: 16, height: 16).padding(.top, 1)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(title).font(.system(size: 13)).foregroundStyle(Theme.ink)
-                    Text(detail).font(.system(size: 12)).foregroundStyle(Theme.muted)
+                    Text(title).font(.body).foregroundStyle(Theme.ink)
+                    Text(detail).font(.callout).foregroundStyle(Theme.muted)
                 }
             }
             .contentShape(Rectangle())
@@ -257,7 +257,7 @@ struct StorageSettings: View {
 
     private func link(_ title: String, _ action: @escaping () async -> Void) -> some View {
         Button { Task { await action() } } label: {
-            Text(title).font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink2)
+            Text(title).font(.body.weight(.medium)).foregroundStyle(Theme.ink2)
         }
         .buttonStyle(.plain)
         .disabled(working != nil)

@@ -2,113 +2,64 @@ import SwiftUI
 
 struct ThreadListView: View {
     @Bindable var store: MailStore
-    var sidebarHidden: Bool
-    var showSidebar: () -> Void
-    @Environment(\.colorScheme) private var scheme
     @Environment(\.accent) private var accent
     @State private var customSnooze: [ThreadSummary]?
-    @State private var hovered: String?
 
     private var showTabs: Bool {
         switch store.mailbox { case .allInboxes, .accountInbox: return true; default: return false }
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            if showTabs { tabs }
-            if case .scheduled = store.mailbox {
-                ScheduledList(store: store)
-            } else if store.threads.isEmpty && store.unreadOnly && !store.syncing.isEmpty {
-                VStack(spacing: 10) {
-                    ProgressView().controlSize(.small)
-                    Text("Loading unread mail…").font(.system(size: 13)).foregroundStyle(Theme.muted)
+        content
+            .navigationTitle(titleText)
+            .navigationSubtitle(subtitle)
+            .safeAreaInset(edge: .top, spacing: 0) { if showTabs { tabs } }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button { store.compose() } label: { Label("New Message", systemImage: "square.and.pencil") }.help("New Message")
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if store.threads.isEmpty {
-                ContentUnavailableView(emptyTitle, systemImage: emptyIcon, description: Text(emptySubtitle))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(spacing: 2) {
-                            ForEach(store.threads) { t in
-                                ThreadRow(thread: t, account: store.account(t.accountId), selected: store.selection.contains(t.id), store: store)
-                                    .id(t.id)
-                                    .contentShape(Rectangle())
-                                    .onTapGesture { select(t) }
-                                    .draggable(t.id)
-                                    .contextMenu { contextMenu(for: menuTargets(t)) }
-                            }
-                            .onAppear { Perf.mark("thread rows built"); DispatchQueue.main.async { Perf.mark("first list frame") } }
-                        }
-                        .padding(.horizontal, 8).padding(.vertical, 6)
-                    }
-                    .scrollIndicators(.automatic)
-                    .onChange(of: store.selection) { if let s = store.selection.first { withAnimation { proxy.scrollTo(s) } } }
+                ToolbarItem(placement: .primaryAction) {
+                    Button { store.searchPresented = true } label: { Label("Search & Commands…", systemImage: "magnifyingglass") }.help("Search & Commands…")
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Toggle(isOn: $store.unreadOnly) { Label("Unread Only", systemImage: "envelope.badge") }.help("Show unread only")
                 }
             }
-        }
-        .sheet(item: Binding(get: { customSnooze.map { IdentifiedThreads(threads: $0) } }, set: { customSnooze = $0?.threads })) { item in
-            DatePickerSheet(title: "Snooze until…", action: "Snooze") { store.snooze(item.threads, until: $0) }
-        }
+            .sheet(item: Binding(get: { customSnooze.map { IdentifiedThreads(threads: $0) } }, set: { customSnooze = $0?.threads })) { item in
+                DatePickerSheet(title: "Snooze until…", action: "Snooze") { store.snooze(item.threads, until: $0) }
+            }
     }
 
-    // ⌘/⇧ click for multi-select
-    private func select(_ t: ThreadSummary) {
-        let mods = NSEvent.modifierFlags
-        if mods.contains(.command) {
-            if store.selection.contains(t.id) { store.selection.remove(t.id) } else { store.selection.insert(t.id) }
-        } else if mods.contains(.shift), let anchor = store.threads.firstIndex(where: { store.selection.contains($0.id) }),
-                  let idx = store.threads.firstIndex(where: { $0.id == t.id }) {
-            store.selection = Set(store.threads[min(anchor, idx)...max(anchor, idx)].map(\.id))
+    @ViewBuilder private var content: some View {
+        if case .scheduled = store.mailbox {
+            ScheduledList(store: store)
+        } else if store.threads.isEmpty && store.unreadOnly && !store.syncing.isEmpty {
+            VStack(spacing: 10) {
+                ProgressView().controlSize(.small)
+                Text("Loading unread mail…").foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if store.threads.isEmpty {
+            ContentUnavailableView(emptyTitle, systemImage: emptyIcon, description: Text(emptySubtitle))
         } else {
-            store.selection = [t.id]
-        }
-    }
-
-    private func menuTargets(_ t: ThreadSummary) -> [ThreadSummary] {
-        store.selection.contains(t.id) ? store.selectedThreads : [t]
-    }
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            if sidebarHidden {
-                // With the sidebar hidden the window buttons sit over this card: reserve their space
-                // and put the "show sidebar" button right after them.
-                HStack(spacing: 10) {
-                    Color.clear.frame(width: 58, height: 14)
-                    Button(action: showSidebar) {
-                        Image(systemName: "sidebar.left").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.muted)
-                            .frame(width: 26, height: 22).contentShape(Rectangle())
+            ScrollViewReader { proxy in
+                List(selection: $store.selection) {
+                    ForEach(store.threads) { t in
+                        ThreadRow(thread: t, account: store.account(t.accountId), store: store)
+                            .tag(t.id)
+                            .id(t.id)
+                            .draggable(t.id)
                     }
-                    .buttonStyle(.plain).help("Show sidebar")
-                    Spacer()
+                    .onAppear { Perf.mark("thread rows built"); DispatchQueue.main.async { Perf.mark("first list frame") } }
                 }
-                .frame(height: 20)
-                .padding(.top, -8).padding(.bottom, -6)
+                .listStyle(.inset)
+                .contextMenu(forSelectionType: String.self) { ids in contextMenu(for: menuTargets(ids)) }
+                .onChange(of: store.selection) { if let s = store.selection.first { withAnimation { proxy.scrollTo(s) } } }
             }
-            HStack(alignment: .firstTextBaseline) {
-                Text(titleText).font(.system(size: 22, weight: .bold)).tracking(-0.44).foregroundStyle(Theme.ink).lineLimit(1)
-                Spacer(minLength: 8)
-                Text(subtitle).font(.system(size: 12)).foregroundStyle(Theme.muted).lineLimit(1)
-            }
-            Button { store.searchPresented = true } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass").font(.system(size: 12, weight: .medium))
-                    Text("Search or ask anything").font(.system(size: 13))
-                    Spacer()
-                    Text("⌘K").font(.system(size: 11))
-                }
-                .foregroundStyle(Theme.faint)
-                .padding(.horizontal, 10).padding(.vertical, 8)
-                .background(Theme.fieldFill, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 20).padding(.top, sidebarHidden ? 14 : 20).padding(.bottom, showTabs ? 14 : 10)
     }
+
+    private func menuTargets(_ ids: Set<String>) -> [ThreadSummary] { store.threads.filter { ids.contains($0.id) } }
 
     private var titleText: String {
         switch store.mailbox {
@@ -128,35 +79,16 @@ struct ThreadListView: View {
         }
     }
 
-    /// Underlined text tabs with a hairline under the whole row.
+    /// Inbox tabs as a standard segmented control.
     private var tabs: some View {
-        HStack(spacing: 18) {
+        Picker("Tab", selection: $store.tab) {
             ForEach(InboxTab.allCases) { t in
-                let sel = store.tab == t
-                Button { store.tab = t } label: {
-                    HStack(spacing: 0) {
-                        Text(t.rawValue)
-                        if let n = store.tabUnread[t], n > 0, t != .all { Text(" · \(n)").monospacedDigit() }
-                    }
-                    .font(.system(size: 13, weight: sel ? .semibold : .regular))
-                    .foregroundStyle(sel ? Theme.ink : Theme.muted)
-                    .lineLimit(1).fixedSize()
-                    .padding(.bottom, 9)
-                    .overlay(alignment: .bottom) { if sel { Rectangle().fill(Theme.ink).frame(height: 2) } }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
+                if let n = store.tabUnread[t], n > 0, t != .all { Text("\(t.rawValue) · \(n)").tag(t) } else { Text(LocalizedStringKey(t.rawValue)).tag(t) }
             }
-            Spacer(minLength: 0)
-            Button { store.unreadOnly.toggle() } label: {
-                Text("Unread").font(.system(size: 12, weight: store.unreadOnly ? .semibold : .regular))
-                    .foregroundStyle(store.unreadOnly ? Theme.ink : Theme.faint)
-                    .padding(.bottom, 9).contentShape(Rectangle())
-            }
-            .buttonStyle(.plain).help("Show unread only")
         }
-        .overlay(alignment: .bottom) { Rectangle().fill(Theme.hairline).frame(height: 1) }
-        .padding(.horizontal, 20).padding(.bottom, 6)
+        .pickerStyle(.segmented).labelsHidden()
+        .padding(.horizontal, 12).padding(.vertical, 8)
+        .background(.bar)
     }
 
     private var emptyTitle: String {
@@ -200,11 +132,8 @@ struct IdentifiedThreads: Identifiable { let id = UUID(); var threads: [ThreadSu
 struct ThreadRow: View {
     var thread: ThreadSummary
     var account: Account?
-    var selected: Bool
     var store: MailStore
     @Environment(\.accent) private var accent
-    @Environment(\.colorScheme) private var scheme
-    @State private var hovering = false
 
     private var counterpart: EmailAddress {
         let m = thread.latest
@@ -229,33 +158,28 @@ struct ThreadRow: View {
                         .font(.system(size: 13.5, weight: unread ? .semibold : .medium))
                         .foregroundStyle(unread ? Theme.ink : Theme.ink2)
                         .lineLimit(1)
-                    if thread.count > 1 { Text("\(thread.count)").font(.system(size: 11.5)).foregroundStyle(Theme.faint) }
+                    if thread.count > 1 { Text("\(thread.count)").font(.subheadline).foregroundStyle(Theme.faint) }
                     Spacer(minLength: 4)
                     Text(m.date.listLabel).font(.system(size: 11.5, weight: unread ? .semibold : .regular))
                         .foregroundStyle(unread ? accent : Theme.faint)
                 }
                 HStack(spacing: 5) {
-                    if thread.flagged { Image(systemName: "flag.fill").font(.system(size: 10)).foregroundStyle(.orange) }
+                    if thread.flagged { Image(systemName: "flag.fill").font(.caption).foregroundStyle(.orange) }
                     Text(m.subject.isEmpty ? "(no subject)" : m.subject)
                         .font(.system(size: 13, weight: unread ? .semibold : .regular))
                         .foregroundStyle(unread ? Theme.ink : Theme.ink2)
                         .lineLimit(1)
                 }
                 if code == nil {
-                    Text(m.snippet).font(.system(size: 12.5)).foregroundStyle(unread ? Theme.muted : Theme.faint).lineLimit(1)
+                    Text(m.snippet).font(.callout).foregroundStyle(unread ? Theme.muted : Theme.faint).lineLimit(1)
                 }
                 chips
             }
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: selected ? 14 : 10, style: .continuous)
-                .fill(selected ? Theme.selectedRow : hovering ? Theme.selectedRow.opacity(0.5) : .clear)
-        )
+        .padding(.vertical, 6)
         .overlay(alignment: .topLeading) {
-            if unread { Circle().fill(accent).frame(width: 6, height: 6).offset(x: 2, y: 26) }
+            if unread { Circle().fill(accent).frame(width: 7, height: 7).offset(x: -13, y: 14) }
         }
-        .onHover { hovering = $0 }
     }
 
     @ViewBuilder private var chips: some View {
@@ -274,7 +198,7 @@ struct ThreadRow: View {
                     Sounds.play(.copy)
                     store.copiedCodes.insert(code)
                 } label: {
-                    Text(copied ? "Copied" : "Copy").font(.system(size: 12, weight: .semibold)).foregroundStyle(accent)
+                    Text(copied ? "Copied" : "Copy").font(.callout.weight(.semibold)).foregroundStyle(accent)
                 }
                 .buttonStyle(.plain)
             }
@@ -282,17 +206,17 @@ struct ThreadRow: View {
         } else if needsReply || !files.isEmpty {
             HStack(spacing: 6) {
                 if needsReply {
-                    Text("Needs reply").font(.system(size: 11, weight: .semibold)).foregroundStyle(accent)
+                    Text("Needs reply").font(.subheadline.weight(.semibold)).foregroundStyle(accent)
                         .padding(.horizontal, 7).padding(.vertical, 2)
                         .background(Theme.chip, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
                 }
                 ForEach(files.prefix(2), id: \.self) { f in
-                    Text(f).font(.system(size: 11)).foregroundStyle(Theme.ink).lineLimit(1)
+                    Text(f).font(.subheadline).foregroundStyle(Theme.ink).lineLimit(1)
                         .padding(.horizontal, 7).padding(.vertical, 2)
                         .background(Theme.raised, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
                         .overlay(RoundedRectangle(cornerRadius: 5, style: .continuous).strokeBorder(Theme.hairline))
                 }
-                if files.count > 2 { Text("+\(files.count - 2)").font(.system(size: 11)).foregroundStyle(Theme.faint) }
+                if files.count > 2 { Text("+\(files.count - 2)").font(.subheadline).foregroundStyle(Theme.faint) }
             }
             .padding(.top, 6)
         }
@@ -315,12 +239,12 @@ struct ScheduledList: View {
                 ForEach(items) { d in
                     VStack(alignment: .leading, spacing: 3) {
                         HStack {
-                            Text("To: \(d.to)").font(.system(size: 15, weight: .semibold)).lineLimit(1)
+                            Text("To: \(d.to)").font(.title3.weight(.semibold)).lineLimit(1)
                             Spacer()
-                            if let at = d.sendAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.system(size: 13)).foregroundStyle(.secondary) }
+                            if let at = d.sendAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.body).foregroundStyle(.secondary) }
                         }
-                        Text(d.subject).font(.system(size: 14)).lineLimit(1)
-                        Text(d.plain).font(.system(size: 13)).foregroundStyle(.secondary).lineLimit(2)
+                        Text(d.subject).font(.body).lineLimit(1)
+                        Text(d.plain).font(.body).foregroundStyle(.secondary).lineLimit(2)
                     }
                     .padding(12)
                     .contentShape(Rectangle())

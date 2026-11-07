@@ -30,11 +30,10 @@ struct ConversationView: View {
     private var counterpart: EmailAddress { latestInbound?.from ?? thread.latest.to.first ?? thread.latest.from }
 
     var body: some View {
-        Card {
+        Group {
             GeometryReader { geo in
                 let pad: CGFloat = geo.size.width > 760 ? 56 : 28
                 VStack(spacing: 0) {
-                    toolbar
                     ScrollViewReader { proxy in
                         ScrollView {
                             VStack(alignment: .leading, spacing: 22) {
@@ -62,6 +61,9 @@ struct ConversationView: View {
                 }
             }
         }
+        .toolbar { conversationToolbar }
+        .navigationTitle(thread.latest.subject.isEmpty ? "(no subject)" : thread.latest.subject)
+        .navigationSubtitle(account?.label ?? "")
         .task(id: thread.id + "\(thread.latest.id)") { await load() }
         .sheet(isPresented: $customSnooze) {
             DatePickerSheet(title: "Snooze until…", action: "Snooze") { store.snooze([thread], until: $0) }
@@ -112,77 +114,40 @@ struct ConversationView: View {
 
     // MARK: toolbar & title
 
-    private var toolbar: some View {
-        HStack(spacing: 4) {
-            toolButton("Archive", key: "E") { Task { await store.archive([thread]) } }
+    /// Actions in the window toolbar (system look, customisable, tooltips with the key).
+    @ToolbarContentBuilder private var conversationToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button { Task { await store.archive([thread]) } } label: { Label("Archive", systemImage: "archivebox") }.help("Archive (E)")
+            Button { Task { await store.trash([thread]) } } label: { Label("Move to Trash", systemImage: "trash") }.help("Move to Trash (#)")
+            Button { Task { await store.toggleFlag([thread]) } } label: { Label(thread.flagged ? "Unflag" : "Flag", systemImage: thread.flagged ? "flag.fill" : "flag") }
+                .help(thread.flagged ? "Unflag (F)" : "Flag (F)")
             Menu {
                 SnoozeMenu { store.snooze([thread], until: $0) }
                 Divider()
                 Button("Pick Date & Time…") { customSnooze = true }
-            } label: { toolLabel("Snooze", key: "H") }
-                .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-            toolButton(thread.flagged ? "Unflag" : "Flag", key: "F") { Task { await store.toggleFlag([thread]) } }
-            toolButton("Trash", key: "#") { Task { await store.trash([thread]) } }
-            Menu { moreMenu } label: {
-                Image(systemName: "ellipsis").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink2)
-                    .frame(width: 30, height: 28).contentShape(Rectangle())
+            } label: { Label("Snooze", systemImage: "clock") }.help("Snooze (H)")
+            Menu { moreMenu } label: { Label("More", systemImage: "ellipsis.circle") }
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Picker("View as", selection: Binding(get: { style }, set: { setStyle($0) })) {
+                ForEach(ConversationStyle.allCases) { Text($0.label).tag($0) }
             }
-            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-            Spacer(minLength: 8)
-            HStack(spacing: 2) {
-                segment(.classic)
-                segment(.chat)
-            }
-            .padding(2)
-            .background(Theme.fieldFill, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .pickerStyle(.segmented).labelsHidden()
         }
-        .padding(.horizontal, 28).padding(.vertical, 12)
-        .overlay(alignment: .bottom) { Rectangle().fill(Theme.hairline).frame(height: 1) }
-    }
-
-    private func toolLabel(_ title: String, key: String) -> some View {
-        HStack(spacing: 4) {
-            Text(title).foregroundStyle(Theme.ink2)
-            Text(key).foregroundStyle(Theme.faint)
-        }
-        .font(.system(size: 12.5))
-        .padding(.horizontal, 10).padding(.vertical, 6)
-        .contentShape(Rectangle())
-    }
-
-    private func toolButton(_ title: String, key: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) { toolLabel(title, key: key) }.buttonStyle(HoverPlainStyle())
-    }
-
-    private func segment(_ v: ConversationStyle) -> some View {
-        let sel = style == v
-        return Button { withAnimation(.snappy) { setStyle(v) } } label: {
-            Text(v.label).font(.system(size: 12, weight: sel ? .semibold : .regular))
-                .foregroundStyle(sel ? Theme.ink : Theme.muted)
-                .padding(.horizontal, 10).padding(.vertical, 4)
-                .background {
-                    if sel {
-                        RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Theme.raised)
-                            .shadow(color: .black.opacity(scheme == .dark ? 0 : 0.08), radius: 1, y: 1)
-                    }
-                }
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 
     private var titleBlock: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(thread.latest.subject.isEmpty ? "(no subject)" : thread.latest.subject)
-                .font(.system(size: 28, weight: .bold)).tracking(-0.56).foregroundStyle(Theme.ink)
+                .font(.title.bold()).foregroundStyle(.primary)
                 .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 8) {
                 if let account {
-                    Text(account.label).font(.system(size: 11, weight: .semibold)).foregroundStyle(account.color)
+                    Text(account.label).font(.subheadline.weight(.semibold)).foregroundStyle(account.color)
                         .padding(.horizontal, 7).padding(.vertical, 2)
                         .background(account.color.opacity(0.14), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
                 }
-                Text(metaLine).font(.system(size: 12)).foregroundStyle(Theme.faint)
+                Text(metaLine).font(.callout).foregroundStyle(Theme.faint)
             }
         }
     }
@@ -230,8 +195,8 @@ struct ConversationView: View {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.red)
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("This message may be impersonating \(m.from.name.isEmpty ? m.from.domain : m.from.name).").font(.system(size: 14, weight: .semibold))
-                        Text(v.warning + " Don't open its links or reply with passwords, codes or payment details.").font(.system(size: 13)).foregroundStyle(.secondary)
+                        Text("This message may be impersonating \(m.from.name.isEmpty ? m.from.domain : m.from.name).").font(.body.weight(.semibold))
+                        Text(v.warning + " Don't open its links or reply with passwords, codes or payment details.").font(.body).foregroundStyle(.secondary)
                     }
                 }
                 HStack(spacing: 14) {
@@ -240,7 +205,7 @@ struct ConversationView: View {
                     Spacer()
                     Button("It's Safe") { safeOverride = true }.foregroundStyle(.secondary)
                 }
-                .buttonStyle(.plain).font(.system(size: 13, weight: .semibold)).foregroundStyle(.red)
+                .buttonStyle(.plain).font(.body.weight(.semibold)).foregroundStyle(.red)
                 .padding(.leading, 24)
             }
             .padding(14)
@@ -254,18 +219,18 @@ struct ConversationView: View {
         if !blocked.isEmpty && !isSpamFolder {
             HStack(spacing: 10) {
                 Image(systemName: "eye.slash").foregroundStyle(.secondary)
-                Text("Images hidden" + (trackers > 0 ? " · \(trackers) tracker\(trackers == 1 ? "" : "s") removed" : "")).font(.system(size: 13)).foregroundStyle(.secondary)
+                Text("Images hidden" + (trackers > 0 ? " · \(trackers) tracker\(trackers == 1 ? "" : "s") removed" : "")).font(.body).foregroundStyle(.secondary)
                 Spacer()
                 Button("Load images") { loadImages() }.keyboardShortcut("i", modifiers: [.command, .shift])
                 Button("Always from sender") { if let m = blocked.last { store.allowImages(from: m.from.email) }; loadImages() }
             }
-            .buttonStyle(.plain).font(.system(size: 13, weight: .medium)).foregroundStyle(accent)
+            .buttonStyle(.plain).font(.body.weight(.medium)).foregroundStyle(accent)
             .padding(.horizontal, 14).padding(.vertical, 10)
             .background(Theme.field(scheme), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
         if let aiError { Text(aiError).font(.caption).foregroundStyle(.secondary) }
         if summarizing && summary == nil {
-            HStack(spacing: 6) { ProgressView().controlSize(.small); Text("Summarizing…").font(.system(size: 13)).foregroundStyle(.secondary) }
+            HStack(spacing: 6) { ProgressView().controlSize(.small); Text("Summarizing…").font(.body).foregroundStyle(.secondary) }
         }
     }
 
@@ -278,16 +243,16 @@ struct ConversationView: View {
 
     private func summaryCard(_ s: AISummary) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "sparkle").font(.system(size: 14, weight: .semibold)).foregroundStyle(accent).frame(width: 16).padding(.top, 2)
+            Image(systemName: "sparkle").font(.body.weight(.semibold)).foregroundStyle(accent).frame(width: 16).padding(.top, 2)
             VStack(alignment: .leading, spacing: 8) {
-                Text(s.text).font(.system(size: 13)).lineSpacing(3).foregroundStyle(Theme.ink2)
+                Text(s.text).font(.body).lineSpacing(3).foregroundStyle(Theme.ink2)
                     .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
                 ForEach(s.actions, id: \.self) { a in
-                    Label { Text(a).font(.system(size: 12.5, weight: .semibold)).foregroundStyle(Theme.ink) } icon: { Image(systemName: "checkmark.circle").foregroundStyle(accent) }
+                    Label { Text(a).font(.callout.weight(.semibold)).foregroundStyle(Theme.ink) } icon: { Image(systemName: "checkmark.circle").foregroundStyle(accent) }
                 }
             }
             Spacer(minLength: 0)
-            Button { summaryDismissed = true } label: { Image(systemName: "xmark").font(.system(size: 10, weight: .semibold)).foregroundStyle(Theme.faint) }
+            Button { summaryDismissed = true } label: { Image(systemName: "xmark").font(.caption.weight(.semibold)).foregroundStyle(Theme.faint) }
                 .buttonStyle(.plain).help("Hide summary")
         }
         .padding(.horizontal, 16).padding(.vertical, 14)
@@ -315,7 +280,7 @@ struct ConversationView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     } else {
                         VStack(alignment: .leading, spacing: 10) {
-                            Text(chatText(p)).font(.system(size: 13.5)).lineSpacing(2).textSelection(.enabled)
+                            Text(chatText(p)).font(.body).lineSpacing(2).textSelection(.enabled)
                                 .foregroundStyle(mine ? AnyShapeStyle(onAccent) : AnyShapeStyle(.primary))
                             if !p.visibleAttachments.isEmpty { attachments(p.visibleAttachments, onDark: mine) }
                         }
@@ -324,7 +289,7 @@ struct ConversationView: View {
                         .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(mine ? .clear : Theme.stroke(scheme)))
                     }
                 } else {
-                    Text(m.snippet.isEmpty ? "Loading…" : m.snippet).font(.system(size: 13.5)).foregroundStyle(.secondary)
+                    Text(m.snippet.isEmpty ? "Loading…" : m.snippet).font(.body).foregroundStyle(.secondary)
                         .padding(.horizontal, 18).padding(.vertical, 13)
                         .background(Theme.bubbleIn(scheme), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
                 }
@@ -333,7 +298,7 @@ struct ConversationView: View {
             .contextMenu { messageMenu(m) }
             if hasQuoted && !designed {
                 Button { showQuoted.formSymmetricDifference([m.id]) } label: {
-                    Image(systemName: "ellipsis").font(.system(size: 11, weight: .bold)).foregroundStyle(.secondary)
+                    Image(systemName: "ellipsis").font(.subheadline.weight(.bold)).foregroundStyle(.secondary)
                         .padding(.horizontal, 10).padding(.vertical, 3)
                         .overlay(Capsule().strokeBorder(Theme.stroke(scheme), lineWidth: 1.5))
                 }.buttonStyle(.plain).help("Show quoted text")
@@ -341,10 +306,10 @@ struct ConversationView: View {
             Menu { messageMenu(m) } label: {
                 HStack(spacing: 4) {
                     Text(timeLabel(m) + (mine ? "" : " · to \(recipientLabel(m))"))
-                    if mine { Image(systemName: "checkmark").font(.system(size: 10, weight: .bold)).foregroundStyle(accent) }
-                    else { Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold)) }
+                    if mine { Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(accent) }
+                    else { Image(systemName: "chevron.down").font(.caption.weight(.semibold)) }
                 }
-                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .font(.subheadline).foregroundStyle(.secondary)
             }
             .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
         }
@@ -398,15 +363,15 @@ struct ConversationView: View {
                 AvatarView(address: m.from, size: 38)
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text(m.from.display).font(.system(size: 14, weight: .semibold)).foregroundStyle(Theme.ink).lineLimit(1)
-                        Text(m.from.email).font(.system(size: 12.5)).foregroundStyle(Theme.faint).lineLimit(1)
+                        Text(m.from.display).font(.body.weight(.semibold)).foregroundStyle(Theme.ink).lineLimit(1)
+                        Text(m.from.email).font(.callout).foregroundStyle(Theme.faint).lineLimit(1)
                     }
                     Text(expanded ? "to " + recipientLine(m) : m.snippet)
-                        .font(.system(size: 12)).foregroundStyle(Theme.muted).lineLimit(1)
+                        .font(.callout).foregroundStyle(Theme.muted).lineLimit(1)
                 }
                 Spacer(minLength: 8)
-                Text(timeLabel(m)).font(.system(size: 12)).foregroundStyle(Theme.faint)
-                Menu { messageMenu(m) } label: { Image(systemName: "ellipsis").font(.system(size: 12)).foregroundStyle(Theme.faint).frame(width: 20, height: 20) }
+                Text(timeLabel(m)).font(.callout).foregroundStyle(Theme.faint)
+                Menu { messageMenu(m) } label: { Image(systemName: "ellipsis").font(.callout).foregroundStyle(Theme.faint).frame(width: 20, height: 20) }
                     .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
             }
             .contentShape(Rectangle())
@@ -452,14 +417,14 @@ struct ConversationView: View {
                             Image(nsImage: img).resizable().aspectRatio(contentMode: .fill).frame(width: 34, height: 40).clipShape(RoundedRectangle(cornerRadius: 5))
                         } else {
                             let ext = (a.filename as NSString).pathExtension.uppercased()
-                            Text(ext.isEmpty ? "FILE" : String(ext.prefix(4))).font(.system(size: 10, weight: .bold))
+                            Text(ext.isEmpty ? "FILE" : String(ext.prefix(4))).font(.caption.weight(.bold))
                                 .foregroundStyle(Color(hex: "#A33A2E"))
                                 .frame(width: 34, height: 40)
                                 .background(Color(hex: "#F6E2E0").opacity(scheme == .dark ? 0.25 : 1), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
                         }
                         VStack(alignment: .leading, spacing: 0) {
-                            Text(a.filename).font(.system(size: 13, weight: .semibold)).lineLimit(1)
-                            Text(ByteCountFormatter.string(fromByteCount: Int64(a.data.count), countStyle: .file)).font(.system(size: 11.5))
+                            Text(a.filename).font(.body.weight(.semibold)).lineLimit(1)
+                            Text(ByteCountFormatter.string(fromByteCount: Int64(a.data.count), countStyle: .file)).font(.subheadline)
                                 .foregroundStyle(onDark ? AnyShapeStyle(onAccent.opacity(0.7)) : AnyShapeStyle(Theme.faint))
                         }
                         .frame(maxWidth: 180, alignment: .leading)
@@ -539,7 +504,7 @@ struct ComposerBar: View {
                     HStack(spacing: 8) {
                         ForEach(suggestions, id: \.self) { s in
                             Button { text = s; focused = true } label: {
-                                Text(s).lineLimit(1).font(.system(size: 12)).foregroundStyle(accent)
+                                Text(s).lineLimit(1).font(.callout).foregroundStyle(accent)
                                     .padding(.horizontal, 11).padding(.vertical, 5)
                                     .background(Theme.pillFill, in: Capsule())
                                     .overlay(Capsule().strokeBorder(Theme.pillStroke))
@@ -552,7 +517,7 @@ struct ComposerBar: View {
                 HStack(spacing: 6) {
                     ForEach(files, id: \.self) { u in
                         HStack(spacing: 4) {
-                            Text(u.lastPathComponent).font(.system(size: 12)).lineLimit(1)
+                            Text(u.lastPathComponent).font(.callout).lineLimit(1)
                             Button { files.removeAll { $0 == u } } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain).foregroundStyle(Theme.faint)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 3).background(Theme.fieldFill, in: Capsule())
@@ -561,7 +526,7 @@ struct ComposerBar: View {
             }
             HStack(alignment: .bottom, spacing: 12) {
                 TextField("Reply to \(recipientName)…", text: $text, axis: .vertical)
-                    .textFieldStyle(.plain).font(.system(size: 13.5))
+                    .textFieldStyle(.plain).font(.body)
                     .lineLimit(1...10)
                     .focused($focused)
                     .padding(.vertical, 6)
@@ -570,17 +535,17 @@ struct ComposerBar: View {
                         return .ignored
                     }
                 HStack(spacing: 10) {
-                    Button { pickFiles() } label: { icon("paperclip") }.buttonStyle(.plain).help("Attach files")
-                    Button { expand() } label: { Text("Aa").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.faint).frame(height: 28) }
-                        .buttonStyle(.plain).help("Open full composer (formatting, Cc/Bcc)")
+                    Button { pickFiles() } label: { Image(systemName: "paperclip") }.buttonStyle(.borderless).help("Attach files")
+                    Button { expand() } label: { Image(systemName: "textformat") }
+                        .buttonStyle(.borderless).help("Open full composer (formatting, Cc/Bcc)")
                     Menu {
                         ForEach([SnoozeChoice.laterToday, .thisEvening, .tomorrow, .nextWeek]) { c in
                             Button("Send \(c.label) — \(c.subtitle)") { send(at: c.date) }
                         }
                         Divider()
                         Button("Pick Date & Time…") { customSendAt = true }
-                    } label: { icon("clock") }
-                        .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize().help("Send later")
+                    } label: { Image(systemName: "clock") }
+                        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().help("Send later")
                     if let a = fromAccount, store.accounts.count > 1 || !a.aliases.isEmpty {
                         Menu {
                             ForEach(store.accounts) { acct in
@@ -588,24 +553,18 @@ struct ComposerBar: View {
                                 ForEach(acct.aliases) { al in Button("\(acct.label) <\(al.email)>") { fromOverride = (acct.id, al.email) } }
                             }
                         } label: {
-                            Text(a.label).font(.system(size: 12, weight: .medium)).foregroundStyle(Theme.muted).frame(height: 28)
+                            Text(a.label).foregroundStyle(.secondary)
                         }
-                        .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize().help("Send from")
+                        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().help("Send from")
                     }
-                    Text("⌘↩").font(.system(size: 12)).foregroundStyle(Theme.faint)
-                    Button { send() } label: {
-                        Text("Send").font(.system(size: 13, weight: .semibold)).foregroundStyle(onAccent)
-                            .padding(.horizontal, 14).padding(.vertical, 7)
-                            .background(accentFill.opacity(canSend ? 1 : 0.45), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
-                    }
-                    .buttonStyle(.plain).disabled(!canSend)
-                    .keyboardShortcut(.return, modifiers: .command)
+                    Button { send() } label: { Label("Send", systemImage: "paperplane.fill") }
+                        .buttonStyle(.borderedProminent).disabled(!canSend)
+                        .keyboardShortcut(.return, modifiers: .command).help("Send (⌘↩)")
                 }
             }
             .padding(.leading, 16).padding(.trailing, 12).padding(.vertical, 12)
-            .background(Theme.composerFill, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(Theme.composerStroke))
-            .shadow(color: .black.opacity(scheme == .dark ? 0 : 0.06), radius: 8, y: 4)
+            .background(.background, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(.separator))
             .contentShape(Rectangle())
             .onTapGesture { focused = true }
         }
@@ -615,15 +574,15 @@ struct ComposerBar: View {
     }
 
     private func icon(_ name: String) -> some View {
-        Image(systemName: name).font(.system(size: 13)).foregroundStyle(Theme.faint).frame(height: 28).contentShape(Rectangle())
+        Image(systemName: name).font(.body).foregroundStyle(Theme.faint).frame(height: 28).contentShape(Rectangle())
     }
 
     private func circle(_ icon: String) -> some View {
-        Image(systemName: icon).font(.system(size: 12, weight: .medium)).foregroundStyle(.primary.opacity(0.75))
+        Image(systemName: icon).font(.callout.weight(.medium)).foregroundStyle(.primary.opacity(0.75))
             .frame(width: 28, height: 28).background(Theme.field(scheme), in: Circle()).overlay(Circle().strokeBorder(Theme.stroke(scheme)))
     }
     private func textLabel(_ t: String) -> some View {
-        Text(t).font(.system(size: 12, weight: .semibold)).foregroundStyle(.primary.opacity(0.75))
+        Text(t).font(.callout.weight(.semibold)).foregroundStyle(.primary.opacity(0.75))
             .frame(width: 28, height: 28).background(Theme.field(scheme), in: Circle()).overlay(Circle().strokeBorder(Theme.stroke(scheme)))
     }
 
