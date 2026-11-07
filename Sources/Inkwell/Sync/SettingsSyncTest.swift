@@ -2,7 +2,22 @@ import Foundation
 
 /// `Inkwell --settingssynctest`: two simulated Macs share one folder (no network, no Keychain).
 enum SettingsSyncTest {
+    /// `--settingssynctest set a,b` / `get`: one "Mac" (own INKWELL_HOME) using the real MailStore; INKWELL_SYNC_DIR shared.
+    static func runFlow(_ args: [String]) -> Never {
+        MainActor.assumeIsolated {
+            let store = MailStore.shared
+            store.settingsSyncTick()  // loads state, merges the shared file
+            if let i = args.firstIndex(of: "set"), args.indices.contains(i + 1) {
+                store.settings.mutedThreads = args[i + 1].split(separator: ",").map(String.init)
+                store.settingsSyncTick()
+            }
+            print("muted=" + store.settings.mutedThreads.sorted().joined(separator: ","))
+        }
+        exit(0)
+    }
+
     static func run() -> Never {
+        if CommandLine.arguments.contains("set") || CommandLine.arguments.contains("get") { runFlow(CommandLine.arguments) }
         var failures = 0
         func check(_ ok: Bool, _ what: String) { print(ok ? "✓ \(what)" : "✗ \(what)"); if !ok { failures += 1 } }
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent("sync-\(UUID().uuidString)")

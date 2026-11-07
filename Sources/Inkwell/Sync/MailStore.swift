@@ -52,6 +52,9 @@ final class MailStore {
     var snoozedCount = 0
     var snoozeLast: [UUID: Date] = [:]
     var snoozeBusy = Set<UUID>()
+    var syncState = SyncState()
+    var syncLoaded = false
+    var syncApplying = false
     var flaggedCount = 0
     var copiedCodes: Set<String> = []
     var toast: Toast?
@@ -195,6 +198,7 @@ final class MailStore {
     }
 
     private func settingsChanged(_ old: AppSettings) {
+        recordSyncedSettingsChange(old: old)
         for a in settings.accounts {
             if let o = old.accounts.first(where: { $0.id == a.id }) {
                 let serverChanged = o.imapHost != a.imapHost || o.username != a.username || o.imapPort != a.imapPort || o.enabled != a.enabled
@@ -709,6 +713,7 @@ final class MailStore {
         var changed = false
         // Snoozes waking up
         snoozeTick()
+        settingsSyncTick()
         let due = db.query("SELECT account, thread_key FROM snoozes WHERE until <= ? AND server=0", [now]) { ($0.string(0), $0.string(1)) }
         for (acct, key) in due {
             changed = true
