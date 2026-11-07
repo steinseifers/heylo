@@ -4,6 +4,7 @@ struct ThreadListView: View {
     @Bindable var store: MailStore
     @Environment(\.accent) private var accent
     @State private var customSnooze: [ThreadSummary]?
+    @State private var searchText = ""
 
     private var showTabs: Bool {
         switch store.mailbox { case .allInboxes, .accountInbox: return true; default: return false }
@@ -13,13 +14,17 @@ struct ThreadListView: View {
         content
             .navigationTitle(titleText)
             .navigationSubtitle(subtitle)
+            // Standard search field in the window toolbar (⌘F focuses it); Return opens the results palette. ⌘K still opens it empty.
+            .searchable(text: $searchText, placement: .toolbar, prompt: "Search or ask anything")
+            .onSubmit(of: .search) {
+                store.paletteQuery = searchText
+                searchText = ""
+                store.searchPresented = true
+            }
             .safeAreaInset(edge: .top, spacing: 0) { if showTabs { tabs } }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button { store.compose() } label: { Label("New Message", systemImage: "square.and.pencil") }.help("New Message")
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button { store.searchPresented = true } label: { Label("Search & Commands…", systemImage: "magnifyingglass") }.help("Search & Commands…")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Toggle(isOn: $store.unreadOnly) { Label("Unread Only", systemImage: "envelope.badge") }.help("Show unread only")
