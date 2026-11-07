@@ -48,6 +48,7 @@ if CommandLine.arguments.contains("--storagetest") {
 }
 // `Inkwell --probe`: read-only server capability report (see Probe.swift).
 if CommandLine.arguments.contains("--probe") { Probe.run() }
+if CommandLine.arguments.contains("--snoozetest") { SnoozeTest.run(args: CommandLine.arguments) }
 if CommandLine.arguments.contains("--selftest") {
     SelfTest.run()
 }
