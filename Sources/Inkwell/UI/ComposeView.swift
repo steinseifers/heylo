@@ -155,7 +155,7 @@ struct RecipientField: View {
                                 .padding(.horizontal, 10).padding(.vertical, 5)
                                 .contentShape(Rectangle())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.borderless)
                         }
                     }
                     .frame(width: 320)
@@ -350,7 +350,7 @@ struct ComposeView: View {
                     HStack(spacing: 4) {
                         Image(nsImage: NSWorkspace.shared.icon(forFile: u.path)).resizable().frame(width: 16, height: 16)
                         Text(u.lastPathComponent).font(.caption).lineLimit(1)
-                        Button { draft.attachments.removeAll { $0 == u } } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain).foregroundStyle(.secondary)
+                        Button { draft.attachments.removeAll { $0 == u } } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.borderless).foregroundStyle(.secondary)
                     }
                     .padding(.horizontal, 8).padding(.vertical, 4)
                     .background(.quaternary, in: Capsule())

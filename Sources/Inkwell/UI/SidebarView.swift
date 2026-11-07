@@ -27,7 +27,7 @@ struct SidebarView: View {
                 mailboxRow(.allRole(.sent), "paperplane", "Sent")
                 mailboxRow(.scheduled, "calendar.badge.clock", "Scheduled")
                 Button { showSubscriptions = true } label: { Label("Subscriptions", systemImage: "newspaper") }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                     .popover(isPresented: $showSubscriptions, arrowEdge: .trailing) { SubscriptionsSettings(store: store).frame(width: 460, height: 480) }
             }
             Section("Accounts") {
@@ -36,7 +36,7 @@ struct SidebarView: View {
                         ForEach(folderTree(acct)) { n in folderRow(acct, n) }
                     } label: { accountLabel(acct) }
                 }
-                Button { openSettings() } label: { Label("Add account", systemImage: "plus") }.buttonStyle(.plain).foregroundStyle(.secondary)
+                Button { openSettings() } label: { Label("Add account", systemImage: "plus") }.buttonStyle(.borderless).foregroundStyle(.secondary)
             }
         }
         .listStyle(.sidebar)

@@ -276,7 +276,7 @@ private struct PopupCard: View {
                         Image(systemName: "xmark").font(.system(size: 11, weight: .bold)).foregroundStyle(PopupPalette.secondary)
                             .frame(width: 34, height: 30).background(PopupPalette.raised, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -301,7 +301,7 @@ private struct PopupCard: View {
             .background(fill, in: Capsule())
             .contentTransition(.interpolate)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
     }
 
     private func action(_ title: String, _ run: @escaping () -> Void) -> some View {
@@ -310,7 +310,7 @@ private struct PopupCard: View {
                 .frame(maxWidth: .infinity, minHeight: 30)
                 .background(PopupPalette.raised, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
     }
 
     /// "482913" → "482 913", "12345678" → "1234 5678".

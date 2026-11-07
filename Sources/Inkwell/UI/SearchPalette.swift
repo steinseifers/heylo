@@ -147,9 +147,6 @@ struct SearchPalette: View {
             .padding(.horizontal, 16).padding(.vertical, 9)
         }
         .frame(width: 600)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(Theme.stroke(scheme)))
-        .shadow(color: .black.opacity(0.22), radius: 30, y: 12)
         .onAppear { query = store.paletteQuery; store.paletteQuery = ""; focusSearchField() }
         .onChange(of: query) { search() }
         // The text field's editor swallows ↑/↓ on macOS, so the app's key monitor forwards them here.
@@ -165,7 +162,7 @@ struct SearchPalette: View {
                 .padding(.horizontal, 10).padding(.vertical, 4)
                 .background(active ? accent.opacity(0.14) : Theme.field(scheme), in: Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
     }
 
     /// Yellow highlight on the words being searched for.
@@ -203,7 +200,7 @@ struct SearchPalette: View {
                 .background(index == highlighted ? accent.opacity(0.16) : .clear, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .onContinuousHover { phase in
             // Keyboard scrolling slides rows under a still pointer; only a real mouse move should
             // steal the highlight, or ↑/↓ keeps snapping back to the row under the cursor.

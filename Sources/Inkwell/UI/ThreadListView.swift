@@ -202,7 +202,7 @@ struct ThreadRow: View {
                 } label: {
                     Text(copied ? "Copied" : "Copy").font(.callout.weight(.semibold)).foregroundStyle(accent)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
             }
             .padding(.top, 6)
         } else if needsReply || !files.isEmpty {

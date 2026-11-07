@@ -194,7 +194,7 @@ struct StorageSettings: View {
                         .padding(.horizontal, 16).padding(.vertical, 7)
                         .background(accentFill, in: RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
                 .disabled(working != nil || (estimate?.emails ?? 0) == 0)
                 .opacity(working != nil || (estimate?.emails ?? 0) == 0 ? 0.45 : 1)
             }
@@ -225,7 +225,7 @@ struct StorageSettings: View {
                 }
                 Spacer()
                 Button("Show in Finder") { NSWorkspace.shared.activateFileViewerSelecting([Paths.database]) }
-                    .buttonStyle(.plain).font(.body).foregroundStyle(Theme.muted)
+                    .buttonStyle(.borderless).font(.body).foregroundStyle(Theme.muted)
             }
         }
     }
@@ -252,14 +252,14 @@ struct StorageSettings: View {
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
     }
 
     private func link(_ title: String, _ action: @escaping () async -> Void) -> some View {
         Button { Task { await action() } } label: {
             Text(title).font(.body.weight(.medium)).foregroundStyle(Theme.ink2)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .disabled(working != nil)
     }
 

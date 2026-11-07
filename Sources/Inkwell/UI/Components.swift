@@ -203,7 +203,7 @@ struct ToastView: View {
             if toast.isError { Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.yellow) }
             Text(toast.message).font(.callout)
             if let u = toast.undoTitle {
-                Button(u, action: onUndo).buttonStyle(.plain).font(.callout.weight(.semibold)).foregroundStyle(Color.accentColor)
+                Button(u, action: onUndo).buttonStyle(.borderless).font(.callout.weight(.semibold)).foregroundStyle(Color.accentColor)
                     .keyboardShortcut("z", modifiers: .command)
             }
         }

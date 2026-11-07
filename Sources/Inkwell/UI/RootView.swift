@@ -29,13 +29,9 @@ struct RootView: View {
             }
         }
         .animation(reduceMotion ? nil : .spring(duration: 0.3), value: store.toast)
-        .overlay {
-            if store.searchPresented {
-                ZStack(alignment: .top) {
-                    Color.black.opacity(0.12).ignoresSafeArea().onTapGesture { store.searchPresented = false }
-                    SearchPalette(store: store, openSettings: { openSettings() }).padding(.top, 60)
-                }
-            }
+        // ⌘K palette as a standard sheet: system material, shadow, Esc and click-outside handling.
+        .sheet(isPresented: $store.searchPresented) {
+            SearchPalette(store: store, openSettings: { openSettings() })
         }
         .environment(\.accent, accent)
         .environment(\.onAccent, Theme.onAccent(store.settings.accentHex))

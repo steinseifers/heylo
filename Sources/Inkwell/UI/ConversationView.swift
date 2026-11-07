@@ -187,7 +187,7 @@ struct ConversationView: View {
                     Spacer()
                     Button("It's Safe") { safeOverride = true }.foregroundStyle(.secondary)
                 }
-                .buttonStyle(.plain).font(.body.weight(.semibold)).foregroundStyle(.red)
+                .buttonStyle(.borderless).font(.body.weight(.semibold)).foregroundStyle(.red)
                 .padding(.leading, 24)
             }
             .padding(14)
@@ -206,7 +206,7 @@ struct ConversationView: View {
                 Button("Load images") { loadImages() }.keyboardShortcut("i", modifiers: [.command, .shift])
                 Button("Always from sender") { if let m = blocked.last { store.allowImages(from: m.from.email) }; loadImages() }
             }
-            .buttonStyle(.plain).font(.body.weight(.medium)).foregroundStyle(accent)
+            .buttonStyle(.borderless).font(.body.weight(.medium)).foregroundStyle(accent)
             .padding(.horizontal, 14).padding(.vertical, 10)
             .background(Theme.field(scheme), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
@@ -235,7 +235,7 @@ struct ConversationView: View {
             }
             Spacer(minLength: 0)
             Button { summaryDismissed = true } label: { Image(systemName: "xmark").font(.caption.weight(.semibold)).foregroundStyle(Theme.faint) }
-                .buttonStyle(.plain).help("Hide summary")
+                .buttonStyle(.borderless).help("Hide summary")
         }
         .padding(.horizontal, 16).padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -283,7 +283,7 @@ struct ConversationView: View {
                     Image(systemName: "ellipsis").font(.subheadline.weight(.bold)).foregroundStyle(.secondary)
                         .padding(.horizontal, 10).padding(.vertical, 3)
                         .overlay(Capsule().strokeBorder(Theme.stroke(scheme), lineWidth: 1.5))
-                }.buttonStyle(.plain).help("Show quoted text")
+                }.buttonStyle(.borderless).help("Show quoted text")
             }
             Menu { messageMenu(m) } label: {
                 HStack(spacing: 4) {
@@ -490,7 +490,7 @@ struct ComposerBar: View {
                                     .padding(.horizontal, 11).padding(.vertical, 5)
                                     .background(Theme.pillFill, in: Capsule())
                                     .overlay(Capsule().strokeBorder(Theme.pillStroke))
-                            }.buttonStyle(.plain)
+                            }.buttonStyle(.borderless)
                         }
                     }
                 }
@@ -500,7 +500,7 @@ struct ComposerBar: View {
                     ForEach(files, id: \.self) { u in
                         HStack(spacing: 4) {
                             Text(u.lastPathComponent).font(.callout).lineLimit(1)
-                            Button { files.removeAll { $0 == u } } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain).foregroundStyle(Theme.faint)
+                            Button { files.removeAll { $0 == u } } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.borderless).foregroundStyle(Theme.faint)
                         }
                         .padding(.horizontal, 8).padding(.vertical, 3).background(Theme.fieldFill, in: Capsule())
                     }
