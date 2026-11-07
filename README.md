@@ -1,3 +1,5 @@
+> **Stein's Mail is a personal fork of [Inkwell](https://github.com/muzammilkhattri/inkwell)** by Muzammil Khattri (MIT licence, copyright notice kept in `LICENSE`). It adds server-side snooze that works across several Macs, S/MIME, Microsoft 365 sign-in and a more native macOS look. Everything below describes the original Inkwell; the fork's changes are tracked in the commit history.
+
 <h1 align="center">Inkwell</h1>
 
 <p align="center">
