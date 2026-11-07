@@ -5,10 +5,12 @@ final class SMTPClient {
     private var extensions: [String] = []
 
     init(host: String, port: Int, security: SMTPSecurity) throws {
-        socket = try MailSocket(host: host, port: port, tls: security == .ssl)
+        // Plaintext only for local test servers, and only when explicitly enabled (same rule as IMAP).
+        let insecureLocal = host == "127.0.0.1" && ProcessInfo.processInfo.environment["INKWELL_INSECURE_LOCAL"] == "1"
+        socket = try MailSocket(host: host, port: port, tls: security == .ssl && !insecureLocal)
         _ = try expect(220)
         try ehlo()
-        if security == .starttls {
+        if security == .starttls && !insecureLocal {
             try send("STARTTLS", expect: 220)
             socket.startTLS()
             try ehlo()
@@ -75,6 +77,20 @@ final class SMTPClient {
         } catch {
             throw MailError.auth(error.localizedDescription)
         }
+    }
+
+    /// OAuth 2.0 sign-in (Microsoft 365). On failure the server sends a 334 challenge carrying a
+    /// JSON error; an empty line makes it finish with the real 535.
+    func loginXOAUTH2(user: String, token: String) throws {
+        let s = "user=\(user)\u{1}auth=Bearer \(token)\u{1}\u{1}"
+        try socket.write("AUTH XOAUTH2 \(Data(s.utf8).base64EncodedString())\r\n")
+        let (code, lines) = try readReply()
+        if code == 235 { return }
+        if code == 334 {
+            try? socket.write("\r\n")
+            if let (finalCode, finalLines) = try? readReply() { throw MailError.auth("\(finalCode) \(finalLines.joined(separator: " "))") }
+        }
+        throw MailError.auth("\(code) \(lines.joined(separator: " "))")
     }
 
     func sendMail(from: String, recipients: [String], data: Data) throws {

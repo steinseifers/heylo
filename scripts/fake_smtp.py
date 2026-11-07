@@ -32,6 +32,14 @@ class H(socketserver.StreamRequestHandler):
                 self.w("334 VXNlcm5hbWU6\r\n"); self.rfile.readline()
                 self.w("334 UGFzc3dvcmQ6\r\n"); self.rfile.readline()
                 self.w("235 ok\r\n")
+            elif up.startswith("AUTH XOAUTH2"):
+                import base64
+                tok = base64.b64decode(cmd.split(" ", 2)[2]).decode(errors="replace")
+                if "auth=Bearer bad" in tok:
+                    self.w("334 eyJzdGF0dXMiOiI0MDEifQ==\r\n"); self.rfile.readline()
+                    self.w("535 5.7.3 Authentication unsuccessful\r\n")
+                else:
+                    self.w("235 ok\r\n")
             elif up.startswith("AUTH"):
                 self.w("235 ok\r\n")
             elif up.startswith("MAIL FROM"):
