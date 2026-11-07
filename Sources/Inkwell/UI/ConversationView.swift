@@ -37,7 +37,6 @@ struct ConversationView: View {
                     ScrollViewReader { proxy in
                         ScrollView {
                             VStack(alignment: .leading, spacing: 22) {
-                                titleBlock
                                 banners
                                 if let summary, !summaryDismissed { summaryCard(summary) }
                                 if let inv = messages.lazy.compactMap({ parsed[$0.id]?.calendar }).last.flatMap(CalendarInvite.parse),
@@ -49,15 +48,17 @@ struct ConversationView: View {
                                 }
                                 Color.clear.frame(height: 1).id("bottom")
                             }
-                            .padding(.horizontal, pad).padding(.top, 36).padding(.bottom, 16)
+                            .padding(.horizontal, pad).padding(.top, 16).padding(.bottom, 16)
                         }
                         .onChange(of: messages.count) { scrollToLatest(proxy) }
                         .onChange(of: parsed.count) { scrollToLatest(proxy) }
                         .onChange(of: style) { scrollToLatest(proxy) }
                     }
-                    ComposerBar(store: store, thread: thread, recipientName: counterpart.name.split(separator: " ").first.map(String.init) ?? counterpart.display,
-                                suggestions: $suggestions, makeDraft: { quickDraft() })
-                        .padding(.horizontal, pad).padding(.top, 6).padding(.bottom, 28)
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        ComposerBar(store: store, thread: thread, recipientName: counterpart.name.split(separator: " ").first.map(String.init) ?? counterpart.display,
+                                    suggestions: $suggestions, makeDraft: { quickDraft() })
+                            .padding(.horizontal, pad).padding(.top, 8).padding(.bottom, 12)
+                    }
                 }
             }
         }
@@ -137,35 +138,6 @@ struct ConversationView: View {
         ToolbarItem(id: "more", placement: .primaryAction) {
             Menu { moreMenu } label: { Label("More", systemImage: "ellipsis.circle") }
         }
-        ToolbarSpacer(.fixed, placement: .primaryAction)
-        ToolbarItem(id: "style", placement: .primaryAction) {
-            Picker("View as", selection: Binding(get: { style }, set: { setStyle($0) })) {
-                ForEach(ConversationStyle.allCases) { Text($0.label).tag($0) }
-            }
-            .pickerStyle(.segmented).labelsHidden()
-        }
-    }
-
-    private var titleBlock: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(thread.latest.subject.isEmpty ? "(no subject)" : thread.latest.subject)
-                .font(.title.bold()).foregroundStyle(.primary)
-                .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 8) {
-                if let account {
-                    Text(account.label).font(.subheadline.weight(.semibold)).foregroundStyle(account.color)
-                        .padding(.horizontal, 7).padding(.vertical, 2)
-                        .background(account.color.opacity(0.14), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
-                }
-                Text(metaLine).font(.callout).foregroundStyle(Theme.faint)
-            }
-        }
-    }
-
-    private var metaLine: String {
-        var parts = [messages.count == 1 ? "1 message" : "\(max(messages.count, thread.count)) messages"]
-        if thread.flagged { parts.append("Flagged") }
-        return parts.joined(separator: " · ")
     }
 
     private var participants: [EmailAddress] {
@@ -568,32 +540,18 @@ struct ComposerBar: View {
                         .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().help("Send from")
                     }
                     Button { send() } label: { Label("Send", systemImage: "paperplane.fill") }
-                        .buttonStyle(.borderedProminent).disabled(!canSend)
+                        .buttonStyle(.glassProminent).disabled(!canSend)
                         .keyboardShortcut(.return, modifiers: .command).help("Send (⌘↩)")
                 }
             }
-            .padding(.leading, 16).padding(.trailing, 12).padding(.vertical, 12)
-            .background(.background, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(.separator))
+            .padding(.leading, 16).padding(.trailing, 8).padding(.vertical, 8)
+            .glassEffect(.regular, in: .rect(cornerRadius: 22))
             .contentShape(Rectangle())
             .onTapGesture { focused = true }
         }
         .sheet(isPresented: $customSendAt) { DatePickerSheet(title: "Send later…", action: "Schedule") { send(at: $0) } }
         .onChange(of: thread.id) { text = ""; files = []; fromOverride = nil }
         .dropDestination(for: URL.self) { urls, _ in files += urls; return true }
-    }
-
-    private func icon(_ name: String) -> some View {
-        Image(systemName: name).font(.body).foregroundStyle(Theme.faint).frame(height: 28).contentShape(Rectangle())
-    }
-
-    private func circle(_ icon: String) -> some View {
-        Image(systemName: icon).font(.callout.weight(.medium)).foregroundStyle(.primary.opacity(0.75))
-            .frame(width: 28, height: 28).background(Theme.field(scheme), in: Circle()).overlay(Circle().strokeBorder(Theme.stroke(scheme)))
-    }
-    private func textLabel(_ t: String) -> some View {
-        Text(t).font(.callout.weight(.semibold)).foregroundStyle(.primary.opacity(0.75))
-            .frame(width: 28, height: 28).background(Theme.field(scheme), in: Circle()).overlay(Circle().strokeBorder(Theme.stroke(scheme)))
     }
 
     private func draft() -> OutgoingDraft? {

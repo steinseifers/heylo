@@ -41,7 +41,7 @@ enum Theme {
     static let graphiteHex = "#2B2F38"
 
     static func accent(_ hex: String) -> Color {
-        hex == graphiteHex ? Color(nsColor: .controlAccentColor) : Color(hex: hex)
+        Color(nsColor: .controlAccentColor)
     }
     /// Text/icon colour on top of a filled accent shape.
     static func onAccent(_ hex: String) -> Color {
@@ -49,14 +49,13 @@ enum Theme {
     }
     /// Fill for primary buttons/bubbles.
     static func accentFill(_ hex: String) -> Color {
-        hex == graphiteHex ? Color(nsColor: .controlAccentColor) : Color(hex: hex)
+        Color(nsColor: .controlAccentColor)
     }
     static func dynamic(light: String, dark: String) -> Color {
         let l = NSColor(Color(hex: light)), d = NSColor(Color(hex: dark))
         return Color(nsColor: NSColor(name: nil) { $0.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? d : l })
     }
 
-    static let accentPalette = [graphiteHex, "#0A84FF", "#8E5CF5", "#E64AC0", "#FF375F", "#FF453A", "#FF9F0A", "#FFD60A", "#30D158", "#00C7BE", "#8E8E93"]
 }
 
 private struct AccentKey: EnvironmentKey { static let defaultValue: Color = .blue }
@@ -77,90 +76,9 @@ extension EnvironmentValues {
     }
 }
 
-struct Card<Content: View>: View {
-    var sidebar = false
-    @ViewBuilder var content: Content
-    @Environment(\.colorScheme) private var scheme
-    var body: some View {
-        content
-            .background(sidebar ? Theme.sidebar(scheme) : Theme.card(scheme), in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).strokeBorder(scheme == .dark ? Theme.stroke(scheme) : .clear))
-            .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
-            .shadow(color: Color(red: 0.11, green: 0.09, blue: 0.19).opacity(scheme == .dark ? 0.4 : 0.06), radius: 1, y: 1)
-            .shadow(color: Color(red: 0.11, green: 0.09, blue: 0.19).opacity(scheme == .dark ? 0.3 : 0.05), radius: 12, y: 8)
-    }
-}
-
-/// Round icon button used in headers and the composer.
-struct CircleIconButton: View {
-    var systemImage: String
-    var active = false
-    var help: String = ""
-    var action: () -> Void
-    @Environment(\.colorScheme) private var scheme
-    @Environment(\.accent) private var accent
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(active ? accent : .primary.opacity(0.75))
-                .frame(width: 28, height: 28)
-                .background(active ? accent.opacity(0.15) : Theme.field(scheme), in: Circle())
-                .overlay(Circle().strokeBorder(Theme.stroke(scheme)))
-        }
-        .buttonStyle(.plain)
-        .help(help)
-    }
-}
-
-/// Behind-window blur so the desktop shows through ("Glass" / "Clear").
-struct VisualEffectBackground: NSViewRepresentable {
-    var mode: WindowBackground
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let v = NSVisualEffectView()
-        v.blendingMode = .behindWindow
-        v.state = .active
-        return v
-    }
-    func updateNSView(_ v: NSVisualEffectView, context: Context) {
-        switch mode {
-        case .solid: v.material = .windowBackground; v.alphaValue = 1
-        case .glass: v.material = .underWindowBackground; v.alphaValue = 1
-        case .clear: v.material = .hudWindow; v.alphaValue = 0.55
-        }
-    }
-}
-
-/// Makes the hosting window borderless-looking: transparent titlebar, content under it, no opaque fill.
-struct WindowConfigurator: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSView {
-        let v = NSView()
-        DispatchQueue.main.async { configure(v.window) }
-        return v
-    }
-    func updateNSView(_ v: NSView, context: Context) { DispatchQueue.main.async { configure(v.window) } }
-    private func configure(_ w: NSWindow?) {
-        guard let w else { return }
-        w.titlebarAppearsTransparent = true
-        w.titleVisibility = .hidden
-        w.styleMask.insert(.fullSizeContentView)
-        w.isOpaque = false
-        w.backgroundColor = .clear
-        w.isMovableByWindowBackground = true
-        // An empty unified toolbar makes the titlebar taller, which drops the traffic lights
-        // down and in so they sit inside the sidebar card.
-        if w.toolbar == nil {
-            let t = NSToolbar(identifier: "inkwell.main")
-            t.showsBaselineSeparator = false
-            t.displayMode = .iconOnly
-            w.toolbar = t
-        }
-        w.toolbarStyle = .unified
-        WindowConfigurator.allowFullScreen(w)
-    }
-
-    /// SwiftUI keeps resetting this window to "fullScreenNone" (hidden title bar + custom toolbar);
-    /// put full screen back whenever it does, so the green button and ⌃⌘F work.
+/// SwiftUI keeps resetting the main window to "fullScreenNone" for some toolbar setups;
+/// put full screen back whenever it does, so the green button and ⌃⌘F work.
+enum WindowConfigurator {
     static func allowFullScreen(_ w: NSWindow) {
         guard w.collectionBehavior.contains(.fullScreenNone) || !w.collectionBehavior.contains(.fullScreenPrimary) else { return }
         w.collectionBehavior.remove(.fullScreenNone)

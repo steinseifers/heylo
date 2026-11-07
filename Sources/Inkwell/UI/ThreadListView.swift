@@ -21,8 +21,10 @@ struct ThreadListView: View {
                 searchText = ""
                 store.searchPresented = true
             }
-            .safeAreaInset(edge: .top, spacing: 0) { if showTabs { tabs } }
             .toolbar(id: "list") {
+                if showTabs {
+                    ToolbarItem(id: "tabs", placement: .primaryAction) { tabs }
+                }
                 ToolbarItem(id: "unread", placement: .primaryAction) {
                     Toggle(isOn: $store.unreadOnly) { Label("Unread Only", systemImage: "envelope.badge") }.help("Show unread only")
                 }
@@ -84,16 +86,16 @@ struct ThreadListView: View {
         }
     }
 
-    /// Inbox tabs as a standard segmented control.
+    /// Inbox categories as a standard filter menu in the toolbar (checkmark on the current one).
     private var tabs: some View {
-        Picker("Tab", selection: $store.tab) {
-            ForEach(InboxTab.allCases) { t in
-                if let n = store.tabUnread[t], n > 0, t != .all { Text("\(t.rawValue) · \(n)").tag(t) } else { Text(LocalizedStringKey(t.rawValue)).tag(t) }
-            }
-        }
-        .pickerStyle(.segmented).labelsHidden()
-        .padding(.horizontal, 12).padding(.vertical, 8)
-        .background(.bar)
+        Menu {
+            Picker("Category", selection: $store.tab) {
+                ForEach(InboxTab.allCases) { t in
+                    if let n = store.tabUnread[t], n > 0, t != .all { Text("\(t.rawValue) · \(n)").tag(t) } else { Text(LocalizedStringKey(t.rawValue)).tag(t) }
+                }
+            }.pickerStyle(.inline)
+        } label: { Label("Category", systemImage: store.tab == .all ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill") }
+        .help("Show category")
     }
 
     private var emptyTitle: String {
@@ -155,36 +157,31 @@ struct ThreadRow: View {
     var body: some View {
         let m = thread.latest
         let unread = thread.unread
-        HStack(alignment: .top, spacing: 12) {
-            AvatarView(address: counterpart, size: 30)
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(alignment: .top, spacing: 8) {
+            Circle().fill(unread ? accent : .clear).frame(width: 8, height: 8).padding(.top, 6)
+            AvatarView(address: counterpart, size: 28)
+            VStack(alignment: .leading, spacing: 1) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text(m.isFromMe ? "To: \(counterpart.display)" : counterpart.display)
-                        .font(.system(size: 13.5, weight: unread ? .semibold : .medium))
-                        .foregroundStyle(unread ? Theme.ink : Theme.ink2)
+                        .font(.headline.weight(unread ? .semibold : .regular))
                         .lineLimit(1)
-                    if thread.count > 1 { Text("\(thread.count)").font(.subheadline).foregroundStyle(Theme.faint) }
+                    if thread.count > 1 { Text("\(thread.count)").font(.subheadline).foregroundStyle(.tertiary) }
                     Spacer(minLength: 4)
-                    Text(m.date.listLabel).font(.system(size: 11.5, weight: unread ? .semibold : .regular))
-                        .foregroundStyle(unread ? accent : Theme.faint)
+                    Text(m.date.listLabel).font(.subheadline).foregroundStyle(.secondary)
                 }
                 HStack(spacing: 5) {
                     if thread.flagged { Image(systemName: "flag.fill").font(.caption).foregroundStyle(.orange) }
                     Text(m.subject.isEmpty ? "(no subject)" : m.subject)
-                        .font(.system(size: 13, weight: unread ? .semibold : .regular))
-                        .foregroundStyle(unread ? Theme.ink : Theme.ink2)
+                        .font(.subheadline.weight(unread ? .semibold : .regular))
                         .lineLimit(1)
                 }
                 if code == nil {
-                    Text(m.snippet).font(.callout).foregroundStyle(.secondary).lineLimit(2)
+                    Text(m.snippet).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
                 }
                 chips
             }
         }
-        .padding(.vertical, 6)
-        .overlay(alignment: .topLeading) {
-            if unread { Circle().fill(accent).frame(width: 7, height: 7).offset(x: -13, y: 14) }
-        }
+        .padding(.vertical, 2)
     }
 
     @ViewBuilder private var chips: some View {
@@ -194,7 +191,7 @@ struct ThreadRow: View {
         if let code {
             let copied = store.copiedCodes.contains(code)
             HStack(spacing: 8) {
-                Text(Self.grouped(code)).font(.system(size: 15, weight: .semibold).monospacedDigit()).tracking(1.8)
+                Text(Self.grouped(code)).font(.body.weight(.semibold).monospacedDigit()).tracking(1.8)
                     .foregroundStyle(Theme.onCodeTile)
                     .padding(.horizontal, 9).padding(.vertical, 3)
                     .background(Theme.codeTile, in: RoundedRectangle(cornerRadius: 6, style: .continuous))

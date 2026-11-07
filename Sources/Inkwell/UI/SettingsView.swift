@@ -36,26 +36,6 @@ struct GeneralSettings: View {
                 } label: {
                     VStack(alignment: .leading) { Text("Theme"); Text("Dark leaves designed mail as its sender built it.").font(.caption).foregroundStyle(.secondary) }
                 }
-                LabeledContent {
-                    HStack(spacing: 7) {
-                        ForEach(Theme.accentPalette, id: \.self) { hex in
-                            Button { store.settings.accentHex = hex } label: {
-                                Circle().fill(Color(hex: hex)).frame(width: 18, height: 18)
-                                    .overlay(Circle().strokeBorder(.white, lineWidth: store.settings.accentHex == hex ? 2.5 : 0).padding(2))
-                                    .overlay(Circle().strokeBorder(Color(hex: hex).opacity(0.6), lineWidth: store.settings.accentHex == hex ? 1.5 : 0))
-                            }.buttonStyle(.plain)
-                        }
-                    }
-                } label: {
-                    VStack(alignment: .leading) { Text("Accent color"); Text("Buttons, selection and unread marks.").font(.caption).foregroundStyle(.secondary) }
-                }
-                LabeledContent {
-                    Picker("", selection: $store.settings.windowBackground) {
-                        ForEach(WindowBackground.allCases) { Text($0.label).tag($0) }
-                    }.pickerStyle(.segmented).labelsHidden().fixedSize()
-                } label: {
-                    VStack(alignment: .leading) { Text("Window background"); Text("Glass lets your desktop show through.").font(.caption).foregroundStyle(.secondary) }
-                }
                 Toggle(isOn: $store.settings.showAccountPictures) {
                     VStack(alignment: .leading) { Text("Show account pictures"); Text("Each account wears its owner's photo or logo.").font(.caption).foregroundStyle(.secondary) }
                 }
