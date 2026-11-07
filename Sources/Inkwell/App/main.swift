@@ -54,6 +54,7 @@ if CommandLine.arguments.contains("--settingssynctest") { SettingsSyncTest.run()
 if CommandLine.arguments.contains("--oauthtest") { OAuthTest.run(args: CommandLine.arguments) }
 if CommandLine.arguments.contains("--smimetest") { SMIMETest.run() }
 if CommandLine.arguments.contains("--sendtest") { SendLaterTest.run(args: CommandLine.arguments) }
+if CommandLine.arguments.contains("--sendflow") { SendFlowTest.start(args: CommandLine.arguments) }
 if CommandLine.arguments.contains("--snoozeflow") { SnoozeFlowTest.start(args: CommandLine.arguments) }
 if CommandLine.arguments.contains("--selftest") {
     SelfTest.run()

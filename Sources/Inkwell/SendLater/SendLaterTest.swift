@@ -76,3 +76,65 @@ enum SendLaterTest {
         exit(failures == 0 ? 0 : 1)
     }
 }
+
+/// `Inkwell --sendflow <imapPort> <smtpPort> <smtpLog>`: the real MailStore schedules, sends now and cancels.
+enum SendFlowTest {
+    static func start(args: [String]) -> Never {
+        setvbuf(stdout, nil, _IONBF, 0)
+        guard let i = args.firstIndex(of: "--sendflow"), args.indices.contains(i + 3), let imap = Int(args[i + 1]), let smtp = Int(args[i + 2]) else { print("usage"); exit(2) }
+        let log = args[i + 3]
+        Task { @MainActor in
+            let ok = await run(imap: imap, smtp: smtp, log: log)
+            print(ok ? "All send flow checks passed" : "send flow FAILED")
+            exit(ok ? 0 : 1)
+        }
+        dispatchMain()
+    }
+
+    @MainActor static func run(imap: Int, smtp: Int, log: String) async -> Bool {
+        var failures = 0
+        func check(_ ok: Bool, _ what: String) { print(ok ? "✓ \(what)" : "✗ \(what)"); if !ok { failures += 1 } }
+        func wait(_ cond: @MainActor () -> Bool) async { for _ in 0..<150 { if cond() { return }; try? await Task.sleep(nanoseconds: 100_000_000) } }
+        func deliveries() -> [String] { ((try? String(contentsOfFile: log, encoding: .utf8)) ?? "").split(separator: "\n").map(String.init) }
+        do {
+            let b = try SnoozeTest.client(imap)
+            try b.create("Drafts"); try b.create("Sent")
+            let store = MailStore.shared
+            var acct = Account(label: "T", displayName: "Me", email: "me@example.invalid", username: "u", imapHost: "127.0.0.1", smtpHost: "127.0.0.1")
+            acct.imapPort = imap; acct.smtpPort = smtp; acct.draftsFolder = "Drafts"; acct.sentFolder = "Sent"
+            store.settings.accounts = [acct]
+            store.startAccount(acct)
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+
+            var d = OutgoingDraft()
+            d.accountId = acct.id; d.fromEmail = acct.email; d.to = "you@example.invalid"; d.bcc = "hidden@example.invalid"; d.subject = "S1"; d.plain = "hello"
+            d.sendAt = Date().addingTimeInterval(3600)
+            store.queueSend(d)
+            await wait { store.scheduledDrafts().count == 1 }
+            check(store.scheduledDrafts().count == 1, "scheduled message shows in the Scheduled list")
+            check(((try SnoozeTest.dump(b))["Drafts"]?.count ?? 0) == 1, "the message waits in the server's Drafts folder")
+            check(store.db.query("SELECT COUNT(*) FROM scheduled") { $0.int(0) }.first == 0, "nothing sits in the local single-Mac scheduler")
+            check(deliveries().isEmpty, "nothing was sent yet")
+
+            store.sendScheduledNow(store.scheduledDrafts()[0])
+            await wait { deliveries().count >= 1 }
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            check(deliveries().count == 1, "Send Now delivers exactly once (\(deliveries().count))")
+            check(deliveries().first?.contains("hidden@example.invalid") == true, "the Bcc recipient is part of the envelope")
+            let dump = try SnoozeTest.dump(b)
+            check((dump["Drafts"]?.count ?? 0) == 0, "Drafts is empty after sending")
+            check((dump["Sent"]?.count ?? 0) == 1, "a copy was filed in Sent")
+
+            // Cancel: the message comes back as an editable draft and leaves the server.
+            var d2 = d; d2.id = UUID(); d2.subject = "S2"
+            store.queueSend(d2)
+            await wait { store.scheduledDrafts().count == 1 }
+            let before = store.drafts.count
+            store.cancelScheduled(store.scheduledDrafts()[0])
+            await wait { store.drafts.count > before }
+            check(store.drafts.values.contains { $0.subject == "S2" }, "cancel reopens the message as an editable draft")
+            check(((try SnoozeTest.dump(b))["Drafts"]?.count ?? 0) == 0 && deliveries().count == 1, "cancelled message left the server and was never sent")
+        } catch { check(false, "unexpected error: \(error.localizedDescription)") }
+        return failures == 0
+    }
+}

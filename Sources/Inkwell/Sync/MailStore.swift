@@ -55,6 +55,10 @@ final class MailStore {
     var syncState = SyncState()
     var syncLoaded = false
     var syncApplying = false
+    var serverScheduled: [UUID: [ScheduledSend.Info]] = [:]
+    var sendLaterLast: [UUID: Date] = [:]
+    var sendLaterBusy = Set<UUID>()
+    var stuckNotified = Set<String>()
     var flaggedCount = 0
     var copiedCodes: Set<String> = []
     var toast: Toast?
@@ -715,6 +719,7 @@ final class MailStore {
         // Snoozes waking up
         snoozeTick()
         settingsSyncTick()
+        sendLaterTick()
         let due = db.query("SELECT account, thread_key FROM snoozes WHERE until <= ? AND server=0", [now]) { ($0.string(0), $0.string(1)) }
         for (acct, key) in due {
             changed = true

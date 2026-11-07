@@ -104,14 +104,10 @@ extension MailStore {
         drafts[d.id] = nil
         deleteLocalDraft(d.id)
         if let at = d.sendAt, at > Date().addingTimeInterval(30) {
-            if let json = try? JSONEncoder().encode(d) {
-                db.exec("INSERT OR REPLACE INTO scheduled(id, json, send_at) VALUES(?,?,?)", [d.id.uuidString, json, at])
-            }
-            let f = DateFormatter(); f.dateStyle = .medium; f.timeStyle = .short; f.doesRelativeDateFormatting = true
-            showToast("Scheduled for \(f.string(from: at))") { [weak self] in
-                self?.db.exec("DELETE FROM scheduled WHERE id=?", [d.id.uuidString])
-                self?.drafts[d.id] = d
-                self?.openCompose?(d.id)
+            // Prefer the server (safe across Macs); fall back to this Mac if the server can't hold it.
+            Task { @MainActor in
+                if await self.scheduleOnServer(d, at: at) { return }
+                self.scheduleLocally(d, at: at)
             }
             return
         }
@@ -146,22 +142,8 @@ extension MailStore {
 
     /// Actually sends over SMTP and files a copy in Sent.
     func deliver(_ d: OutgoingDraft) async throws {
-        guard let (acct, alias) = identity(for: d.accountId, fromEmail: d.fromEmail) else { throw MailError.protocolError("No account to send from") }
-        let to = MIME.parseAddressList(d.to), cc = MIME.parseAddressList(d.cc), bcc = MIME.parseAddressList(d.bcc)
-        guard !(to + cc + bcc).isEmpty else { throw MailError.protocolError("Add at least one recipient") }
-        let from = EmailAddress(name: alias?.name.isEmpty == false ? alias!.name : acct.displayName, email: alias?.email ?? acct.email)
-        var atts: [MIME.OutgoingAttachment] = []
-        for u in d.attachments {
-            guard let data = try? Data(contentsOf: u) else { continue }
-            atts.append(.init(filename: u.lastPathComponent, mimeType: MIME.mimeType(for: u), data: data))
-        }
-        var extra: [(String, String)] = []
-        if d.requestReadReceipt { extra.append(("Disposition-Notification-To", from.email)) }
-        let html = "<html><body>\(d.html.isEmpty ? HTMLText.fromPlain(d.plain) : d.html)\(d.quotedHTML.isEmpty ? "" : "<br>" + d.quotedHTML)</body></html>"
-        let text = d.plain + (d.quotedPlain.isEmpty ? "" : "\n\n" + d.quotedPlain)
-        let (data, mid) = MIME.build(from: from, to: to, cc: cc, replyTo: alias?.replyTo, subject: d.subject, text: text, html: html,
-                                     inReplyTo: d.inReplyTo.isEmpty ? nil : d.inReplyTo,
-                                     references: d.references.split(separator: " ").map(String.init), attachments: atts, extraHeaders: extra)
+        let built = try buildOutgoing(d)
+        let (acct, to, cc, bcc, from, data, mid) = (built.acct, built.to, built.cc, built.bcc, built.from, built.data, built.mid)
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
             DispatchQueue.global().async {
                 do {
@@ -238,11 +220,11 @@ extension MailStore {
         }
     }
 
-    func scheduledDrafts() -> [OutgoingDraft] {
+    func legacyScheduledDrafts() -> [OutgoingDraft] {
         db.query("SELECT json FROM scheduled ORDER BY send_at") { $0.data(0) }.compactMap { $0.flatMap { try? JSONDecoder().decode(OutgoingDraft.self, from: $0) } }
     }
 
-    func cancelScheduled(_ d: OutgoingDraft) {
+    func cancelScheduledLocally(_ d: OutgoingDraft) {
         db.exec("DELETE FROM scheduled WHERE id=?", [d.id.uuidString])
         var copy = d; copy.sendAt = nil
         drafts[d.id] = copy

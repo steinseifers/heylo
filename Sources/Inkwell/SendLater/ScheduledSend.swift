@@ -111,7 +111,7 @@ enum ScheduledSend {
     /// Sends everything that is due. `send` receives the stored message and must throw `NotSent` if it is
     /// certain that nothing was delivered. Call on the account's connection queue; safe to run on several Macs at once.
     static func processDue(_ c: IMAPClient, folder: String, instance: String, now: Date = Date(),
-                           send: (Data) throws -> Void, afterSend: ((UInt32) -> Void)? = nil) throws -> [Outcome] {
+                           send: (Data) throws -> Void, afterSend: ((UInt32, Data) -> Void)? = nil) throws -> [Outcome] {
         var outcomes: [Outcome] = []
         for e in try entries(c, folder: folder) {
             guard let at = e.sendAt, at <= now else { continue }
@@ -127,11 +127,66 @@ enum ScheduledSend {
             catch is NotSent { releaseClaim(c, uid: e.uid, keyword: kw); outcomes.append(.retryLater(uid: e.uid)); continue }
             // From here on the message may be out: never retry. Mark first, clean up second.
             try? c.store("\(e.uid)", flags: sentKeyword, add: true)
-            afterSend?(e.uid)
+            afterSend?(e.uid, raw)
             try? finish(c, uid: e.uid)
             outcomes.append(.sent(uid: e.uid))
         }
         return outcomes
+    }
+
+    /// Moves the send time of a waiting message to `date` (used by "Send Now"); a claimed message is left alone.
+    static func reschedule(_ c: IMAPClient, folder: String, messageID: String, to date: Date) throws {
+        _ = try c.select(folder)
+        for uid in try c.uidSearch("HEADER Message-ID \(IMAPClient.quote(messageID))") {
+            let flags = try c.command("UID FETCH \(uid) (FLAGS)").map { String(decoding: $0, as: UTF8.self) }.joined()
+            guard let f = flags.firstMatch(#"FLAGS \(([^)]*)\)"#) else { continue }
+            let e = parse(uid: uid, modseq: 0, flags: f.split(separator: " ").map(String.init))
+            guard e.claimedAt == nil else { continue }
+            for old in f.split(separator: " ") where old.hasPrefix(sendAtPrefix) { try c.store("\(uid)", flags: String(old), add: false) }
+            try c.store("\(uid)", flags: keyword(sendAt: date), add: true)
+        }
+    }
+
+    /// Envelope data of a stored message: recipients from To/Cc/Bcc, sender, and the message without its Bcc header.
+    static func envelope(_ raw: Data) -> (from: String, recipients: [String], message: Data) {
+        let p = MIME.parse(raw)
+        let rcpt = (MIME.parseAddressList(p.header("To")) + MIME.parseAddressList(p.header("Cc")) + MIME.parseAddressList(p.header("Bcc"))).map(\.email)
+        return (p.from.email, Array(NSOrderedSet(array: rcpt)) as? [String] ?? rcpt, stripBcc(raw))
+    }
+
+    static func stripBcc(_ raw: Data) -> Data {
+        guard let split = raw.range(of: Data("\r\n\r\n".utf8)) else { return raw }
+        let head = String(decoding: raw[..<split.lowerBound], as: UTF8.self)
+        var out: [String] = [], skipping = false
+        for line in head.components(separatedBy: "\r\n") {
+            if line.hasPrefix(" ") || line.hasPrefix("\t") { if !skipping { out.append(line) }; continue }
+            skipping = line.lowercased().hasPrefix("bcc:")
+            if !skipping { out.append(line) }
+        }
+        return Data(out.joined(separator: "\r\n").utf8) + raw[split.lowerBound...]
+    }
+
+    struct Info {
+        var uid: UInt32
+        var sendAt: Date
+        var subject: String
+        var to: String
+        var messageID: String
+        var claimed: Bool
+        var stuck: Bool
+    }
+
+    /// What the "Scheduled" list shows.
+    static func infos(_ c: IMAPClient, folder: String, now: Date = Date()) throws -> [Info] {
+        let es = try entries(c, folder: folder).filter { !$0.sent }
+        guard !es.isEmpty else { return [] }
+        let headers = Dictionary(uniqueKeysWithValues: try c.fetch(IMAPClient.uidSet(es.map(\.uid)), items: "UID BODY.PEEK[HEADER]").map { ($0.uid, $0.header ?? Data()) })
+        return es.compactMap { e in
+            guard let at = e.sendAt else { return nil }
+            let p = MIME.parse((headers[e.uid] ?? Data()) + Data("\r\n".utf8))
+            let stuck = e.claimedAt.map { now.timeIntervalSince($0) > claimTimeout } ?? false
+            return Info(uid: e.uid, sendAt: at, subject: p.subject, to: p.header("To"), messageID: p.header("Message-ID"), claimed: e.claimedAt != nil, stuck: stuck)
+        }
     }
 
     static func finish(_ c: IMAPClient, uid: UInt32) throws { try c.expunge("\(uid)") }

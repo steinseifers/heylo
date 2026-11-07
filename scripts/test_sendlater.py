@@ -20,4 +20,14 @@ for imap_port, extra, mode in [(14350, [], []), (14351, ["--no-condstore"], ["no
             rc |= 0 if ok else 1
     finally:
         imap.terminate(); smtp.terminate()
+# Flow through the real MailStore
+log = tempfile.mktemp()
+imap = subprocess.Popen([sys.executable, os.path.join(here, "fake_imap_multi.py"), "14360"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+smtp = subprocess.Popen([sys.executable, os.path.join(here, "fake_smtp.py"), "14370", log], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+time.sleep(0.6)
+try:
+    env = dict(os.environ, INKWELL_INSECURE_LOCAL="1", INKWELL_HOME=os.popen("mktemp -d").read().strip())
+    rc |= subprocess.run([binary, "--sendflow", "14360", "14370", log], env=env, timeout=120).returncode
+finally:
+    imap.terminate(); smtp.terminate()
 sys.exit(rc)

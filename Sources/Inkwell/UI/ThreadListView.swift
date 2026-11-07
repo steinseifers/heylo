@@ -326,10 +326,7 @@ struct ScheduledList: View {
                     .contentShape(Rectangle())
                     .contextMenu {
                         Button("Edit / Cancel Schedule") { store.cancelScheduled(d); items = store.scheduledDrafts() }
-                        Button("Send Now") {
-                            store.db.exec("DELETE FROM scheduled WHERE id=?", [d.id.uuidString])
-                            var c = d; c.sendAt = nil; store.queueSend(c); items = store.scheduledDrafts()
-                        }
+                        Button("Send Now") { store.sendScheduledNow(d); items = store.scheduledDrafts() }
                     }
                 }
             }
