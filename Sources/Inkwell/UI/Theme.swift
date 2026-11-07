@@ -7,61 +7,49 @@ enum Theme {
     static let gap: CGFloat = 10
     static let rowRadius: CGFloat = 8
 
-    // Graphite (light) / Inky (dark) design tokens. Inky: true-black ground, near-black
-    // cards with a faint edge, white text and one cobalt accent.
-    static let ink = dynamic(light: "#16181D", dark: "#FFFFFF")
-    static let ink2 = dynamic(light: "#3A3D44", dark: "#CFCFD4")      // read rows, toolbar labels
-    static let muted = dynamic(light: "#6B6E76", dark: "#8A8A8F")     // counts, snippets, meta
-    static let faint = dynamic(light: "#8A8D94", dark: "#5E5E63")     // placeholders, read times
-    static let hairline = dynamic(light: "#E4E5E8", dark: "#1C1C1F")
-    static let fieldFill = dynamic(light: "#F5F5F7", dark: "#141416")
-    static let selectedRow = dynamic(light: "#EEEFF1", dark: "#16161A")
-    static let chip = dynamic(light: "#DFE1E5", dark: "#16213A")
-    static let pillFill = dynamic(light: "#FAFAFB", dark: "#0F0F11")
-    static let pillStroke = dynamic(light: "#D8DBE0", dark: "#26262A")
+    // Semantic system colours: the app follows the system's light/dark appearance, increased contrast and
+    // the user's accent colour without us hard-coding hex values. (Fork change; see docs/p4-ui.md step 1.)
+    static let ink = Color(nsColor: .labelColor)
+    static let ink2 = Color(nsColor: .labelColor).opacity(0.82)           // read rows, toolbar labels
+    static let muted = Color(nsColor: .secondaryLabelColor)                // counts, snippets, meta
+    static let faint = Color(nsColor: .tertiaryLabelColor)                 // placeholders, read times
+    static let hairline = Color(nsColor: .separatorColor)
+    static let fieldFill = Color(nsColor: .quaternarySystemFill)
+    static let selectedRow = Color(nsColor: .controlAccentColor).opacity(0.14)
+    static let chip = Color(nsColor: .tertiarySystemFill)
+    static let pillFill = Color(nsColor: .controlBackgroundColor)
+    static let pillStroke = Color(nsColor: .separatorColor)
     /// Raised surfaces on a card or the ground: selected sidebar row, segmented control, file chips.
-    static let raised = dynamic(light: "#FFFFFF", dark: "#1A1A1C")
+    static let raised = Color(nsColor: .controlBackgroundColor)
     /// Reply box at the bottom of a conversation.
-    static let composerFill = dynamic(light: "#FFFFFF", dark: "#141416")
-    static let composerStroke = dynamic(light: "#E4E5E8", dark: "#26262A")
+    static let composerFill = Color(nsColor: .textBackgroundColor)
+    static let composerStroke = Color(nsColor: .separatorColor)
     /// The "code" tile in the list (ink on light, cobalt-tinted on dark).
     static let codeTile = dynamic(light: "#16181D", dark: "#16213A")
     static let onCodeTile = dynamic(light: "#FFFFFF", dark: "#BFD1FF")
 
-    static func card(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(hex: "#0B0B0C") : .white
-    }
-    static let cardFill = dynamic(light: "#FFFFFF", dark: "#0B0B0C")
+    static func card(_ scheme: ColorScheme) -> Color { Color(nsColor: .textBackgroundColor) }
+    static let cardFill = Color(nsColor: .textBackgroundColor)
     /// Window ground behind the floating cards when the background is Solid.
-    static func ground(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(hex: "#000000") : Color(hex: "#EDEEF0")
-    }
-    static func sidebar(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(hex: "#0B0B0C").opacity(0.82) : Color(red: 0.95, green: 0.95, blue: 0.965, opacity: 0.90)
-    }
-    static func stroke(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.09) : Color.black.opacity(0.06)
-    }
-    static func field(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(hex: "#141416") : Color.black.opacity(0.035)
-    }
-    static func bubbleIn(_ scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(hex: "#141416") : Color(hex: "#F2F2F5")
-    }
+    static func ground(_ scheme: ColorScheme) -> Color { Color(nsColor: .windowBackgroundColor) }
+    static func sidebar(_ scheme: ColorScheme) -> Color { Color(nsColor: .windowBackgroundColor).opacity(0.9) }
+    static func stroke(_ scheme: ColorScheme) -> Color { Color(nsColor: .separatorColor) }
+    static func field(_ scheme: ColorScheme) -> Color { Color(nsColor: .quaternarySystemFill) }
+    static func bubbleIn(_ scheme: ColorScheme) -> Color { Color(nsColor: .tertiarySystemFill) }
 
-    /// Graphite is the default: near-black in light mode, cobalt in dark mode (Inky).
+    /// The default accent ("Graphite" in upstream) now follows the system accent colour.
     static let graphiteHex = "#2B2F38"
 
     static func accent(_ hex: String) -> Color {
-        hex == graphiteHex ? dynamic(light: "#2B2F38", dark: "#7FA6FF") : Color(hex: hex)
+        hex == graphiteHex ? Color(nsColor: .controlAccentColor) : Color(hex: hex)
     }
     /// Text/icon colour on top of a filled accent shape.
     static func onAccent(_ hex: String) -> Color {
         .white
     }
-    /// Fill for primary buttons/bubbles. Graphite in dark mode is a cobalt button with white text.
+    /// Fill for primary buttons/bubbles.
     static func accentFill(_ hex: String) -> Color {
-        hex == graphiteHex ? dynamic(light: "#2B2F38", dark: "#5B8CFF") : Color(hex: hex)
+        hex == graphiteHex ? Color(nsColor: .controlAccentColor) : Color(hex: hex)
     }
     static func dynamic(light: String, dark: String) -> Color {
         let l = NSColor(Color(hex: light)), d = NSColor(Color(hex: dark))
