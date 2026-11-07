@@ -82,9 +82,25 @@ enum WindowBackground: String, Codable, CaseIterable, Identifiable {
 enum Paths {
     static var appSupport: URL {
         let u = ProcessInfo.processInfo.environment["INKWELL_HOME"].map { URL(fileURLWithPath: $0, isDirectory: true) }
-            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Inkwell", isDirectory: true)
+            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent(Brand.dataFolderName, isDirectory: true)
         try? FileManager.default.createDirectory(at: u, withIntermediateDirectories: true)
+        if ProcessInfo.processInfo.environment["INKWELL_HOME"] == nil { copyUpstreamDataOnce(to: u) }
         return u
+    }
+
+    nonisolated(unsafe) private static var copiedUpstream = false
+    /// First start of the fork: take over a copy of an existing Inkwell data folder (the original stays untouched).
+    private static func copyUpstreamDataOnce(to new: URL) {
+        guard !copiedUpstream else { return }
+        copiedUpstream = true
+        let fm = FileManager.default
+        let old = new.deletingLastPathComponent().appendingPathComponent(Brand.upstreamDataFolderName, isDirectory: true)
+        guard fm.fileExists(atPath: old.appendingPathComponent("mail.sqlite").path), !fm.fileExists(atPath: new.appendingPathComponent("mail.sqlite").path),
+              let items = try? fm.contentsOfDirectory(atPath: old.path) else { return }
+        for name in items {
+            let dest = new.appendingPathComponent(name)
+            if !fm.fileExists(atPath: dest.path) { try? fm.copyItem(at: old.appendingPathComponent(name), to: dest) }
+        }
     }
     static var settings: URL { appSupport.appendingPathComponent("settings.json") }
     static var database: URL { appSupport.appendingPathComponent("mail.sqlite") }

@@ -6,4 +6,7 @@ enum Brand {
     static let name = "Stein's Mail"
     /// The upstream MCP server is switched off in this fork.
     static let mcpAvailable = false
+    /// Folder in ~/Library/Application Support. The fork's own, so it never touches an upstream Inkwell install.
+    static let dataFolderName = "Stein's Mail"
+    static let upstreamDataFolderName = "Inkwell"
 }

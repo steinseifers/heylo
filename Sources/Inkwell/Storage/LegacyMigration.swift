@@ -19,7 +19,7 @@ enum LegacyMigration {
         let fm = FileManager.default
         let support = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         let old = support.appendingPathComponent("Amailana", isDirectory: true)
-        let new = support.appendingPathComponent("Inkwell", isDirectory: true)
+        let new = support.appendingPathComponent(Brand.dataFolderName, isDirectory: true)
         guard fm.fileExists(atPath: old.appendingPathComponent("mail.sqlite").path),
               !fm.fileExists(atPath: new.appendingPathComponent("mail.sqlite").path),
               let items = try? fm.contentsOfDirectory(atPath: old.path) else { return }
