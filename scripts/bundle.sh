@@ -18,6 +18,8 @@ fi
 cp "$BUILD"/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 # UI strings: compile the String Catalog into en.lproj/de.lproj (SwiftUI looks them up in the main bundle).
 xcrun xcstringstool compile Resources/Localizable.xcstrings -o "$APP/Contents/Resources"
+# Info.plist strings (permission prompts, display name) per language.
+for L in en de; do cp Resources/InfoPlist/$L.lproj/InfoPlist.strings "$APP/Contents/Resources/$L.lproj/"; done
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

@@ -1,0 +1,4 @@
+CFBundleName = "Stein's Mail";
+CFBundleDisplayName = "Stein's Mail";
+NSContactsUsageDescription = "Show photos of people you email.";
+NSCalendarsWriteOnlyAccessUsageDescription = "Add invitations to your calendar.";
