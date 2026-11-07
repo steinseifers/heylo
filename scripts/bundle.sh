@@ -2,30 +2,33 @@
 # Builds Inkwell.app (release, Apple silicon) into ./build and ad-hoc signs it.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-swift build -c release
-APP=build/Inkwell.app
+# Build output stays local (never on a network share): override with INKWELL_BUILD_DIR.
+BUILD="${INKWELL_BUILD_DIR:-$HOME/Library/Caches/inkwell-build}"
+mkdir -p "$BUILD"
+swift build -c release --scratch-path "$BUILD"
+APP="$BUILD/Inkwell.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/Inkwell "$APP/Contents/MacOS/Inkwell"
-if [ ! -f build/AppIcon.icns ] || [ Resources/AppIcon.png -nt build/AppIcon.icns ]; then
-  rm -rf build/AppIcon.iconset
-  swift scripts/make-icon.swift Resources/AppIcon.png build/AppIcon.iconset
-  iconutil -c icns build/AppIcon.iconset -o build/AppIcon.icns
+cp "$BUILD/release/Inkwell" "$APP/Contents/MacOS/Inkwell"
+if [ ! -f "$BUILD"/AppIcon.icns ] || [ Resources/AppIcon.png -nt "$BUILD"/AppIcon.icns ]; then
+  rm -rf "$BUILD"/AppIcon.iconset
+  swift scripts/make-icon.swift Resources/AppIcon.png "$BUILD"/AppIcon.iconset
+  iconutil -c icns "$BUILD"/AppIcon.iconset -o "$BUILD"/AppIcon.icns
 fi
-cp build/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+cp "$BUILD"/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>CFBundleName</key><string>Inkwell</string>
-  <key>CFBundleDisplayName</key><string>Inkwell</string>
-  <key>CFBundleIdentifier</key><string>app.inkwell.mail</string>
+  <key>CFBundleName</key><string>Stein's Mail</string>
+  <key>CFBundleDisplayName</key><string>Stein's Mail</string>
+  <key>CFBundleIdentifier</key><string>de.steinseifers.steinsmail</string>
   <key>CFBundleExecutable</key><string>Inkwell</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>1.0</string>
   <key>CFBundleVersion</key><string>1</string>
-  <key>LSMinimumSystemVersion</key><string>14.0</string>
+  <key>LSMinimumSystemVersion</key><string>26.0</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSContactsUsageDescription</key><string>Show photos of people you email.</string>
