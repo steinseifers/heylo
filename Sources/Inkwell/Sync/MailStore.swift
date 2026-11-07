@@ -315,6 +315,7 @@ final class MailStore {
     /// Rules, blocked senders, muted threads, notifications.
     private func handleNewMail(_ msgs: [MessageRecord], account: Account, initial: Bool) async {
         guard !msgs.isEmpty else { return }
+        wakeSnoozedThreads(forNew: msgs, account: account)
         newMailHook?(msgs)
         var toArchive: [MessageRecord] = [], toTrash: [MessageRecord] = [], toRead: [MessageRecord] = []
         var toMove: [String: [MessageRecord]] = [:]

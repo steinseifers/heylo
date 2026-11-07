@@ -81,6 +81,18 @@ enum SnoozeFlowTest {
             d = try SnoozeTest.dump(b)
             check(SnoozeTest.ids(d, ServerSnooze.defaultFolder).isEmpty && SnoozeTest.ids(d, "INBOX").count == 3, "unsnooze: all three mails back in INBOX")
             check((store.db.query("SELECT COUNT(*) FROM snoozes WHERE account=?", [aid]) { $0.int(0) }.first ?? 9) == 0, "cache empty")
+
+            // A reply from someone else arrives in a snoozed thread: the thread wakes by itself.
+            if let t3 = thread("m3") {
+                await store.snoozeOnServer([t3], until: Date().addingTimeInterval(3600))
+                check(SnoozeTest.ids(try SnoozeTest.dump(b), ServerSnooze.defaultFolder) == ["<m3@example.invalid>"], "m3 snoozed")
+                let reply = "From: other@example.invalid\r\nTo: me@example.invalid\r\nSubject: Re: m3\r\nMessage-ID: <r3@example.invalid>\r\nIn-Reply-To: <m3@example.invalid>\r\nReferences: <m3@example.invalid>\r\n\r\nreply\r\n"
+                try b.append("INBOX", flags: "", message: Data(reply.utf8))
+                store.sync(accountId: acct.id)
+                await wait("reply wake") { ((try? SnoozeTest.ids(SnoozeTest.dump(b), ServerSnooze.defaultFolder).isEmpty) ?? false) }
+                d = try SnoozeTest.dump(b)
+                check(SnoozeTest.ids(d, ServerSnooze.defaultFolder).isEmpty && SnoozeTest.ids(d, "INBOX").contains("<m3@example.invalid>"), "reply woke the snoozed thread")
+            } else { check(false, "thread m3 missing") }
         } catch {
             print("✗ unexpected error: \(error)")
             failures += 1

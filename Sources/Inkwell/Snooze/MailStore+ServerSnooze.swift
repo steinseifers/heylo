@@ -56,26 +56,43 @@ extension MailStore {
 
     private func unsnoozeOnServer(_ threads: [ThreadSummary]) async {
         for (acctId, ts) in Dictionary(grouping: threads, by: \.accountId) {
-            guard let conn = connections[acctId], let acct = account(acctId) else { continue }
-            let folder = acct.snoozeFolderName
-            let uids = Set(ts.flatMap { t in
-                db.messages(where: "account=? AND thread_key=? AND folder=?", [acctId.uuidString, t.threadKey, folder]).map(\.uid)
-            })
-            if uids.isEmpty { continue }
-            let db = self.db
-            do {
-                let entries = try await conn.run { c -> [ServerSnooze.Entry] in
-                    let mine = try ServerSnooze.entries(c, folder: folder).filter { uids.contains($0.uid) }
-                    try ServerSnooze.wake(c, folder: folder, entries: mine)
-                    _ = try SyncEngine.syncFolder(c, account: acct, path: "INBOX", db: db)
-                    return try Self.syncSnoozeFolder(c, acct: acct, db: db)
-                }
-                applySnoozeCache(acctId, folder: folder, entries: entries)
-            } catch {
-                showToast("Couldn't unsnooze: \(error.localizedDescription)", isError: true)
-            }
+            await wakeThreads(acctId, keys: ts.map(\.threadKey))
         }
         reload()
+    }
+
+    /// A new inbox message in a snoozed thread wakes the whole thread; otherwise the reply
+    /// would stay hidden until the snooze expires.
+    func wakeSnoozedThreads(forNew msgs: [MessageRecord], account: Account) {
+        let snoozed = Set(db.query("SELECT thread_key FROM snoozes WHERE account=? AND server=1", [account.id.uuidString]) { $0.string(0) })
+        let keys = Set(msgs.filter { !$0.isFromMe && snoozed.contains($0.threadKey) }.map(\.threadKey))
+        guard !keys.isEmpty else { return }
+        Task {
+            await wakeThreads(account.id, keys: Array(keys))
+            showToast("A reply woke a snoozed conversation.")
+            reload()
+        }
+    }
+
+    private func wakeThreads(_ acctId: UUID, keys: [String]) async {
+        guard let conn = connections[acctId], let acct = account(acctId) else { return }
+        let folder = acct.snoozeFolderName
+        let uids = Set(keys.flatMap { k in
+            db.messages(where: "account=? AND thread_key=? AND folder=?", [acctId.uuidString, k, folder]).map(\.uid)
+        })
+        if uids.isEmpty { return }
+        let db = self.db
+        do {
+            let entries = try await conn.run { c -> [ServerSnooze.Entry] in
+                let mine = try ServerSnooze.entries(c, folder: folder).filter { uids.contains($0.uid) }
+                try ServerSnooze.wake(c, folder: folder, entries: mine)
+                _ = try SyncEngine.syncFolder(c, account: acct, path: "INBOX", db: db)
+                return try Self.syncSnoozeFolder(c, acct: acct, db: db)
+            }
+            applySnoozeCache(acctId, folder: folder, entries: entries)
+        } catch {
+            showToast("Couldn't unsnooze: \(error.localizedDescription)", isError: true)
+        }
     }
 
     // MARK: wake cycle (called from tick)
