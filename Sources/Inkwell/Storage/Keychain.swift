@@ -2,7 +2,7 @@ import Foundation
 import Security
 
 enum Keychain {
-    static let service = "app.inkwell.mail"
+    static let service = "de.steinseifers.steinsmail"
 
     /// Saves with the default access control: only the app that saved the item (Inkwell, as
     /// identified by its signature) can read it without the user's approval.

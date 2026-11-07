@@ -455,7 +455,7 @@ struct AISettings: View {
                 Text("Used for thread summaries, suggested replies and Rewrite. Smart tabs, To Reply and phishing checks always run on-device without AI.")
                     .font(.caption).foregroundStyle(.secondary)
             }
-            Section("Let AI apps use your mail (MCP)") {
+            if Brand.mcpAvailable { Section("Let AI apps use your mail (MCP)") {
                 Toggle("Turn on Inkwell MCP", isOn: $store.settings.mcpEnabled)
                 if store.settings.mcpEnabled {
                     ForEach(store.settings.accounts) { a in
@@ -475,7 +475,8 @@ struct AISettings: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
-            if store.settings.mcpEnabled {
+            } // Brand.mcpAvailable
+            if Brand.mcpAvailable && store.settings.mcpEnabled {
                 Section("Activity") {
                     if activity.isEmpty { Text("No AI actions yet").foregroundStyle(.secondary) }
                     ForEach(activity) { a in

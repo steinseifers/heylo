@@ -7,6 +7,10 @@ LegacyMigration.moveDataFolder()
 
 // `Inkwell --mcp` runs the stdio MCP server for AI apps instead of the UI.
 if CommandLine.arguments.contains("--mcp") {
+    guard Brand.mcpAvailable else {
+        FileHandle.standardError.write(Data("MCP is disabled in this build.\n".utf8))
+        exit(2)
+    }
     MCPServer.run()
 }
 if CommandLine.arguments.contains("--bench") {

@@ -6,7 +6,7 @@ struct InkwellApp: App {
     @Bindable private var store = MailStore.shared
 
     var body: some Scene {
-        Window("Inkwell", id: "main") {
+        Window(Brand.name, id: "main") {
             RootView(store: store)
                 .frame(minWidth: 980, maxWidth: .infinity, minHeight: 600, maxHeight: .infinity)
         }
@@ -96,7 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             for n in [NSWindow.didBecomeKeyNotification, NSWindow.didBecomeMainNotification, NSWindow.didResizeNotification] {
                 NotificationCenter.default.addObserver(forName: n, object: nil, queue: .main) { note in
                     MainActor.assumeIsolated {
-                        if let w = note.object as? NSWindow, w.title == "Inkwell" { WindowConfigurator.allowFullScreen(w) }
+                        if let w = note.object as? NSWindow, w.title == Brand.name { WindowConfigurator.allowFullScreen(w) }
                     }
                 }
             }
@@ -143,7 +143,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             try? await Task.sleep(for: .seconds(1.5))
             if let path = ProcessInfo.processInfo.environment["INKWELL_ARROW_SHOT"],
-               let w = NSApp.windows.first(where: { $0.isVisible && $0.identifier?.rawValue == "main" || $0.title == "Inkwell" }),
+               let w = NSApp.windows.first(where: { $0.isVisible && $0.identifier?.rawValue == "main" || $0.title == Brand.name }),
                let v = w.contentView?.superview ?? w.contentView, let rep = v.bitmapImageRepForCachingDisplay(in: v.bounds) {
                 v.cacheDisplay(in: v.bounds, to: rep)
                 try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
@@ -156,8 +156,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor private func debugSnapshot(_ path: String) {
         Task { @MainActor in
             let store = MailStore.shared
-            @MainActor func shot(_ name: String, window title: String = "Inkwell") {
-                guard let w = NSApp.windows.first(where: { $0.isVisible && ($0.title == title || (title == "Inkwell" && $0.identifier?.rawValue == "main")) }),
+            @MainActor func shot(_ name: String, window title: String = Brand.name) {
+                guard let w = NSApp.windows.first(where: { $0.isVisible && ($0.title == title || (title == Brand.name && $0.identifier?.rawValue == "main")) }),
                       let v = w.contentView?.superview ?? w.contentView,
                       let rep = v.bitmapImageRepForCachingDisplay(in: v.bounds) else { return }
                 v.cacheDisplay(in: v.bounds, to: rep)
@@ -208,7 +208,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 for w in NSApp.windows where w.title == "Re: Weekend trip?" { w.close() }
                 NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
                 await wait(3)
-                if let sw = NSApp.windows.first(where: { $0.isVisible && $0.title != "Inkwell" && $0.frame.width < 900 }) {
+                if let sw = NSApp.windows.first(where: { $0.isVisible && $0.title != Brand.name && $0.frame.width < 900 }) {
                     let v = sw.contentView!.superview!
                     if let rep = v.bitmapImageRepForCachingDisplay(in: v.bounds) {
                         v.cacheDisplay(in: v.bounds, to: rep)
@@ -223,7 +223,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        if !flag { for w in sender.windows where w.identifier?.rawValue == "main" || w.title == "Inkwell" { w.makeKeyAndOrderFront(nil); return false } }
+        if !flag { for w in sender.windows where w.identifier?.rawValue == "main" || w.title == Brand.name { w.makeKeyAndOrderFront(nil); return false } }
         return true
     }
 
@@ -255,7 +255,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 if (e.keyCode == 125 || e.keyCode == 126), !store.searchPresented,
                    e.modifierFlags.intersection([.command, .control, .option, .shift]).isEmpty,
                    !(NSApp.keyWindow?.firstResponder is NSText),
-                   NSApp.keyWindow?.title == "Inkwell" || NSApp.keyWindow?.identifier?.rawValue == "main" {
+                   NSApp.keyWindow?.title == Brand.name || NSApp.keyWindow?.identifier?.rawValue == "main" {
                     store.focusedThread = nil
                     store.moveSelection(e.keyCode == 125 ? 1 : -1)
                     return nil
@@ -263,7 +263,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 guard store.settings.vimKeys, !store.searchPresented,
                       e.modifierFlags.intersection([.command, .control, .option]).isEmpty else { return e }
                 if NSApp.keyWindow?.firstResponder is NSText { return e }
-                guard NSApp.keyWindow?.title == "Inkwell" || NSApp.keyWindow?.identifier?.rawValue == "main" else { return e }
+                guard NSApp.keyWindow?.title == Brand.name || NSApp.keyWindow?.identifier?.rawValue == "main" else { return e }
                 switch e.charactersIgnoringModifiers ?? "" {
                 case "j": store.moveSelection(1)
                 case "k": store.moveSelection(-1)

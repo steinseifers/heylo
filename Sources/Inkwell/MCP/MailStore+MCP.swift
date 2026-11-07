@@ -13,7 +13,7 @@ struct AIActivity: Identifiable {
 extension MailStore {
     /// Executes actions queued by `Inkwell --mcp`.
     func processPendingActions() {
-        guard settings.mcpEnabled else { return }
+        guard Brand.mcpAvailable, settings.mcpEnabled else { return }
         let rows = db.query("SELECT id, app, json FROM pending_actions ORDER BY id LIMIT 20") { ($0.int(0), $0.string(1), $0.data(2)) }
         for (id, app, json) in rows {
             db.exec("DELETE FROM pending_actions WHERE id=?", [id])

@@ -72,7 +72,7 @@ final class CodePopup {
         dismiss()
         guard !item.messageId.isEmpty else { return }
         NSApp.activate(ignoringOtherApps: true)
-        for w in NSApp.windows where w.title == "Inkwell" { w.makeKeyAndOrderFront(nil) }
+        for w in NSApp.windows where w.title == Brand.name { w.makeKeyAndOrderFront(nil) }
         let store = MailStore.shared
         if let m = store.db.message(id: item.messageId) {
             store.mailbox = .allInboxes
