@@ -75,6 +75,12 @@ def tokens(s):
     return out
 
 
+def seq_set(spec, uids):
+    """Sequence-number set -> UIDs (position in UID order, 1-based)."""
+    order = sorted(uids)
+    return [order[i - 1] for i in uid_set(spec, list(range(1, len(order) + 1)))]
+
+
 def uid_set(spec, uids):
     top = max(uids) if uids else 0
     sel = set()
@@ -174,6 +180,8 @@ class H(socketserver.StreamRequestHandler):
         elif cmd == "UID":
             sub, _, rest2 = a.partition(" ")
             self.uid_cmd(tag, sub.upper(), rest2.strip())
+        elif cmd in ("FETCH", "STORE", "SEARCH", "COPY", "MOVE"):
+            self.uid_cmd(tag, cmd, a, seq=True)
         elif cmd == "EXPUNGE":
             with lock:
                 gone = [u for u, m in self.box().items() if "\\Deleted" in m["flags"]]
@@ -200,8 +208,9 @@ class H(socketserver.StreamRequestHandler):
             del box[u]
             order.remove(u)
 
-    def uid_cmd(self, tag, sub, a):
+    def uid_cmd(self, tag, sub, a, seq=False):
         t = tokens(a)
+        sel = (lambda spec, uids: seq_set(spec, uids)) if seq else uid_set
         with lock:
             box = self.box()
             if sub == "SEARCH":
@@ -220,7 +229,7 @@ class H(socketserver.StreamRequestHandler):
                 items = t[1][1].upper() if isinstance(t[1], tuple) else t[1].upper()
                 since = re.search(r"CHANGEDSINCE (\d+)", a, re.I)
                 order = sorted(box)
-                for u in uid_set(t[0], order):
+                for u in sel(t[0], order):
                     m = box[u]
                     if since and m["modseq"] <= int(since.group(1)):
                         continue
@@ -245,7 +254,7 @@ class H(socketserver.StreamRequestHandler):
                 m = re.match(r"(\S+) (?:\(UNCHANGEDSINCE (\d+)\) )?([+-]?)FLAGS(\.SILENT)? \((.*)\)$", a, re.I)
                 if self.readonly:
                     return self.w(f"{tag} NO [READ-ONLY] read-only\r\n")
-                uids = uid_set(m.group(1), list(box))
+                uids = sel(m.group(1), list(box))
                 unchanged, op, silent = m.group(2), m.group(3), m.group(4)
                 flags = {x for x in m.group(5).split() if KEYWORDS or x in SYSTEM}
                 modified = []
@@ -266,7 +275,7 @@ class H(socketserver.StreamRequestHandler):
                 dest = t[1]
                 if dest not in folders:
                     return self.w(f"{tag} NO [TRYCREATE] no such folder\r\n")
-                uids = uid_set(t[0], list(box))  # vanished UIDs simply drop out (lost race)
+                uids = sel(t[0], list(box))  # vanished UIDs simply drop out (lost race)
                 pairs = []
                 for u in uids:
                     msg = box[u]

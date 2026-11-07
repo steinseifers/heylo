@@ -50,6 +50,8 @@ final class MailStore {
     var tabUnread: [InboxTab: Int] = [:]
     var toReplyCount = 0
     var snoozedCount = 0
+    var snoozeLast: [UUID: Date] = [:]
+    var snoozeBusy = Set<UUID>()
     var flaggedCount = 0
     var copiedCodes: Set<String> = []
     var toast: Toast?
@@ -272,7 +274,7 @@ final class MailStore {
                     return (acct, listed)
                 }
                 if let listed {
-                    folders[accountId] = listed
+                    folders[accountId] = listed.filter { $0.path != updatedAcct.snoozeFolderName }  // the Wiedervorlage folder stays out of sight
                     lastFolderList[accountId] = Date()
                     if let i = settings.accounts.firstIndex(where: { $0.id == accountId }) {
                         let cur = settings.accounts[i]
@@ -705,7 +707,8 @@ final class MailStore {
         let now = Date().timeIntervalSince1970
         var changed = false
         // Snoozes waking up
-        let due = db.query("SELECT account, thread_key FROM snoozes WHERE until <= ?", [now]) { ($0.string(0), $0.string(1)) }
+        snoozeTick()
+        let due = db.query("SELECT account, thread_key FROM snoozes WHERE until <= ? AND server=0", [now]) { ($0.string(0), $0.string(1)) }
         for (acct, key) in due {
             changed = true
             db.exec("DELETE FROM snoozes WHERE account=? AND thread_key=?", [acct, key])

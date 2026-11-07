@@ -137,7 +137,7 @@ extension MailStore {
         else { await setFlag(threads.map(\.latest), true) }
     }
 
-    func snooze(_ threads: [ThreadSummary], until: Date) {
+    func snoozeLocally(_ threads: [ThreadSummary], until: Date) {
         for t in threads {
             db.exec("INSERT OR REPLACE INTO snoozes(account, thread_key, until) VALUES(?,?,?)", [t.accountId.uuidString, t.threadKey, until])
         }
@@ -150,7 +150,7 @@ extension MailStore {
         }
     }
 
-    func unsnooze(_ threads: [ThreadSummary]) {
+    func unsnoozeLocally(_ threads: [ThreadSummary]) {
         for t in threads { db.exec("DELETE FROM snoozes WHERE account=? AND thread_key=?", [t.accountId.uuidString, t.threadKey]) }
         reload()
     }

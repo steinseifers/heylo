@@ -37,7 +37,10 @@ enum ServerSnooze {
         return f
     }()
 
-    static func keyword(for date: Date) -> String { keywordPrefix + formatter.string(from: date) }
+    /// Minute resolution, rounded up so a snooze never wakes early.
+    static func keyword(for date: Date) -> String {
+        keywordPrefix + formatter.string(from: Date(timeIntervalSince1970: (date.timeIntervalSince1970 / 60).rounded(.up) * 60))
+    }
 
     static func isSnoozeKeyword(_ flag: String) -> Bool { flag.lowercased().hasPrefix(keywordPrefix.lowercased()) }
 

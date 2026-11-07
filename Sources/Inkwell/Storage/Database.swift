@@ -111,6 +111,11 @@ final class Database {
             exec("ALTER TABLE messages ADD COLUMN rev INTEGER NOT NULL DEFAULT 0")
             exec("PRAGMA user_version=5")
         }
+        if version < 6 {
+            // v6: snoozes derived from the server folder (server=1) vs. legacy local-only ones (server=0).
+            exec("ALTER TABLE snoozes ADD COLUMN server INTEGER NOT NULL DEFAULT 0")
+            exec("PRAGMA user_version=6")
+        }
         exec("PRAGMA optimize=0x10002")  // cheap stats refresh instead of a full ANALYZE on every launch
     }
 

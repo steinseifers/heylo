@@ -45,6 +45,9 @@ struct Account: Codable, Hashable, Identifiable {
     var draftsFolder: String?
     var trashFolder: String?
     var spamFolder: String?
+    /// Server folder holding snoozed mail (Wiedervorlage); nil = `ServerSnooze.defaultFolder`.
+    var snoozeFolder: String?
+    var snoozeFolderName: String { snoozeFolder.flatMap { $0.isEmpty ? nil : $0 } ?? ServerSnooze.defaultFolder }
 
     var color: Color { Color(hex: colorHex) }
     var isGmail: Bool { imapHost.contains("gmail") }
