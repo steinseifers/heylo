@@ -50,6 +50,7 @@ if CommandLine.arguments.contains("--storagetest") {
 if CommandLine.arguments.contains("--probe") { Probe.run() }
 if CommandLine.arguments.contains("--snoozetest") { SnoozeTest.run(args: CommandLine.arguments) }
 if CommandLine.arguments.contains("--smtptest") { SMTPAuthTest.run(args: CommandLine.arguments) }
+if CommandLine.arguments.contains("--settingssynctest") { SettingsSyncTest.run() }
 if CommandLine.arguments.contains("--snoozeflow") { SnoozeFlowTest.start(args: CommandLine.arguments) }
 if CommandLine.arguments.contains("--selftest") {
     SelfTest.run()
