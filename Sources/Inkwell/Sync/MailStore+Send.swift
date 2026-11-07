@@ -162,12 +162,11 @@ extension MailStore {
         let (data, mid) = MIME.build(from: from, to: to, cc: cc, replyTo: alias?.replyTo, subject: d.subject, text: text, html: html,
                                      inReplyTo: d.inReplyTo.isEmpty ? nil : d.inReplyTo,
                                      references: d.references.split(separator: " ").map(String.init), attachments: atts, extraHeaders: extra)
-        let password = Keychain.password(for: acct)
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
             DispatchQueue.global().async {
                 do {
                     let smtp = try SMTPClient(host: acct.smtpHost, port: acct.smtpPort, security: acct.smtpSecurity)
-                    try smtp.login(user: acct.username, password: password)
+                    try smtp.login(account: acct)
                     try smtp.sendMail(from: from.email, recipients: (to + cc + bcc).map(\.email), data: data)
                     smtp.quit()
                     cont.resume()

@@ -47,6 +47,9 @@ struct Account: Codable, Hashable, Identifiable {
     var spamFolder: String?
     /// Server folder holding snoozed mail (Wiedervorlage); nil = `ServerSnooze.defaultFolder`.
     var snoozeFolder: String?
+    /// Microsoft 365 sign-in via OAuth instead of a password; `oauthTenant` is the tenant ID learnt at sign-in.
+    var oauth: Bool = false
+    var oauthTenant: String?
     var snoozeFolderName: String { snoozeFolder.flatMap { $0.isEmpty ? nil : $0 } ?? ServerSnooze.defaultFolder }
 
     var color: Color { Color(hex: colorHex) }

@@ -32,7 +32,7 @@ final class AccountConnection {
         client?.close()
         let c = try IMAPClient(host: account.imapHost, port: account.imapPort)
         // Nearly every job starts in the inbox; its SELECT rides along with LOGIN.
-        try c.login(user: account.username, password: Keychain.password(for: account), select: "INBOX", compress: true)
+        try c.login(account: account, select: "INBOX", compress: true)
         client = c
         return c
     }
@@ -152,7 +152,7 @@ final class IdleWatcher {
             do {
                 let c = try IMAPClient(host: account.imapHost, port: account.imapPort)
                 client = c
-                try c.login(user: account.username, password: Keychain.password(for: account), select: "INBOX", readOnly: true)
+                try c.login(account: account, select: "INBOX", readOnly: true)
                 guard c.capabilities.contains("IDLE") else {
                     c.close(); client = nil
                     pause(60)

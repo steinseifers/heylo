@@ -164,7 +164,7 @@ extension AppSettings {
 extension Account {
     enum CodingKeys: String, CodingKey {
         case id, label, displayName, email, username, colorHex, imapHost, imapPort, smtpHost, smtpPort, smtpSecurity, signature, signatureOnReplies,
-             aliases, style, enabled, notify, archiveFolder, sentFolder, draftsFolder, trashFolder, spamFolder, snoozeFolder
+             aliases, style, enabled, notify, archiveFolder, sentFolder, draftsFolder, trashFolder, spamFolder, snoozeFolder, oauth, oauthTenant
     }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -187,6 +187,8 @@ extension Account {
         trashFolder = c.value(.trashFolder, trashFolder)
         spamFolder = c.value(.spamFolder, spamFolder)
         snoozeFolder = c.value(.snoozeFolder, snoozeFolder)
+        oauth = c.value(.oauth, oauth)
+        oauthTenant = c.value(.oauthTenant, oauthTenant)
     }
 }
 
