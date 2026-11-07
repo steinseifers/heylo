@@ -211,7 +211,7 @@ final class MailStore {
     }
 
     func addAccount(_ a: Account, password: String) {
-        Keychain.setPassword(password, for: a)
+        if !a.oauth { Keychain.setPassword(password, for: a) }
         settings.accounts.append(a)
     }
 
@@ -223,6 +223,7 @@ final class MailStore {
         db.exec("DELETE FROM folders WHERE account=?", [id.uuidString])
         Keychain.forget(id)
         Keychain.delete("acct-\(id.uuidString)")
+        Keychain.delete("oauth-refresh-\(id.uuidString)")
         folders[id] = nil
         if case .accountInbox(let a) = mailbox, a == id { mailbox = .allInboxes }
         reload()

@@ -13,8 +13,8 @@ enum Probe {
             print("== \(a.email) (\(a.imapHost):\(a.imapPort))")
             do {
                 let c = try IMAPClient(host: a.imapHost, port: a.imapPort)
-                let pw = ProcessInfo.processInfo.environment["INKWELL_PROBE_PASSWORD"] ?? Keychain.password(for: a)
-                try c.login(user: a.username, password: pw)
+                if let pw = ProcessInfo.processInfo.environment["INKWELL_PROBE_PASSWORD"] { try c.login(user: a.username, password: pw) }
+                else { try c.login(account: a) }  // password from the Keychain, or OAuth
                 let caps = c.capabilities.sorted()
                 print("CAPABILITY: \(caps.joined(separator: " "))")
                 let interesting = ["MOVE", "UIDPLUS", "CONDSTORE", "QRESYNC", "SNOOZE", "IDLE", "SPECIAL-USE", "LITERAL+"]

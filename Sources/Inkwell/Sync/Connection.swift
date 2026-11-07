@@ -88,10 +88,10 @@ final class AccountConnection {
             DispatchQueue.global().async {
                 do {
                     let c = try IMAPClient(host: account.imapHost, port: account.imapPort)
-                    try c.login(user: account.username, password: password)
+                    if account.oauth { try c.login(account: account) } else { try c.login(user: account.username, password: password) }
                     c.close()
                     let s = try SMTPClient(host: account.smtpHost, port: account.smtpPort, security: account.smtpSecurity)
-                    try s.login(user: account.username, password: password)
+                    if account.oauth { try s.login(account: account) } else { try s.login(user: account.username, password: password) }
                     s.quit()
                     cont.resume()
                 } catch { cont.resume(throwing: error) }

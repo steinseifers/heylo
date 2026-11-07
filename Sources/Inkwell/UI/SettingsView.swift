@@ -251,6 +251,8 @@ struct AddAccountSheet: View {
     @State private var security = SMTPSecurity.ssl
     @State private var working = false
     @State private var error: String?
+    @State private var clientID = OAuth.clientID ?? ""
+    private var isOAuth: Bool { preset.id == "m365" }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -261,8 +263,14 @@ struct AddAccountSheet: View {
             Text(preset.help).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             Form {
                 TextField("Your name", text: $name)
-                TextField("Email", text: $email).textContentType(.emailAddress)
-                SecureField(preset.id == "other" ? "Password" : "App password", text: $password)
+                TextField(isOAuth ? "Email (optional hint)" : "Email", text: $email).textContentType(.emailAddress)
+                if isOAuth {
+                    if OAuth.clientID == nil || ProcessInfo.processInfo.environment["INKWELL_OAUTH_CLIENT_ID"] == nil {
+                        TextField("Entra app client ID", text: $clientID)
+                    }
+                } else {
+                    SecureField(preset.id == "other" ? "Password" : "App password", text: $password)
+                }
                 if preset.id == "other" || preset.id == "icloud" {
                     TextField("Username (if different)", text: $username)
                 }
@@ -280,9 +288,9 @@ struct AddAccountSheet: View {
             HStack {
                 Spacer()
                 Button("Cancel") { dismiss() }.keyboardShortcut(.cancelAction)
-                Button { add() } label: { if working { ProgressView().controlSize(.small) } else { Text("Sign In") } }
+                Button { isOAuth ? addMicrosoft() : add() } label: { if working { ProgressView().controlSize(.small) } else { Text(isOAuth ? "Sign In with Microsoft" : "Sign In") } }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(email.isEmpty || password.isEmpty || working)
+                    .disabled(isOAuth ? (clientID.isEmpty && OAuth.clientID == nil) || working : (email.isEmpty || password.isEmpty || working))
             }
         }
         .padding(20)
@@ -294,6 +302,28 @@ struct AddAccountSheet: View {
     private func applyPreset() {
         imapHost = preset.imapHost; imapPort = preset.imapPort
         smtpHost = preset.smtpHost; smtpPort = preset.smtpPort; security = preset.smtpSecurity
+    }
+
+    private func addMicrosoft() {
+        working = true; error = nil
+        if !clientID.isEmpty, ProcessInfo.processInfo.environment["INKWELL_OAUTH_CLIENT_ID"] == nil { UserDefaults.standard.set(clientID.trimmingCharacters(in: .whitespaces), forKey: "oauthClientID") }
+        Task {
+            do {
+                let r = try await OAuth.signIn(loginHint: email.isEmpty ? nil : email)
+                guard !r.email.isEmpty else { throw OAuth.OAuthError.badResponse("no address in the sign-in response") }
+                var account = Account(label: store.settings.accounts.contains { $0.label == "Microsoft" } ? r.email : "Microsoft", displayName: name.isEmpty ? r.name : name, email: r.email,
+                                      username: r.email, colorHex: accountPalette[store.settings.accounts.count % accountPalette.count],
+                                      imapHost: imapHost, imapPort: imapPort, smtpHost: smtpHost, smtpPort: smtpPort, smtpSecurity: security)
+                account.oauth = true
+                account.oauthTenant = r.tenant
+                OAuth.store(r.tokens, for: account)
+                try await AccountConnection.test(account: account, password: "")
+                store.addAccount(account, password: "")
+                onAdded(account.id)
+                dismiss()
+            } catch { self.error = error.localizedDescription }
+            working = false
+        }
     }
 
     private func add() {
