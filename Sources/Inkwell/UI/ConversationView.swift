@@ -61,7 +61,7 @@ struct ConversationView: View {
                 }
             }
         }
-        .toolbar { conversationToolbar }
+        .toolbar(id: "conversation") { conversationToolbar }
         .navigationTitle(thread.latest.subject.isEmpty ? "(no subject)" : thread.latest.subject)
         .navigationSubtitle(account?.label ?? "")
         .task(id: thread.id + "\(thread.latest.id)") { await load() }
@@ -114,21 +114,31 @@ struct ConversationView: View {
 
     // MARK: toolbar & title
 
-    /// Actions in the window toolbar (system look, customisable, tooltips with the key).
-    @ToolbarContentBuilder private var conversationToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .primaryAction) {
+    /// Actions in the window toolbar: customisable ("Customize Toolbar…"), grouped with spacers, tooltips with the key.
+    @ToolbarContentBuilder private var conversationToolbar: some CustomizableToolbarContent {
+        ToolbarItem(id: "archive", placement: .primaryAction) {
             Button { Task { await store.archive([thread]) } } label: { Label("Archive", systemImage: "archivebox") }.help("Archive (E)")
+        }
+        ToolbarItem(id: "trash", placement: .primaryAction) {
             Button { Task { await store.trash([thread]) } } label: { Label("Move to Trash", systemImage: "trash") }.help("Move to Trash (#)")
+        }
+        ToolbarItem(id: "flag", placement: .primaryAction) {
             Button { Task { await store.toggleFlag([thread]) } } label: { Label(thread.flagged ? "Unflag" : "Flag", systemImage: thread.flagged ? "flag.fill" : "flag") }
                 .help(thread.flagged ? "Unflag (F)" : "Flag (F)")
+        }
+        ToolbarSpacer(.fixed, placement: .primaryAction)
+        ToolbarItem(id: "snooze", placement: .primaryAction) {
             Menu {
                 SnoozeMenu { store.snooze([thread], until: $0) }
                 Divider()
                 Button("Pick Date & Time…") { customSnooze = true }
             } label: { Label("Snooze", systemImage: "clock") }.help("Snooze (H)")
+        }
+        ToolbarItem(id: "more", placement: .primaryAction) {
             Menu { moreMenu } label: { Label("More", systemImage: "ellipsis.circle") }
         }
-        ToolbarItem(placement: .primaryAction) {
+        ToolbarSpacer(.fixed, placement: .primaryAction)
+        ToolbarItem(id: "style", placement: .primaryAction) {
             Picker("View as", selection: Binding(get: { style }, set: { setStyle($0) })) {
                 ForEach(ConversationStyle.allCases) { Text($0.label).tag($0) }
             }

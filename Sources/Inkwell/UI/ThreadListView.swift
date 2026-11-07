@@ -22,12 +22,12 @@ struct ThreadListView: View {
                 store.searchPresented = true
             }
             .safeAreaInset(edge: .top, spacing: 0) { if showTabs { tabs } }
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button { store.compose() } label: { Label("New Message", systemImage: "square.and.pencil") }.help("New Message")
-                }
-                ToolbarItem(placement: .primaryAction) {
+            .toolbar(id: "list") {
+                ToolbarItem(id: "unread", placement: .primaryAction) {
                     Toggle(isOn: $store.unreadOnly) { Label("Unread Only", systemImage: "envelope.badge") }.help("Show unread only")
+                }
+                ToolbarItem(id: "compose", placement: .primaryAction) {
+                    Button { store.compose() } label: { Label("New Message", systemImage: "square.and.pencil") }.help("New Message")
                 }
             }
             .sheet(item: Binding(get: { customSnooze.map { IdentifiedThreads(threads: $0) } }, set: { customSnooze = $0?.threads })) { item in
@@ -156,7 +156,7 @@ struct ThreadRow: View {
         let m = thread.latest
         let unread = thread.unread
         HStack(alignment: .top, spacing: 12) {
-            AvatarView(address: counterpart, size: 34)
+            AvatarView(address: counterpart, size: 30)
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text(m.isFromMe ? "To: \(counterpart.display)" : counterpart.display)
@@ -176,7 +176,7 @@ struct ThreadRow: View {
                         .lineLimit(1)
                 }
                 if code == nil {
-                    Text(m.snippet).font(.callout).foregroundStyle(unread ? Theme.muted : Theme.faint).lineLimit(1)
+                    Text(m.snippet).font(.callout).foregroundStyle(.secondary).lineLimit(2)
                 }
                 chips
             }
@@ -209,21 +209,13 @@ struct ThreadRow: View {
             }
             .padding(.top, 6)
         } else if needsReply || !files.isEmpty {
-            HStack(spacing: 6) {
-                if needsReply {
-                    Text("Needs reply").font(.subheadline.weight(.semibold)).foregroundStyle(accent)
-                        .padding(.horizontal, 7).padding(.vertical, 2)
-                        .background(Theme.chip, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+            HStack(spacing: 10) {
+                if needsReply { Label("Needs reply", systemImage: "arrowshape.turn.up.left").font(.caption).foregroundStyle(accent) }
+                if !files.isEmpty {
+                    Label(files.count == 1 ? files[0] : "\(files.count)", systemImage: "paperclip").font(.caption).foregroundStyle(.secondary).lineLimit(1)
                 }
-                ForEach(files.prefix(2), id: \.self) { f in
-                    Text(f).font(.subheadline).foregroundStyle(Theme.ink).lineLimit(1)
-                        .padding(.horizontal, 7).padding(.vertical, 2)
-                        .background(Theme.raised, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: 5, style: .continuous).strokeBorder(Theme.hairline))
-                }
-                if files.count > 2 { Text("+\(files.count - 2)").font(.subheadline).foregroundStyle(Theme.faint) }
             }
-            .padding(.top, 6)
+            .padding(.top, 2)
         }
     }
 

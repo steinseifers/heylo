@@ -81,6 +81,9 @@ D = {
 "Your name": "Dein Name", "from": "von", "↑↓ navigate   ↵ open   esc close": "↑↓ navigieren   ↵ öffnen   esc schließen",
 }
 EXTRA = {
+"Bigger": "Größer", "Bold": "Fett", "Italic": "Kursiv", "Underline": "Unterstrichen", "Format": "Format",
+"Show or hide the format bar": "Formatierungsleiste ein- oder ausblenden", "Hide Format Bar": "Formatierungsleiste ausblenden", "Show Format Bar": "Formatierungsleiste einblenden",
+"Mailbox": "Postfach", "Message": "Nachricht",
 "Encrypted": "Verschlüsselt",
 "Signed by %@": "Signiert von %@",
 "Signed by %@, certificate not trusted": "Signiert von %@, Zertifikat nicht vertrauenswürdig",
@@ -98,6 +101,9 @@ EXTRA = {
 "Archive (E)": "Archivieren (E)", "More": "Mehr", "Move to Trash (#)": "In den Papierkorb legen (#)", "Redo": "Wiederholen",
 "Send (⌘↩)": "Senden (⌘↩)", "Snooze (H)": "Wiedervorlage (H)", "Tab": "Reiter",
 "Unflag (F)": "Markierung entfernen (F)", "Flag (F)": "Markieren (F)",
+"Bigger": "Größer", "Bold": "Fett", "Italic": "Kursiv", "Underline": "Unterstrichen", "Format": "Format",
+"Show or hide the format bar": "Formatierungsleiste ein- oder ausblenden", "Hide Format Bar": "Formatierungsleiste ausblenden", "Show Format Bar": "Formatierungsleiste einblenden",
+"Mailbox": "Postfach", "Message": "Nachricht", "Awaiting Reply": "Antwort ausstehend", "To Reply": "Zu beantworten", "Unread Only": "Nur Ungelesene",
 "Primary": "Primär", "Updates": "Mitteilungen", "Promos": "Werbung", "All": "Alle",
 }
 

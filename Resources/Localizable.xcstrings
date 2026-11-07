@@ -486,6 +486,17 @@
         }
       }
     },
+    "Bigger": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größer"
+          }
+        }
+      }
+    },
     "Block": {
       "extractionState": "manual",
       "localizations": {
@@ -537,6 +548,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Blockierte Absender"
+          }
+        }
+      }
+    },
+    "Bold": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fett"
           }
         }
       }
@@ -1003,6 +1025,17 @@
         }
       }
     },
+    "Format": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Format"
+          }
+        }
+      }
+    },
     "Forward": {
       "extractionState": "manual",
       "localizations": {
@@ -1087,6 +1120,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "„Glas“ lässt den Schreibtisch durchscheinen."
+          }
+        }
+      }
+    },
+    "Hide Format Bar": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Formatierungsleiste ausblenden"
           }
         }
       }
@@ -1201,6 +1245,17 @@
         }
       }
     },
+    "Italic": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kursiv"
+          }
+        }
+      }
+    },
     "Italic ⌘I": {
       "extractionState": "manual",
       "localizations": {
@@ -1311,6 +1366,17 @@
         }
       }
     },
+    "Mailbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Postfach"
+          }
+        }
+      }
+    },
     "Mark messages as read after viewing them": {
       "extractionState": "manual",
       "localizations": {
@@ -1318,6 +1384,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nachrichten nach dem Ansehen als gelesen markieren"
+          }
+        }
+      }
+    },
+    "Message": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nachricht"
           }
         }
       }
@@ -2257,6 +2334,17 @@
         }
       }
     },
+    "Show Format Bar": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Formatierungsleiste einblenden"
+          }
+        }
+      }
+    },
     "Show account pictures": {
       "extractionState": "manual",
       "localizations": {
@@ -2297,6 +2385,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mitteilungen für neue Mails anzeigen"
+          }
+        }
+      }
+    },
+    "Show or hide the format bar": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Formatierungsleiste ein- oder ausblenden"
           }
         }
       }
@@ -2858,6 +2957,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Blockierung aufheben"
+          }
+        }
+      }
+    },
+    "Underline": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unterstrichen"
           }
         }
       }

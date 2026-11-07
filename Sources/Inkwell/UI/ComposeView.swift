@@ -184,6 +184,19 @@ struct RecipientField: View {
 
 // MARK: Compose window
 
+/// What the menu bar's Format menu can drive in the focused compose window.
+struct ComposeActions {
+    var editor: EditorController
+    var showFormatBar: Binding<Bool>
+}
+private struct ComposeActionsKey: FocusedValueKey { typealias Value = ComposeActions }
+extension FocusedValues {
+    var composeActions: ComposeActions? {
+        get { self[ComposeActionsKey.self] }
+        set { self[ComposeActionsKey.self] = newValue }
+    }
+}
+
 struct ComposeView: View {
     let draftId: UUID
     @Bindable var store: MailStore
@@ -200,6 +213,7 @@ struct ComposeView: View {
     @State private var aiError: String?
     @State private var customSendAt = false
     @State private var customRemind = false
+    @AppStorage("composeFormatBar") private var showFormatBar = true
     @State private var dropTargeted = false
     @State private var saveTask: Task<Void, Never>?
     /// The upload to the Drafts folder in flight (one at a time per draft).
@@ -220,7 +234,7 @@ struct ComposeView: View {
                 }
                 .padding(.horizontal, 14).padding(.top, 6)
             }
-            formatBar
+            if showFormatBar { formatBar }
             RichTextEditor(text: $body_, controller: editor) { addAttachments($0) }
                 .frame(minHeight: 200)
             if !draft.quotedHTML.isEmpty {
@@ -232,10 +246,10 @@ struct ComposeView: View {
             }
             if !draft.attachments.isEmpty { attachmentRow }
             if let aiError { Text(aiError).font(.caption).foregroundStyle(.red).padding(.horizontal, 14) }
-            Divider()
-            bottomBar
         }
         .frame(minWidth: 560, minHeight: 460)
+        .toolbar { composeToolbar }
+        .focusedSceneValue(\.composeActions, ComposeActions(editor: editor, showFormatBar: $showFormatBar))
         .overlay {
             if dropTargeted {
                 RoundedRectangle(cornerRadius: 12).strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 3, dash: [8]))
@@ -299,9 +313,9 @@ struct ComposeView: View {
     private var formatBar: some View {
         HStack(spacing: 2) {
             Group {
-                Button { editor.toggleTrait(.boldFontMask) } label: { Image(systemName: "bold") }.keyboardShortcut("b", modifiers: .command).help("Bold ⌘B")
-                Button { editor.toggleTrait(.italicFontMask) } label: { Image(systemName: "italic") }.keyboardShortcut("i", modifiers: .command).help("Italic ⌘I")
-                Button { editor.toggleUnderline() } label: { Image(systemName: "underline") }.keyboardShortcut("u", modifiers: .command).help("Underline ⌘U")
+                Button { editor.toggleTrait(.boldFontMask) } label: { Image(systemName: "bold") }.help("Bold ⌘B")
+                Button { editor.toggleTrait(.italicFontMask) } label: { Image(systemName: "italic") }.help("Italic ⌘I")
+                Button { editor.toggleUnderline() } label: { Image(systemName: "underline") }.help("Underline ⌘U")
                 Divider().frame(height: 14)
                 Button { editor.list(numbered: false) } label: { Image(systemName: "list.bullet") }.help("Bulleted list")
                 Button { editor.list(numbered: true) } label: { Image(systemName: "list.number") }.help("Numbered list")
@@ -363,9 +377,14 @@ struct ComposeView: View {
         }
     }
 
-    private var bottomBar: some View {
-        HStack(spacing: 10) {
-            Button { pickFiles() } label: { Image(systemName: "paperclip") }.buttonStyle(.borderless).help("Attach files")
+    /// Window toolbar: discard on the left; attach, format, reminders, S/MIME, send later and Send on the right.
+    @ToolbarContentBuilder private var composeToolbar: some ToolbarContent {
+        ToolbarItem(placement: .navigation) {
+            Button(role: .destructive) { discard() } label: { Label("Discard draft", systemImage: "trash") }.help("Discard draft")
+        }
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button { pickFiles() } label: { Label("Attach files", systemImage: "paperclip") }.help("Attach files")
+            Toggle(isOn: $showFormatBar) { Label("Format", systemImage: "textformat") }.help("Show or hide the format bar")
             Menu {
                 Picker("Remind me if no reply", selection: Binding(get: { draft.remindAfter ?? 0 }, set: { draft.remindAfter = $0 == 0 ? nil : $0 })) {
                     Text("Off").tag(TimeInterval(0))
@@ -377,13 +396,12 @@ struct ComposeView: View {
                 Button("Pick a date…") { customRemind = true }
                 Divider()
                 Toggle("Request read receipt", isOn: $draft.requestReadReceipt)
-            } label: {
-                Image(systemName: draft.remindAfter == nil ? "bell" : "bell.badge.fill")
-            }
-            .menuStyle(.borderlessButton).fixedSize().help("Remind me if no reply")
+            } label: { Label("Remind me if no reply", systemImage: draft.remindAfter == nil ? "bell" : "bell.badge.fill") }
+                .help("Remind me if no reply")
             smimeControls
-            Button(role: .destructive) { discard() } label: { Image(systemName: "trash") }.buttonStyle(.borderless).help("Discard draft")
-            Spacer()
+        }
+        ToolbarSpacer(.fixed, placement: .primaryAction)
+        ToolbarItemGroup(placement: .primaryAction) {
             if let at = draft.sendAt { Text("Sends \(at.formatted(date: .abbreviated, time: .shortened))").font(.caption).foregroundStyle(.secondary) }
             Menu {
                 ForEach([SnoozeChoice.laterToday, .thisEvening, .tomorrow, .nextWeek]) { c in
@@ -391,14 +409,12 @@ struct ComposeView: View {
                 }
                 Divider()
                 Button("Pick Date & Time…") { customSendAt = true }
-            } label: { Image(systemName: "clock") }
-            .menuStyle(.borderlessButton).fixedSize().help("Send later")
+            } label: { Label("Send later", systemImage: "clock") }.help("Send later")
             Button { send() } label: { Label("Send", systemImage: "paperplane.fill") }
-                .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.return, modifiers: .command)
                 .disabled(draft.to.trimmingCharacters(in: .whitespaces).isEmpty && draft.cc.isEmpty && draft.bcc.isEmpty)
+                .help("Send (⌘↩)")
         }
-        .padding(.horizontal, 14).padding(.vertical, 10)
     }
 
     // MARK: logic

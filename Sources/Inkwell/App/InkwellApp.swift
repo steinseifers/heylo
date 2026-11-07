@@ -32,6 +32,7 @@ struct InkwellApp: App {
 
 struct AppCommands: Commands {
     var store: MailStore
+    @FocusedValue(\.composeActions) private var compose
     @Environment(\.openWindow) private var openWindow
 
     var body: some Commands {
@@ -56,6 +57,20 @@ struct AppCommands: Commands {
             Button("Scheduled") { store.mailbox = .scheduled }.keyboardShortcut("6")
             Divider()
             Button("Unread Only") { store.unreadOnly.toggle() }.keyboardShortcut("u", modifiers: [.command, .option])
+        }
+        CommandMenu("Format") {
+            Button("Bold") { compose?.editor.toggleTrait(.boldFontMask) }.keyboardShortcut("b").disabled(compose == nil)
+            Button("Italic") { compose?.editor.toggleTrait(.italicFontMask) }.keyboardShortcut("i").disabled(compose == nil)
+            Button("Underline") { compose?.editor.toggleUnderline() }.keyboardShortcut("u").disabled(compose == nil)
+            Divider()
+            Button("Bulleted list") { compose?.editor.list(numbered: false) }.disabled(compose == nil)
+            Button("Numbered list") { compose?.editor.list(numbered: true) }.disabled(compose == nil)
+            Divider()
+            Button("Bigger") { compose?.editor.resize(by: 2) }.keyboardShortcut("+").disabled(compose == nil)
+            Button("Smaller") { compose?.editor.resize(by: -2) }.keyboardShortcut("-").disabled(compose == nil)
+            Divider()
+            Button(LocalizedStringKey((compose?.showFormatBar.wrappedValue ?? true) ? "Hide Format Bar" : "Show Format Bar")) { compose?.showFormatBar.wrappedValue.toggle() }
+                .keyboardShortcut("t", modifiers: [.command, .shift]).disabled(compose == nil)
         }
         CommandMenu("Message") {
             Button("Reply") { store.replyToSelection(all: false) }.keyboardShortcut("r")
@@ -271,6 +286,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 if (e.keyCode == 125 || e.keyCode == 126), !store.searchPresented,
                    e.modifierFlags.intersection([.command, .control, .option, .shift]).isEmpty,
                    !(NSApp.keyWindow?.firstResponder is NSText),
+                   // A focused list (message list, sidebar) handles ↑/↓ itself, like any Mac list.
+                   !(NSApp.keyWindow?.firstResponder is NSTableView),
                    NSApp.keyWindow?.title == Brand.name || NSApp.keyWindow?.identifier?.rawValue == "main" {
                     store.focusedThread = nil
                     store.moveSelection(e.keyCode == 125 ? 1 : -1)
