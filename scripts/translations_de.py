@@ -107,6 +107,26 @@ EXTRA = {
 "Primary": "Primär", "Updates": "Mitteilungen", "Promos": "Werbung", "All": "Alle",
 }
 
+def plural(en, de):
+    mk = lambda one, other: {"variations": {"plural": {"one": {"stringUnit": {"state": "translated", "value": one}},
+                                                       "other": {"stringUnit": {"state": "translated", "value": other}}}}}
+    return {"en": mk(*en), "de": mk(*de)}
+
+# Real plural rules (CLDR one/other) for en and de.
+PLURALS = {
+"%lld results": plural(("%lld result", "%lld results"), ("%lld Ergebnis", "%lld Ergebnisse")),
+"Remove %lld downloaded emails from this Mac?": plural(("Remove %lld downloaded email from this Mac?", "Remove %lld downloaded emails from this Mac?"),
+                                                       ("%lld heruntergeladene E-Mail von diesem Mac entfernen?", "%lld heruntergeladene E-Mails von diesem Mac entfernen?")),
+"· %lld emails": plural(("· %lld email", "· %lld emails"), ("· %lld E-Mail", "· %lld E-Mails")),
+"from %lld emails": plural(("from %lld email", "from %lld emails"), ("von %lld E-Mail", "von %lld E-Mails")),
+"Removed %lld emails": plural(("Removed %lld email", "Removed %lld emails"), ("%lld E-Mail entfernt", "%lld E-Mails entfernt")),
+}
+EXTRA2 = {
+" · %lld downloaded": " · %lld heruntergeladen", "freed %@": "%@ freigegeben", "every account": "alle Accounts",
+", on this Mac": ", auf diesem Mac", " + server": " + Server",
+}
+OBSOLETE = [" · %@ downloaded", "from %@ emails", "· %@ emails", "%lld result%lld", "from %@ email%@", "· %@ emails · %@ downloaded", "+%lld", "%lld", "Found on the server · %lld"]
+
 if __name__ == "__main__":
     path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Resources", "Localizable.xcstrings")
     cat = json.load(open(path)); n = 0
@@ -115,5 +135,11 @@ if __name__ == "__main__":
             if k in EXTRA: cat["strings"][k] = {"extractionState": "manual", "localizations": {}}
             else: print("unknown key (skipped):", k); continue
         cat["strings"][k]["localizations"] = {"de": {"stringUnit": {"state": "translated", "value": v}}}; n += 1
+    for k, v in EXTRA2.items():
+        cat["strings"].setdefault(k, {"extractionState": "manual", "localizations": {}})["localizations"] = {"de": {"stringUnit": {"state": "translated", "value": v}}}; n += 1
+    for k, loc in PLURALS.items():
+        cat["strings"].setdefault(k, {"extractionState": "manual", "localizations": {}})["localizations"] = loc; n += 1
+    for k in OBSOLETE:
+        if k in cat["strings"] and not cat["strings"][k].get("localizations", {}).get("de"): cat["strings"].pop(k)
     json.dump(cat, open(path, "w"), ensure_ascii=False, indent=2, sort_keys=True)
     print(n, "translations applied")

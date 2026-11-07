@@ -138,7 +138,9 @@ struct SearchPalette: View {
                 Text("↑↓ navigate   ↵ open   esc close").font(.subheadline).foregroundStyle(.secondary)
                 Spacer()
                 if !query.isEmpty && !query.hasPrefix(">") {
-                    Text("\(scoped.count) result\(scoped.count == 1 ? "" : "s") · \(scope == nil ? "every account" : store.account(scope!)?.label ?? "")\(remote.isEmpty ? ", on this Mac" : " + server")")
+                    let where_ = scope == nil ? Text("every account") : Text(verbatim: store.account(scope!)?.label ?? "")
+                    let place = remote.isEmpty ? Text(", on this Mac") : Text(" + server")
+                    (Text("\(scoped.count) results") + Text(" · ") + where_ + place)
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
             }

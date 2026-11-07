@@ -51,8 +51,8 @@ struct StorageSettings: View {
         }
     }
 
-    private var confirmTitle: String {
-        "Remove \(estimate?.emails ?? 0) downloaded email\(estimate?.emails == 1 ? "" : "s") from this Mac?"
+    private var confirmTitle: LocalizedStringKey {
+        "Remove \(estimate?.emails ?? 0) downloaded emails from this Mac?"
     }
 
     // MARK: sections
@@ -67,7 +67,7 @@ struct StorageSettings: View {
                             .font(.system(size: 34, weight: .bold)).tracking(-0.6).foregroundStyle(Theme.ink)
                             .contentTransition(.numericText())
                         if let r = report {
-                            Text("· \(r.emails) emails · \(r.downloaded) downloaded").font(.body).foregroundStyle(Theme.muted)
+                            (Text("· \(r.emails) emails") + Text(" · \(r.downloaded) downloaded")).font(.body).foregroundStyle(Theme.muted)
                         }
                     }
                 }
@@ -182,7 +182,7 @@ struct StorageSettings: View {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text("Frees about").font(.body).foregroundStyle(Theme.ink2)
                         Text(Self.bytes(e.bytes)).font(.title2.weight(.bold)).tracking(-0.2).foregroundStyle(Theme.ink)
-                        Text("from \(e.emails) email\(e.emails == 1 ? "" : "s")").font(.body).foregroundStyle(Theme.muted)
+                        Text("from \(e.emails) emails").font(.body).foregroundStyle(Theme.muted)
                     }
                 } else {
                     Text(lastResult ?? (estimate == nil ? "Calculating…" : "Nothing to clean up with these settings"))
@@ -291,7 +291,7 @@ struct StorageSettings: View {
         let (db, o, all) = (store.db, options, allAccountIds)
         let r = await Task.detached(priority: .userInitiated) { StorageManager.cleanUp(db: db, o, allAccounts: all) }.value
         working = nil
-        lastResult = "Removed \(r.emails) email\(r.emails == 1 ? "" : "s") · freed \(Self.bytes(r.freed))"
+        lastResult = String(localized: "Removed \(r.emails) emails") + " · " + String(localized: "freed \(Self.bytes(r.freed))")
         store.reload()
         await refresh()
         await refreshEstimate()

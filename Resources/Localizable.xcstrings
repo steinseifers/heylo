@@ -1,6 +1,28 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    " + server": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " + Server"
+          }
+        }
+      }
+    },
+    " · %lld downloaded": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · %lld heruntergeladen"
+          }
+        }
+      }
+    },
     "%@ sent to %@": {
       "extractionState": "manual",
       "localizations": {
@@ -23,10 +45,6 @@
         }
       }
     },
-    "%lld": {
-      "extractionState": "manual",
-      "localizations": {}
-    },
     "%lld conversations selected": {
       "extractionState": "manual",
       "localizations": {
@@ -38,9 +56,46 @@
         }
       }
     },
-    "%lld result%lld": {
+    "%lld results": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Ergebnis"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Ergebnisse"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld result"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld results"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "%lld senders": {
       "extractionState": "manual",
@@ -53,10 +108,6 @@
         }
       }
     },
-    "+%lld": {
-      "extractionState": "manual",
-      "localizations": {}
-    },
     "+%lld · %@ %@": {
       "extractionState": "manual",
       "localizations": {
@@ -64,6 +115,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "+%lld · %@ %@"
+          }
+        }
+      }
+    },
+    ", on this Mac": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", auf diesem Mac"
           }
         }
       }
@@ -1905,6 +1967,47 @@
         }
       }
     },
+    "Remove %lld downloaded emails from this Mac?": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld heruntergeladene E-Mail von diesem Mac entfernen?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld heruntergeladene E-Mails von diesem Mac entfernen?"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remove %lld downloaded email from this Mac?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Remove %lld downloaded emails from this Mac?"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Remove emails older than": {
       "extractionState": "manual",
       "localizations": {
@@ -1912,6 +2015,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mails entfernen, die älter sind als"
+          }
+        }
+      }
+    },
+    "Removed %lld emails": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld E-Mail entfernt"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld E-Mails entfernt"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Removed %lld email"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Removed %lld emails"
+                }
+              }
+            }
           }
         }
       }
@@ -3192,6 +3336,28 @@
         }
       }
     },
+    "every account": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alle Accounts"
+          }
+        }
+      }
+    },
+    "freed %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ freigegeben"
+          }
+        }
+      }
+    },
     "from": {
       "extractionState": "manual",
       "localizations": {
@@ -3203,13 +3369,87 @@
         }
       }
     },
-    "from %@ email%@": {
+    "from %lld emails": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "von %lld E-Mail"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "von %lld E-Mails"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "from %lld email"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "from %lld emails"
+                }
+              }
+            }
+          }
+        }
+      }
     },
-    "· %@ emails · %@ downloaded": {
+    "· %lld emails": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "· %lld E-Mail"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "· %lld E-Mails"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "· %lld email"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "· %lld emails"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "↑↓ navigate   ↵ open   esc close": {
       "extractionState": "manual",

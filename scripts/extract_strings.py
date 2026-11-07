@@ -9,7 +9,7 @@ pats = [(re.compile(r'\b(?:Text|Button|Toggle|Section|Label|TextField|SecureFiel
         (re.compile(r'\.(?:help|navigationTitle|navigationSubtitle|accessibilityLabel|accessibilityHint|badge)\(\s*"((?:[^"\\]|\\.)*)"'), 1),
         (re.compile(r'(?:prompt|description|message):\s*(?:Text\()?"((?:[^"\\]|\\.)*)"'), 1),
         (re.compile(r'\bshowToast\(\s*"((?:[^"\\]|\\.)*)"'), 1)]
-NUM = re.compile(r'(count|seconds|minutes|hours|days|months|total|number|\.n\b|Int\()', re.I)
+NUM = re.compile(r"(count|seconds|minutes|hours|days|months|total|number|emails|downloaded|\.n\b|Int\()", re.I)
 
 def interp(s):
     out, i = "", 0
@@ -30,12 +30,14 @@ for f in sorted(glob.glob(os.path.join(root, "Sources/**/*.swift"), recursive=Tr
     for rx, g in pats:
         for m in rx.finditer(s):
             t = interp(m.group(g))
-            if re.search(r"[A-Za-z]{2}", t): found.setdefault(t, os.path.relpath(f, root))
+            if re.search(r"[A-Za-z]{2}", re.sub(r"%(lld|@)", "", t)): found.setdefault(t, os.path.relpath(f, root))
 
 cat = json.load(open(cat_path)) if os.path.exists(cat_path) else {"sourceLanguage": "en", "strings": {}, "version": "1.0"}
 for k in found:
     cat["strings"].setdefault(k, {"extractionState": "manual", "localizations": {}})
-def de(k): return cat["strings"][k].get("localizations", {}).get("de", {}).get("stringUnit", {}).get("value")
+def de(k):
+    d = cat["strings"][k].get("localizations", {}).get("de", {})
+    return d.get("stringUnit", {}).get("value") or ("plural" if d.get("variations") else None)
 if "--missing" in sys.argv:
     for k in sorted(found):
         if not de(k): print(json.dumps(k, ensure_ascii=False))
