@@ -16,10 +16,14 @@ if [ ! -f "$BUILD"/AppIcon.icns ] || [ Resources/AppIcon.png -nt "$BUILD"/AppIco
   iconutil -c icns "$BUILD"/AppIcon.iconset -o "$BUILD"/AppIcon.icns
 fi
 cp "$BUILD"/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+# UI strings: compile the String Catalog into en.lproj/de.lproj (SwiftUI looks them up in the main bundle).
+xcrun xcstringstool compile Resources/Localizable.xcstrings -o "$APP/Contents/Resources"
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key><array><string>en</string><string>de</string></array>
   <key>CFBundleName</key><string>Stein's Mail</string>
   <key>CFBundleDisplayName</key><string>Stein's Mail</string>
   <key>CFBundleIdentifier</key><string>de.steinseifers.steinsmail</string>

@@ -1,0 +1,2820 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%@ sent to %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ an %@ gesendet"
+          }
+        }
+      }
+    },
+    "%@ wants to send an email": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ möchte eine E-Mail senden"
+          }
+        }
+      }
+    },
+    "%lld": {
+      "extractionState": "manual",
+      "localizations": {}
+    },
+    "%lld conversations selected": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Konversationen ausgewählt"
+          }
+        }
+      }
+    },
+    "%lld result%lld": {
+      "extractionState": "manual",
+      "localizations": {}
+    },
+    "%lld senders": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Absender"
+          }
+        }
+      }
+    },
+    "+%lld": {
+      "extractionState": "manual",
+      "localizations": {}
+    },
+    "+%lld · %@ %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld · %@ %@"
+          }
+        }
+      }
+    },
+    "1 month": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Monat"
+          }
+        }
+      }
+    },
+    "1 year": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Jahr"
+          }
+        }
+      }
+    },
+    "10 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 Sekunden"
+          }
+        }
+      }
+    },
+    "2 years": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 Jahre"
+          }
+        }
+      }
+    },
+    "20 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "20 Sekunden"
+          }
+        }
+      }
+    },
+    "3 months": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 Monate"
+          }
+        }
+      }
+    },
+    "30 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 Sekunden"
+          }
+        }
+      }
+    },
+    "5 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 Sekunden"
+          }
+        }
+      }
+    },
+    "6 months": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6 Monate"
+          }
+        }
+      }
+    },
+    "A reply woke a snoozed conversation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Antwort hat eine Konversation aus der Wiedervorlage geholt."
+          }
+        }
+      }
+    },
+    "ACCOUNTS": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ACCOUNTS"
+          }
+        }
+      }
+    },
+    "AI": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KI"
+          }
+        }
+      }
+    },
+    "AI apps can read, search, draft, archive, move, flag, snooze and mute. They can't delete mail or touch Spam/Trash. Sending, rules, unsubscribe and blocking always ask you first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KI-Apps können Mails lesen, suchen, entwerfen, archivieren, verschieben, markieren, in die Wiedervorlage legen und stummschalten. Löschen und Spam/Papierkorb sind tabu. Senden, Regeln, Abbestellen und Blockieren erfordern immer deine Bestätigung."
+          }
+        }
+      }
+    },
+    "AI model": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KI-Modell"
+          }
+        }
+      }
+    },
+    "Aa": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aa"
+          }
+        }
+      }
+    },
+    "Accent color": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akzentfarbe"
+          }
+        }
+      }
+    },
+    "Account": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account"
+          }
+        }
+      }
+    },
+    "Account Settings…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account-Einstellungen …"
+          }
+        }
+      }
+    },
+    "Accounts": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accounts"
+          }
+        }
+      }
+    },
+    "Activity": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivität"
+          }
+        }
+      }
+    },
+    "Add Account": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account hinzufügen"
+          }
+        }
+      }
+    },
+    "Add Alias": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alias hinzufügen"
+          }
+        }
+      }
+    },
+    "Add Rule": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regel hinzufügen"
+          }
+        }
+      }
+    },
+    "Add account": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account hinzufügen"
+          }
+        }
+      }
+    },
+    "Add an account first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge zuerst einen Account hinzu."
+          }
+        }
+      }
+    },
+    "Add to replies": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu Antworten hinzufügen"
+          }
+        }
+      }
+    },
+    "Aliases": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aliasse"
+          }
+        }
+      }
+    },
+    "All Inboxes": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Postfächer"
+          }
+        }
+      }
+    },
+    "All accounts": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Accounts"
+          }
+        }
+      }
+    },
+    "Always from sender": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immer vom Absender"
+          }
+        }
+      }
+    },
+    "Always load images from": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilder immer laden von"
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erscheinungsbild"
+          }
+        }
+      }
+    },
+    "Archive": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivieren"
+          }
+        }
+      }
+    },
+    "Attach files": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateien anhängen"
+          }
+        }
+      }
+    },
+    "Awaiting Reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antwort ausstehend"
+          }
+        }
+      }
+    },
+    "Block": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockieren"
+          }
+        }
+      }
+    },
+    "Block %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ blockieren"
+          }
+        }
+      }
+    },
+    "Block Sender…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Absender blockieren …"
+          }
+        }
+      }
+    },
+    "Blocked %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ blockiert"
+          }
+        }
+      }
+    },
+    "Blocked Senders": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockierte Absender"
+          }
+        }
+      }
+    },
+    "Bold ⌘B": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fett ⌘B"
+          }
+        }
+      }
+    },
+    "Bulleted list": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufzählung"
+          }
+        }
+      }
+    },
+    "Buttons, selection and unread marks.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schaltflächen, Auswahl und Ungelesen-Markierungen."
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        }
+      }
+    },
+    "Cc": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cc"
+          }
+        }
+      }
+    },
+    "Check for New Mail": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach neuen E-Mails suchen"
+          }
+        }
+      }
+    },
+    "Choose Picture…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild wählen …"
+          }
+        }
+      }
+    },
+    "Choose…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen …"
+          }
+        }
+      }
+    },
+    "Clean Up": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufräumen"
+          }
+        }
+      }
+    },
+    "Clean Up…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufräumen …"
+          }
+        }
+      }
+    },
+    "Clean up automatically": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch aufräumen"
+          }
+        }
+      }
+    },
+    "Conversations": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konversationen"
+          }
+        }
+      }
+    },
+    "Copied": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert"
+          }
+        }
+      }
+    },
+    "Copy Sender Address": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Absenderadresse kopieren"
+          }
+        }
+      }
+    },
+    "Couldn't move: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschieben nicht möglich: %@"
+          }
+        }
+      }
+    },
+    "Couldn't send reply: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antwort konnte nicht gesendet werden: %@"
+          }
+        }
+      }
+    },
+    "Couldn't snooze: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedervorlage nicht möglich: %@"
+          }
+        }
+      }
+    },
+    "Couldn't unsnooze: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konnte nicht aus der Wiedervorlage geholt werden: %@"
+          }
+        }
+      }
+    },
+    "Custom": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigene"
+          }
+        }
+      }
+    },
+    "Dark": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dunkel"
+          }
+        }
+      }
+    },
+    "Dark leaves designed mail as its sender built it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Dunkel“ zeigt gestaltete Mails so, wie der Absender sie gebaut hat."
+          }
+        }
+      }
+    },
+    "Deleted permanently": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endgültig gelöscht"
+          }
+        }
+      }
+    },
+    "Discard draft": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entwurf verwerfen"
+          }
+        }
+      }
+    },
+    "Don't Send": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht senden"
+          }
+        }
+      }
+    },
+    "Draft saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entwurf gesichert"
+          }
+        }
+      }
+    },
+    "Drafted by %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entworfen von %@"
+          }
+        }
+      }
+    },
+    "Drafts": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entwürfe"
+          }
+        }
+      }
+    },
+    "Drop to attach": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Anhängen hier ablegen"
+          }
+        }
+      }
+    },
+    "Each account wears its owner's photo or logo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeder Account zeigt das Foto oder Logo seines Inhabers."
+          }
+        }
+      }
+    },
+    "Edit / Cancel Schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten / Planung abbrechen"
+          }
+        }
+      }
+    },
+    "Edit in Inkwell": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Stein's Mail bearbeiten"
+          }
+        }
+      }
+    },
+    "Email": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-Mail"
+          }
+        }
+      }
+    },
+    "Enabled": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        }
+      }
+    },
+    "Entra app client ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Client-ID der Entra-App"
+          }
+        }
+      }
+    },
+    "Everyone who sends you mailing-list mail, by volume.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle, die dir Mailinglisten-Post schicken, nach Menge."
+          }
+        }
+      }
+    },
+    "Filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
+          }
+        }
+      }
+    },
+    "Flagged": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert"
+          }
+        }
+      }
+    },
+    "Folders": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordner"
+          }
+        }
+      }
+    },
+    "Forward": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiterleiten"
+          }
+        }
+      }
+    },
+    "Found on the server · %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf dem Server gefunden · %lld"
+          }
+        }
+      }
+    },
+    "Free up space": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speicher freigeben"
+          }
+        }
+      }
+    },
+    "Frees about": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gibt etwa frei:"
+          }
+        }
+      }
+    },
+    "From": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von"
+          }
+        }
+      }
+    },
+    "From: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von: %@"
+          }
+        }
+      }
+    },
+    "General": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allgemein"
+          }
+        }
+      }
+    },
+    "Glass lets your desktop show through.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Glas“ lässt den Schreibtisch durchscheinen."
+          }
+        }
+      }
+    },
+    "Hide one-time codes and sign-in links from AI apps": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einmalcodes und Anmeldelinks vor KI-Apps verbergen"
+          }
+        }
+      }
+    },
+    "Hide one-time codes in notification text": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einmalcodes im Mitteilungstext verbergen"
+          }
+        }
+      }
+    },
+    "Hide sidebar": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seitenleiste ausblenden"
+          }
+        }
+      }
+    },
+    "Hide summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zusammenfassung ausblenden"
+          }
+        }
+      }
+    },
+    "IMAP server": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IMAP-Server"
+          }
+        }
+      }
+    },
+    "Images hidden": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilder ausgeblendet"
+          }
+        }
+      }
+    },
+    "In 1 day": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In 1 Tag"
+          }
+        }
+      }
+    },
+    "In 1 week": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In 1 Woche"
+          }
+        }
+      }
+    },
+    "In 3 days": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In 3 Tagen"
+          }
+        }
+      }
+    },
+    "It's Safe": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ist sicher"
+          }
+        }
+      }
+    },
+    "Italic ⌘I": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kursiv ⌘I"
+          }
+        }
+      }
+    },
+    "Keep flagged and snoozed emails": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markierte Mails und Mails in der Wiedervorlage behalten"
+          }
+        }
+      }
+    },
+    "Label": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezeichnung"
+          }
+        }
+      }
+    },
+    "Larger": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größer"
+          }
+        }
+      }
+    },
+    "Let AI apps use your mail (MCP)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KI-Apps auf deine Mails zugreifen lassen (MCP)"
+          }
+        }
+      }
+    },
+    "Light": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hell"
+          }
+        }
+      }
+    },
+    "Load images": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilder laden"
+          }
+        }
+      }
+    },
+    "Load remote images automatically": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Externe Bilder automatisch laden"
+          }
+        }
+      }
+    },
+    "Loading unread mail…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungelesene Mails werden geladen …"
+          }
+        }
+      }
+    },
+    "Mail on your server isn’t counted": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mails auf deinem Server werden nicht mitgezählt"
+          }
+        }
+      }
+    },
+    "Mark messages as read after viewing them": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nachrichten nach dem Ansehen als gelesen markieren"
+          }
+        }
+      }
+    },
+    "Model": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modell"
+          }
+        }
+      }
+    },
+    "Move Down": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach unten"
+          }
+        }
+      }
+    },
+    "Move Up": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach oben"
+          }
+        }
+      }
+    },
+    "Move to": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschieben nach"
+          }
+        }
+      }
+    },
+    "Move to Trash": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In den Papierkorb legen"
+          }
+        }
+      }
+    },
+    "Mute Conversation": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konversation stummschalten"
+          }
+        }
+      }
+    },
+    "Muted. New replies will skip the inbox.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stummgeschaltet. Neue Antworten umgehen den Posteingang."
+          }
+        }
+      }
+    },
+    "Name": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "Needs reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antwort nötig"
+          }
+        }
+      }
+    },
+    "New Message": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Nachricht"
+          }
+        }
+      }
+    },
+    "New message": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Nachricht"
+          }
+        }
+      }
+    },
+    "No AI actions yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine KI-Aktionen"
+          }
+        }
+      }
+    },
+    "No blocked senders": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine blockierten Absender"
+          }
+        }
+      }
+    },
+    "No conversation selected": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Konversation ausgewählt"
+          }
+        }
+      }
+    },
+    "No results": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ergebnisse"
+          }
+        }
+      }
+    },
+    "No unsubscribe option in this message": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Nachricht enthält keine Abbestell-Option"
+          }
+        }
+      }
+    },
+    "Nothing scheduled": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts geplant"
+          }
+        }
+      }
+    },
+    "Notifications": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitteilungen"
+          }
+        }
+      }
+    },
+    "Numbered list": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nummerierte Liste"
+          }
+        }
+      }
+    },
+    "Off": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus"
+          }
+        }
+      }
+    },
+    "Once a day, using the settings above": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einmal täglich, mit den obigen Einstellungen"
+          }
+        }
+      }
+    },
+    "Only one-time codes and magic sign-in links pop up. Click Copy, or hover to view or archive the email. On Macs without a notch it appears at the top centre of the screen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Einmalcodes und Anmeldelinks erscheinen. Klicke auf „Kopieren“ oder fahre darüber, um die Mail anzusehen oder zu archivieren. Auf Macs ohne Notch erscheint das Fenster oben in der Mitte des Bildschirms."
+          }
+        }
+      }
+    },
+    "Open": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnen"
+          }
+        }
+      }
+    },
+    "Open at login (keeps Send Later and snoozes running)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beim Anmelden öffnen (hält „Später senden“ und Wiedervorlage am Laufen)"
+          }
+        }
+      }
+    },
+    "Open full composer (formatting, Cc/Bcc)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollständiges Schreibfenster öffnen (Formatierung, Cc/Bcc)"
+          }
+        }
+      }
+    },
+    "Or press + to add Gmail, iCloud, Outlook, Yahoo, Fastmail or any IMAP account.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oder tippe auf +, um Gmail, iCloud, Outlook, Yahoo, Fastmail oder einen beliebigen IMAP-Account hinzuzufügen."
+          }
+        }
+      }
+    },
+    "Password / app password": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort / App-Passwort"
+          }
+        }
+      }
+    },
+    "Pick Date & Time…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum und Uhrzeit wählen …"
+          }
+        }
+      }
+    },
+    "Pick a date…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum wählen …"
+          }
+        }
+      }
+    },
+    "Picture": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild"
+          }
+        }
+      }
+    },
+    "Play sounds (new mail, sent, copy, sign-in codes)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Töne abspielen (neue Mail, gesendet, kopiert, Anmeldecodes)"
+          }
+        }
+      }
+    },
+    "Popup": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Popup"
+          }
+        }
+      }
+    },
+    "Port": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port"
+          }
+        }
+      }
+    },
+    "Preview": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorschau"
+          }
+        }
+      }
+    },
+    "Print…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drucken …"
+          }
+        }
+      }
+    },
+    "Privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datenschutz"
+          }
+        }
+      }
+    },
+    "Provider": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anbieter"
+          }
+        }
+      }
+    },
+    "Quick Look": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersicht"
+          }
+        }
+      }
+    },
+    "Quoted text": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zitierter Text"
+          }
+        }
+      }
+    },
+    "Remind me if no reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erinnern, falls keine Antwort kommt"
+          }
+        }
+      }
+    },
+    "Remove %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ entfernen"
+          }
+        }
+      }
+    },
+    "Remove emails older than": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mails entfernen, die älter sind als"
+          }
+        }
+      }
+    },
+    "Removes downloaded copies from this Mac only. Every email stays on your mail server and downloads again when you open it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt nur heruntergeladene Kopien von diesem Mac. Jede Mail bleibt auf deinem Mailserver und wird beim Öffnen erneut geladen."
+          }
+        }
+      }
+    },
+    "Reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antworten"
+          }
+        }
+      }
+    },
+    "Reply All": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allen antworten"
+          }
+        }
+      }
+    },
+    "Reply to %@…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ antworten …"
+          }
+        }
+      }
+    },
+    "Reply-To (optional)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antwort an (optional)"
+          }
+        }
+      }
+    },
+    "Reply…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antworten …"
+          }
+        }
+      }
+    },
+    "Report Spam": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als Spam melden"
+          }
+        }
+      }
+    },
+    "Report as Spam": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als Spam melden"
+          }
+        }
+      }
+    },
+    "Request read receipt": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesebestätigung anfordern"
+          }
+        }
+      }
+    },
+    "Request read receipts by default": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesebestätigungen standardmäßig anfordern"
+          }
+        }
+      }
+    },
+    "Rewrite": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umformulieren"
+          }
+        }
+      }
+    },
+    "Rules": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regeln"
+          }
+        }
+      }
+    },
+    "Rules run on new mail before it reaches your inbox. They're applied on the server, so every device sees the result.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regeln laufen auf neuer Post, bevor sie deinen Posteingang erreicht. Sie wirken auf dem Server, sodass jedes Gerät das Ergebnis sieht."
+          }
+        }
+      }
+    },
+    "SMTP server": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMTP-Server"
+          }
+        }
+      }
+    },
+    "Save": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichern"
+          }
+        }
+      }
+    },
+    "Save Password": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort sichern"
+          }
+        }
+      }
+    },
+    "Save as .eml…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als .eml sichern …"
+          }
+        }
+      }
+    },
+    "Save to Downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In „Downloads“ sichern"
+          }
+        }
+      }
+    },
+    "Say hello to the user of a mail app.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sag dem Nutzer einer Mail-App Hallo."
+          }
+        }
+      }
+    },
+    "Scheduled": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplant"
+          }
+        }
+      }
+    },
+    "Scheduled for %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplant für %@"
+          }
+        }
+      }
+    },
+    "Scheduled send failed: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplantes Senden fehlgeschlagen: %@"
+          }
+        }
+      }
+    },
+    "Search & Commands…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suchen & Befehle …"
+          }
+        }
+      }
+    },
+    "Search everything": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles durchsuchen"
+          }
+        }
+      }
+    },
+    "Search or ask anything": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suchen oder etwas fragen"
+          }
+        }
+      }
+    },
+    "Select an account": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle einen Account"
+          }
+        }
+      }
+    },
+    "Send": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden"
+          }
+        }
+      }
+    },
+    "Send %@ — %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ senden — %@"
+          }
+        }
+      }
+    },
+    "Send Now": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jetzt senden"
+          }
+        }
+      }
+    },
+    "Send failed: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden fehlgeschlagen: %@"
+          }
+        }
+      }
+    },
+    "Send from": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden von"
+          }
+        }
+      }
+    },
+    "Send later": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Später senden"
+          }
+        }
+      }
+    },
+    "Sending…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird gesendet …"
+          }
+        }
+      }
+    },
+    "Sends %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sendet %@"
+          }
+        }
+      }
+    },
+    "Sent": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesendet"
+          }
+        }
+      }
+    },
+    "Server": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server"
+          }
+        }
+      }
+    },
+    "Shortcuts": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurzbefehle"
+          }
+        }
+      }
+    },
+    "Show account pictures": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account-Bilder anzeigen"
+          }
+        }
+      }
+    },
+    "Show brand icons from sender websites": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markensymbole von Absender-Websites anzeigen"
+          }
+        }
+      }
+    },
+    "Show in Finder": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Finder zeigen"
+          }
+        }
+      }
+    },
+    "Show notifications for new mail": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitteilungen für neue Mails anzeigen"
+          }
+        }
+      }
+    },
+    "Show quoted text": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zitierten Text zeigen"
+          }
+        }
+      }
+    },
+    "Show sidebar": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seitenleiste einblenden"
+          }
+        }
+      }
+    },
+    "Show sign-in codes and links below the notch": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmeldecodes und -links unter dem Notch anzeigen"
+          }
+        }
+      }
+    },
+    "Show unread only": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Ungelesene zeigen"
+          }
+        }
+      }
+    },
+    "Shown in the sidebar and composer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird in der Seitenleiste und im Schreibfenster angezeigt."
+          }
+        }
+      }
+    },
+    "Sign in to %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei %@ anmelden"
+          }
+        }
+      }
+    },
+    "Signature (optional)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signatur (optional)"
+          }
+        }
+      }
+    },
+    "Signature for %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signatur für %@"
+          }
+        }
+      }
+    },
+    "Signatures": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signaturen"
+          }
+        }
+      }
+    },
+    "Single-key shortcuts (J/K, E, R, #…)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einzeltasten-Kurzbefehle (J/K, E, R, # …)"
+          }
+        }
+      }
+    },
+    "Smaller": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kleiner"
+          }
+        }
+      }
+    },
+    "Snooze": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedervorlage"
+          }
+        }
+      }
+    },
+    "Snooze Until Tomorrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedervorlage bis morgen"
+          }
+        }
+      }
+    },
+    "Snoozed": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedervorlage"
+          }
+        }
+      }
+    },
+    "Snoozed until %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedervorlage bis %@"
+          }
+        }
+      }
+    },
+    "Spam": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spam"
+          }
+        }
+      }
+    },
+    "Startup": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        }
+      }
+    },
+    "Storage": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speicher"
+          }
+        }
+      }
+    },
+    "Subject": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Betreff"
+          }
+        }
+      }
+    },
+    "Subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements"
+          }
+        }
+      }
+    },
+    "Summarize": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zusammenfassen"
+          }
+        }
+      }
+    },
+    "Summarizing…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird zusammengefasst …"
+          }
+        }
+      }
+    },
+    "System": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        }
+      }
+    },
+    "Test": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testen"
+          }
+        }
+      }
+    },
+    "Test Connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbindung testen"
+          }
+        }
+      }
+    },
+    "Theme": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Design"
+          }
+        }
+      }
+    },
+    "Then": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dann"
+          }
+        }
+      }
+    },
+    "This message may be impersonating %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Nachricht gibt sich möglicherweise als %@ aus."
+          }
+        }
+      }
+    },
+    "To": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An"
+          }
+        }
+      }
+    },
+    "To Reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu beantworten"
+          }
+        }
+      }
+    },
+    "To: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An: %@"
+          }
+        }
+      }
+    },
+    "Toggle Flag": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markierung umschalten"
+          }
+        }
+      }
+    },
+    "Toggle Read": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gelesen/Ungelesen umschalten"
+          }
+        }
+      }
+    },
+    "Tracking pixels and link trackers are always removed. Remote images never load in Spam.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tracking-Pixel und Link-Tracker werden immer entfernt. Externe Bilder werden in Spam nie geladen."
+          }
+        }
+      }
+    },
+    "Translate to…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersetzen nach …"
+          }
+        }
+      }
+    },
+    "Trash": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Papierkorb"
+          }
+        }
+      }
+    },
+    "Trust these recipients for this session": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diesen Empfängern in dieser Sitzung vertrauen"
+          }
+        }
+      }
+    },
+    "Turn on Inkwell MCP": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MCP von Stein's Mail aktivieren"
+          }
+        }
+      }
+    },
+    "Unblock": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockierung aufheben"
+          }
+        }
+      }
+    },
+    "Underline ⌘U": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unterstrichen ⌘U"
+          }
+        }
+      }
+    },
+    "Undo": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widerrufen"
+          }
+        }
+      }
+    },
+    "Undo Send": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden widerrufen"
+          }
+        }
+      }
+    },
+    "Unread": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungelesen"
+          }
+        }
+      }
+    },
+    "Unread Only": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Ungelesene"
+          }
+        }
+      }
+    },
+    "Unsnooze": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Wiedervorlage holen"
+          }
+        }
+      }
+    },
+    "Unsubscribe": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbestellen"
+          }
+        }
+      }
+    },
+    "Unsubscribe failed: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbestellen fehlgeschlagen: %@"
+          }
+        }
+      }
+    },
+    "Unsubscribe request sent to %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbestell-Anfrage an %@ gesendet"
+          }
+        }
+      }
+    },
+    "Unsubscribed from %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ abbestellt"
+          }
+        }
+      }
+    },
+    "Use Send Later in the composer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutze „Später senden“ im Schreibfenster."
+          }
+        }
+      }
+    },
+    "Used for thread summaries, suggested replies and Rewrite. Smart tabs, To Reply and phishing checks always run on-device without AI.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird für Zusammenfassungen, Antwortvorschläge und „Umformulieren“ genutzt. Intelligente Reiter, „Zu beantworten“ und Phishing-Prüfungen laufen immer auf dem Gerät ohne KI."
+          }
+        }
+      }
+    },
+    "Username": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzername"
+          }
+        }
+      }
+    },
+    "Username (if different)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzername (falls abweichend)"
+          }
+        }
+      }
+    },
+    "View as": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Darstellung"
+          }
+        }
+      }
+    },
+    "When": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wann"
+          }
+        }
+      }
+    },
+    "Window background": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fensterhintergrund"
+          }
+        }
+      }
+    },
+    "Your name": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Name"
+          }
+        }
+      }
+    },
+    "from": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "von"
+          }
+        }
+      }
+    },
+    "from %@ email%@": {
+      "extractionState": "manual",
+      "localizations": {}
+    },
+    "· %@ emails · %@ downloaded": {
+      "extractionState": "manual",
+      "localizations": {}
+    },
+    "↑↓ navigate   ↵ open   esc close": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "↑↓ navigieren   ↵ öffnen   esc schließen"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
