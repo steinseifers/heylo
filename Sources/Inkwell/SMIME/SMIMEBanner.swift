@@ -23,7 +23,9 @@ struct SMIMEBanner: View {
                 if status.encrypted { Text("Encrypted").font(.subheadline.weight(.semibold)) }
                 if status.signed {
                     if status.signatureValid {
-                        Text(status.trusted ? "Signed by \(status.signerEmail ?? "the sender")" : "Signed by \(status.signerEmail ?? "the sender"), certificate not trusted").font(.subheadline.weight(.semibold))
+                        let who = status.signerEmail ?? "–"
+                        if status.trusted { Text("Signed by \(who)").font(.subheadline.weight(.semibold)) }
+                        else { Text("Signed by \(who), certificate not trusted").font(.subheadline.weight(.semibold)) }
                     } else {
                         Text("Signature invalid").font(.subheadline.weight(.semibold))
                     }

@@ -143,7 +143,9 @@ extension MailStore {
     /// Actually sends over SMTP and files a copy in Sent.
     func deliver(_ d: OutgoingDraft) async throws {
         let built = try buildOutgoing(d)
-        let (acct, to, cc, bcc, from, data, mid) = (built.acct, built.to, built.cc, built.bcc, built.from, built.data, built.mid)
+        let (acct, to, cc, bcc, from, mid) = (built.acct, built.to, built.cc, built.bcc, built.from, built.mid)
+        let plan = SMIMESending.plan(for: d, from: from.email, recipients: (to + cc + bcc).map(\.email))
+        let data = try SMIMESending.apply(built.data, sign: plan.sign, encrypt: plan.encrypt, from: from.email, recipients: (to + cc + bcc).map(\.email))
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
             DispatchQueue.global().async {
                 do {

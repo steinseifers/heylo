@@ -29,6 +29,10 @@ extension MailStore {
         var extra: [(String, String)] = []
         if d.requestReadReceipt { extra.append(("Disposition-Notification-To", from.email)) }
         if includeBcc, !bcc.isEmpty { extra.append(("Bcc", d.bcc)) }
+        if includeBcc {  // scheduled: the Mac that sends applies S/MIME with its own keychain
+            let plan = SMIMESending.plan(for: d, from: (alias?.email ?? acct.email), recipients: (to + cc + bcc).map(\.email))
+            if let m = SMIMESending.marker(sign: plan.sign, encrypt: plan.encrypt) { extra.append((SMIMESending.headerName, m)) }
+        }
         let html = "<html><body>\(d.html.isEmpty ? HTMLText.fromPlain(d.plain) : d.html)\(d.quotedHTML.isEmpty ? "" : "<br>" + d.quotedHTML)</body></html>"
         let text = d.plain + (d.quotedPlain.isEmpty ? "" : "\n\n" + d.quotedPlain)
         let (data, mid) = MIME.build(from: from, to: to, cc: cc, replyTo: alias?.replyTo, subject: d.subject, text: text, html: html,
@@ -95,14 +99,17 @@ extension MailStore {
                 let outcomes = try ScheduledSend.processDue(c, folder: folder, instance: MailStore.sendInstanceID, send: { raw in
                     let env = ScheduledSend.envelope(raw)
                     guard !env.recipients.isEmpty else { throw ScheduledSend.NotSent(underlying: nil) }
+                    let final: Data
+                    do { final = try SMIMESending.applyMarker(to: env.message, from: env.from, recipients: env.recipients) }
+                    catch { throw ScheduledSend.NotSent(underlying: error) }  // e.g. no certificate on this Mac: another Mac may send it
                     let smtp: SMTPClient
                     do { smtp = try SMTPClient(host: acct.smtpHost, port: acct.smtpPort, security: acct.smtpSecurity); try smtp.login(account: acct) }
                     catch { throw ScheduledSend.NotSent(underlying: error) }
-                    try smtp.sendMail(from: env.from, recipients: env.recipients, data: env.message)
+                    try smtp.sendMail(from: env.from, recipients: env.recipients, data: final)
                     smtp.quit()
                 }, afterSend: { _, raw in
                     // Gmail and Microsoft file sent mail themselves.
-                    if !autoFiles, let sent = acct.sentFolder { try? c.append(sent, flags: "\\Seen", message: ScheduledSend.stripBcc(raw)) }
+                    if !autoFiles, let sent = acct.sentFolder { try? c.append(sent, flags: "\\Seen", message: ScheduledSend.stripBcc(ScheduledSend.stripHeader(raw, SMIMESending.headerName))) }
                 })
                 return (outcomes, try ScheduledSend.infos(c, folder: folder))
             }

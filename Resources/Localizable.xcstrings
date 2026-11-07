@@ -178,6 +178,17 @@
         }
       }
     },
+    "A scheduled message was claimed but never finished. It may or may not have been sent. Check Sent; the message is still in Drafts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine geplante Nachricht wurde reserviert, aber nie abgeschlossen. Sie ist möglicherweise gesendet worden. Prüfe „Gesendet“; die Nachricht liegt noch in den Entwürfen."
+          }
+        }
+      }
+    },
     "ACCOUNTS": {
       "extractionState": "manual",
       "localizations": {
@@ -541,6 +552,17 @@
         }
       }
     },
+    "Can't encrypt: no certificate for %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschlüsseln nicht möglich: kein Zertifikat für %@"
+          }
+        }
+      }
+    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -867,6 +889,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aktiv"
+          }
+        }
+      }
+    },
+    "Encrypt with S/MIME": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit S/MIME verschlüsseln"
+          }
+        }
+      }
+    },
+    "Encrypted": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschlüsselt"
           }
         }
       }
@@ -2224,6 +2268,17 @@
         }
       }
     },
+    "Sign with S/MIME": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit S/MIME signieren"
+          }
+        }
+      }
+    },
     "Signature (optional)": {
       "extractionState": "manual",
       "localizations": {
@@ -2246,6 +2301,17 @@
         }
       }
     },
+    "Signature invalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signatur ungültig"
+          }
+        }
+      }
+    },
     "Signatures": {
       "extractionState": "manual",
       "localizations": {
@@ -2253,6 +2319,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Signaturen"
+          }
+        }
+      }
+    },
+    "Signed by %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signiert von %@"
+          }
+        }
+      }
+    },
+    "Signed by %@, certificate not trusted": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signiert von %@, Zertifikat nicht vertrauenswürdig"
           }
         }
       }
@@ -2433,6 +2521,50 @@
         }
       }
     },
+    "The S/MIME data could not be read.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die S/MIME-Daten konnten nicht gelesen werden."
+          }
+        }
+      }
+    },
+    "The message was changed after it was signed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Nachricht wurde nach dem Signieren verändert."
+          }
+        }
+      }
+    },
+    "The signature could not be checked.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Signatur konnte nicht geprüft werden."
+          }
+        }
+      }
+    },
+    "The signature could not be read.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Signatur konnte nicht gelesen werden."
+          }
+        }
+      }
+    },
     "Theme": {
       "extractionState": "manual",
       "localizations": {
@@ -2451,6 +2583,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dann"
+          }
+        }
+      }
+    },
+    "This message is already being sent.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Nachricht wird gerade gesendet."
+          }
+        }
+      }
+    },
+    "This message is encrypted for a certificate that isn't on this Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Nachricht ist für ein Zertifikat verschlüsselt, das nicht auf diesem Mac liegt."
           }
         }
       }

@@ -346,6 +346,23 @@ struct ComposeView: View {
         }
     }
 
+    private var smimeAddress: String {
+        store.identity(for: draft.accountId, fromEmail: draft.fromEmail).map { $0.1?.email ?? $0.0.email } ?? ""
+    }
+
+    /// Sign / encrypt switches, shown when the sender has an S/MIME certificate.
+    @ViewBuilder private var smimeControls: some View {
+        let from = smimeAddress
+        if !from.isEmpty, SMIMESending.hasIdentity(from) {
+            let plan = SMIMESending.plan(for: draft, from: from, recipients: (MIME.parseAddressList(draft.to) + MIME.parseAddressList(draft.cc) + MIME.parseAddressList(draft.bcc)).map(\.email))
+            Toggle(isOn: Binding(get: { plan.sign }, set: { draft.smimeSign = $0 })) { Image(systemName: "checkmark.seal") }
+                .toggleStyle(.button).buttonStyle(.borderless).help("Sign with S/MIME")
+            Toggle(isOn: Binding(get: { plan.encrypt }, set: { draft.smimeEncrypt = $0 })) { Image(systemName: plan.encrypt ? "lock.fill" : "lock.open") }
+                .toggleStyle(.button).buttonStyle(.borderless).disabled(!plan.canEncrypt)
+                .help(plan.canEncrypt ? "Encrypt with S/MIME" : "Can't encrypt: no certificate for \(plan.missingCertificates.joined(separator: ", "))")
+        }
+    }
+
     private var bottomBar: some View {
         HStack(spacing: 10) {
             Button { pickFiles() } label: { Image(systemName: "paperclip") }.buttonStyle(.borderless).help("Attach files")
@@ -364,6 +381,7 @@ struct ComposeView: View {
                 Image(systemName: draft.remindAfter == nil ? "bell" : "bell.badge.fill")
             }
             .menuStyle(.borderlessButton).fixedSize().help("Remind me if no reply")
+            smimeControls
             Button(role: .destructive) { discard() } label: { Image(systemName: "trash") }.buttonStyle(.borderless).help("Discard draft")
             Spacer()
             if let at = draft.sendAt { Text("Sends \(at.formatted(date: .abbreviated, time: .shortened))").font(.caption).foregroundStyle(.secondary) }

@@ -268,6 +268,9 @@ struct OutgoingDraft: Codable, Identifiable, Hashable {
     var requestReadReceipt = false
     var draftedBy: String?
     var serverDraftMessageId: String?
+    /// S/MIME overrides; nil follows the defaults (sign if a certificate exists, encrypt if all recipients have one).
+    var smimeSign: Bool?
+    var smimeEncrypt: Bool?
 }
 
 extension Color {

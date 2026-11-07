@@ -80,11 +80,30 @@ D = {
 "Username": "Benutzername", "Username (if different)": "Benutzername (falls abweichend)", "View as": "Darstellung", "When": "Wann", "Window background": "Fensterhintergrund",
 "Your name": "Dein Name", "from": "von", "↑↓ navigate   ↵ open   esc close": "↑↓ navigieren   ↵ öffnen   esc schließen",
 }
+EXTRA = {
+"Encrypted": "Verschlüsselt",
+"Signed by %@": "Signiert von %@",
+"Signed by %@, certificate not trusted": "Signiert von %@, Zertifikat nicht vertrauenswürdig",
+"Signature invalid": "Signatur ungültig",
+"The signature could not be read.": "Die Signatur konnte nicht gelesen werden.",
+"The message was changed after it was signed.": "Die Nachricht wurde nach dem Signieren verändert.",
+"The signature could not be checked.": "Die Signatur konnte nicht geprüft werden.",
+"The S/MIME data could not be read.": "Die S/MIME-Daten konnten nicht gelesen werden.",
+"This message is encrypted for a certificate that isn't on this Mac.": "Diese Nachricht ist für ein Zertifikat verschlüsselt, das nicht auf diesem Mac liegt.",
+"Sign with S/MIME": "Mit S/MIME signieren",
+"Encrypt with S/MIME": "Mit S/MIME verschlüsseln",
+"Can't encrypt: no certificate for %@": "Verschlüsseln nicht möglich: kein Zertifikat für %@",
+"A scheduled message was claimed but never finished. It may or may not have been sent. Check Sent; the message is still in Drafts.": "Eine geplante Nachricht wurde reserviert, aber nie abgeschlossen. Sie ist möglicherweise gesendet worden. Prüfe „Gesendet“; die Nachricht liegt noch in den Entwürfen.",
+"This message is already being sent.": "Diese Nachricht wird gerade gesendet.",
+}
+
 if __name__ == "__main__":
     path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Resources", "Localizable.xcstrings")
     cat = json.load(open(path)); n = 0
-    for k, v in D.items():
-        if k not in cat["strings"]: print("unknown key (skipped):", k); continue
+    for k, v in {**D, **EXTRA}.items():
+        if k not in cat["strings"]:
+            if k in EXTRA: cat["strings"][k] = {"extractionState": "manual", "localizations": {}}
+            else: print("unknown key (skipped):", k); continue
         cat["strings"][k]["localizations"] = {"de": {"stringUnit": {"state": "translated", "value": v}}}; n += 1
     json.dump(cat, open(path, "w"), ensure_ascii=False, indent=2, sort_keys=True)
     print(n, "translations applied")

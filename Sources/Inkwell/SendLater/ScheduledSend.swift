@@ -154,13 +154,15 @@ enum ScheduledSend {
         return (p.from.email, Array(NSOrderedSet(array: rcpt)) as? [String] ?? rcpt, stripBcc(raw))
     }
 
-    static func stripBcc(_ raw: Data) -> Data {
+    static func stripHeader(_ raw: Data, _ name: String) -> Data { stripBcc(raw, header: name) }
+
+    static func stripBcc(_ raw: Data, header: String = "bcc") -> Data {
         guard let split = raw.range(of: Data("\r\n\r\n".utf8)) else { return raw }
         let head = String(decoding: raw[..<split.lowerBound], as: UTF8.self)
         var out: [String] = [], skipping = false
         for line in head.components(separatedBy: "\r\n") {
             if line.hasPrefix(" ") || line.hasPrefix("\t") { if !skipping { out.append(line) }; continue }
-            skipping = line.lowercased().hasPrefix("bcc:")
+            skipping = line.lowercased().hasPrefix(header.lowercased() + ":")
             if !skipping { out.append(line) }
         }
         return Data(out.joined(separator: "\r\n").utf8) + raw[split.lowerBound...]
