@@ -15,6 +15,8 @@ struct ParsedMessage {
     var html: String = ""
     var attachments: [MIMEPartAttachment] = []
     var calendar: String?
+    /// Set when the message is S/MIME signed and/or encrypted (display path only).
+    var smime: SMIMEStatus?
 
     func header(_ name: String) -> String {
         headers.first { $0.0.caseInsensitiveCompare(name) == .orderedSame }?.1 ?? ""

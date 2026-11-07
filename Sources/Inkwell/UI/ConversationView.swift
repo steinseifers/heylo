@@ -247,6 +247,7 @@ struct ConversationView: View {
             .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(.red.opacity(0.2)))
         }
+        ForEach(messages.compactMap { m in parsed[m.id]?.smime.map { (id: m.id, status: $0) } }, id: \.id) { SMIMEBanner(status: $0.status) }
         let cleaned = messages.compactMap { m in parsed[m.id].flatMap { $0.html.isEmpty ? nil : (m, Privacy.clean($0.html)) } }
         let blocked = cleaned.filter { !remoteAllowed($0.0) && $0.1.hasRemoteImages }.map(\.0)
         let trackers = cleaned.reduce(0) { $0 + $1.1.trackersRemoved }

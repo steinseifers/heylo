@@ -597,11 +597,11 @@ final class MailStore {
     }
 
     func loadBody(_ m: MessageRecord) async -> ParsedMessage? {
-        if let raw = db.raw(for: m.id) { return MIME.parse(raw) }
+        if let raw = db.raw(for: m.id) { return MIME.parseForDisplay(raw) }
         guard let conn = bodyConnection(m.accountId), let acct = account(m.accountId) else { return nil }
         let db = self.db
         let raw = try? await conn.run { c in try SyncEngine.fetchBody(c, rec: m, account: acct, db: db) }
-        return (raw ?? nil).map(MIME.parse)
+        return (raw ?? nil).map(MIME.parseForDisplay)
     }
 
     /// Loads many bodies at once: cached ones from disk, the rest in one FETCH per folder
@@ -611,7 +611,7 @@ final class MailStore {
         var missing: [MessageRecord] = []
         for m in msgs {
             if let p = parsedCache[m.id] { out[m.id] = p }
-            else if let raw = db.raw(for: m.id) { out[m.id] = MIME.parse(raw) } else { missing.append(m) }
+            else if let raw = db.raw(for: m.id) { out[m.id] = MIME.parseForDisplay(raw) } else { missing.append(m) }
         }
         let db = self.db
         for (_, group) in Dictionary(grouping: missing, by: { $0.accountId.uuidString + "|" + $0.folder }) {
@@ -625,7 +625,7 @@ final class MailStore {
             for m in group {
                 guard let raw = fetched[m.uid] else { continue }
                 SyncEngine.applyBody(raw, to: m, account: acct, db: db)
-                out[m.id] = MIME.parse(raw)
+                out[m.id] = MIME.parseForDisplay(raw)
             }
         }
         return out

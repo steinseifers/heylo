@@ -89,6 +89,31 @@ enum SMIMETest {
             let innerParts = SMIME.splitSigned(body: inner[split.upperBound...], boundary: boundary)
             let innerOK = try innerParts.map { try SMIME.verify(signature: $0.signature, content: $0.content).0.signatureValid } ?? false
             check(innerOK, "signed + encrypted message opens and verifies")
+
+            // 5. Whole messages: wrap for sending, open for display.
+            SMIMEKeychain.rememberCertificates = false
+            let plain = Data("From: Me <me@example.invalid>\r\nTo: you@example.invalid\r\nSubject: Test\r\nDate: Sat, 7 Nov 2026 12:00:00 +0100\r\nMessage-ID: <w1@example.invalid>\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nSecret plan: ship on Friday. Grüße\r\n".utf8)
+            check(!SMIME.looksLikeSMIME(plain), "ordinary mail is not treated as S/MIME")
+            let signedOnly = try SMIME.wrap(message: plain, signWith: identity, encryptTo: [])
+            let so = SMIME.openForDisplay(signedOnly, keychain: keychain)
+            check(so?.status.signed == true && so?.status.signatureValid == true && so?.status.encrypted == false, "signed message: signature valid, not encrypted")
+            check(String(decoding: signedOnly, as: UTF8.self).contains("Subject: Test"), "headers stay readable in a signed message")
+            let signedAndEncrypted = try SMIME.wrap(message: plain, signWith: identity, encryptTo: [cert])
+            check(!String(decoding: signedAndEncrypted, as: UTF8.self).contains("Secret plan"), "encrypted message hides the content")
+            check(String(decoding: signedAndEncrypted, as: UTF8.self).contains("Subject: Test"), "headers of an encrypted message stay readable")
+            let bo = SMIME.openForDisplay(signedAndEncrypted, keychain: keychain)
+            check(bo?.status.encrypted == true && bo?.status.signed == true && bo?.status.signatureValid == true, "signed + encrypted message opens: encrypted, signed, valid")
+            check(bo.map { MIME.parse($0.message).text.contains("Secret plan: ship on Friday. Grüße") } == true, "decrypted text is available for display")
+            check(bo.map { MIME.parse($0.message).subject == "Test" } == true, "decrypted message keeps the outer headers")
+            let encOnly = try SMIME.wrap(message: plain, signWith: nil, encryptTo: [cert])
+            let eo = SMIME.openForDisplay(encOnly, keychain: keychain)
+            check(eo?.status.encrypted == true && eo?.status.signed == false, "encrypted-only message opens")
+            var tamperedMsg = signedOnly
+            if let r = tamperedMsg.range(of: Data("Secret plan".utf8)) { tamperedMsg[r.lowerBound] = UInt8(ascii: "X") }
+            let tm = SMIME.openForDisplay(tamperedMsg, keychain: keychain)
+            check(tm?.status.signed == true && tm?.status.signatureValid == false && tm?.status.problem != nil, "a changed signed message is flagged")
+            // The stored raw message never contains plain text of an encrypted mail.
+            check(!signedAndEncrypted.contains(Data("Secret plan".utf8)), "raw (stored) encrypted message has no plain text")
         } catch { check(false, "unexpected error: \(error.localizedDescription)") }
         if let oldList { SecKeychainSetSearchList(oldList) }
         SecKeychainDelete(keychain)
