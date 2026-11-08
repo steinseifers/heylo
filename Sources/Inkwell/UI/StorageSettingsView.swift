@@ -103,7 +103,7 @@ struct StorageSettings: View {
         .animation(.snappy, value: report?.total)
     }
 
-    private func legend(_ title: String, _ value: Int64?, _ color: Color) -> some View {
+    private func legend(_ title: LocalizedStringKey, _ value: Int64?, _ color: Color) -> some View {
         HStack(spacing: 7) {
             RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 8, height: 8)
             Text(title).font(.callout).foregroundStyle(Theme.ink2)
@@ -232,11 +232,11 @@ struct StorageSettings: View {
 
     // MARK: pieces
 
-    private func sectionLabel(_ s: String) -> some View {
+    private func sectionLabel(_ s: LocalizedStringKey) -> some View {
         Text(s).font(.subheadline.weight(.semibold)).tracking(0.66).foregroundStyle(Theme.muted)
     }
 
-    private func radio(_ on: Bool, _ title: String, _ detail: String, _ select: @escaping () -> Void) -> some View {
+    private func radio(_ on: Bool, _ title: LocalizedStringKey, _ detail: LocalizedStringKey, _ select: @escaping () -> Void) -> some View {
         Button(action: select) {
             HStack(alignment: .top, spacing: 9) {
                 ZStack {
@@ -255,7 +255,7 @@ struct StorageSettings: View {
         .buttonStyle(.borderless)
     }
 
-    private func link(_ title: String, _ action: @escaping () async -> Void) -> some View {
+    private func link(_ title: LocalizedStringKey, _ action: @escaping () async -> Void) -> some View {
         Button { Task { await action() } } label: {
             Text(title).font(.body.weight(.medium)).foregroundStyle(Theme.ink2)
         }

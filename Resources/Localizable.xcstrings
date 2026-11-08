@@ -108,6 +108,28 @@
         }
       }
     },
+    "%lld unread": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ungelesen"
+          }
+        }
+      }
+    },
+    "(no subject)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Kein Betreff)"
+          }
+        }
+      }
+    },
     "+%lld · %@ %@": {
       "extractionState": "manual",
       "localizations": {
@@ -416,6 +438,17 @@
         }
       }
     },
+    "Add an account to start": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge einen Account hinzu, um zu starten"
+          }
+        }
+      }
+    },
     "Add to replies": {
       "extractionState": "manual",
       "localizations": {
@@ -467,6 +500,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alle Accounts"
+          }
+        }
+      }
+    },
+    "All caught up": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles erledigt"
+          }
+        }
+      }
+    },
+    "All inboxes": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Postfächer"
+          }
+        }
+      }
+    },
+    "Also removed from the list and local search. Unread emails are kept": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird auch aus der Liste und der lokalen Suche entfernt. Ungelesene Mails bleiben erhalten"
           }
         }
       }
@@ -548,6 +614,17 @@
         }
       }
     },
+    "BY ACCOUNT": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NACH ACCOUNT"
+          }
+        }
+      }
+    },
     "Bigger": {
       "extractionState": "manual",
       "localizations": {
@@ -614,6 +691,17 @@
         }
       }
     },
+    "Bodies and attachments only": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Inhalte und Anhänge"
+          }
+        }
+      }
+    },
     "Bold": {
       "extractionState": "manual",
       "localizations": {
@@ -669,6 +757,28 @@
         }
       }
     },
+    "Can't reach server": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server nicht erreichbar"
+          }
+        }
+      }
+    },
+    "Can't reach servers": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server nicht erreichbar"
+          }
+        }
+      }
+    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -680,6 +790,17 @@
         }
       }
     },
+    "Category": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorie"
+          }
+        }
+      }
+    },
     "Cc": {
       "extractionState": "manual",
       "localizations": {
@@ -687,6 +808,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cc"
+          }
+        }
+      }
+    },
+    "Chat": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chat"
           }
         }
       }
@@ -724,6 +856,17 @@
         }
       }
     },
+    "Classic": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klassisch"
+          }
+        }
+      }
+    },
     "Clean Up": {
       "extractionState": "manual",
       "localizations": {
@@ -753,6 +896,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Automatisch aufräumen"
+          }
+        }
+      }
+    },
+    "Clear image cache · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildcache leeren · %@"
+          }
+        }
+      }
+    },
+    "Click “Add account” to connect Gmail, iCloud, Outlook, Yahoo, Fastmail or any IMAP account.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf „Account hinzufügen“, um Gmail, iCloud, Outlook, Yahoo, Fastmail oder einen beliebigen IMAP-Account zu verbinden."
+          }
+        }
+      }
+    },
+    "Commands": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Befehle"
           }
         }
       }
@@ -944,6 +1120,17 @@
         }
       }
     },
+    "EMAILS": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-MAILS"
+          }
+        }
+      }
+    },
     "Each account wears its owner's photo or logo.": {
       "extractionState": "manual",
       "localizations": {
@@ -988,6 +1175,28 @@
         }
       }
     },
+    "Emails & attachments": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-Mails & Anhänge"
+          }
+        }
+      }
+    },
+    "Emails stay in your list and search by subject and sender": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mails bleiben in der Liste und über Betreff und Absender durchsuchbar"
+          }
+        }
+      }
+    },
     "Enabled": {
       "extractionState": "manual",
       "localizations": {
@@ -1021,6 +1230,17 @@
         }
       }
     },
+    "Entire emails": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Komplette E-Mails"
+          }
+        }
+      }
+    },
     "Entra app client ID": {
       "extractionState": "manual",
       "localizations": {
@@ -1039,6 +1259,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alle, die dir Mailinglisten-Post schicken, nach Menge."
+          }
+        }
+      }
+    },
+    "FILE": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DATEI"
           }
         }
       }
@@ -1142,6 +1373,17 @@
         }
       }
     },
+    "Friday": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Freitag"
+          }
+        }
+      }
+    },
     "From": {
       "extractionState": "manual",
       "localizations": {
@@ -1182,6 +1424,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "„Glas“ lässt den Schreibtisch durchscheinen."
+          }
+        }
+      }
+    },
+    "Has attachment": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat Anhang"
           }
         }
       }
@@ -1296,6 +1549,28 @@
         }
       }
     },
+    "Inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingang"
+          }
+        }
+      }
+    },
+    "Is mailing list": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ist Mailingliste"
+          }
+        }
+      }
+    },
     "It's Safe": {
       "extractionState": "manual",
       "localizations": {
@@ -1329,6 +1604,17 @@
         }
       }
     },
+    "Just now": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerade eben"
+          }
+        }
+      }
+    },
     "Keep flagged and snoozed emails": {
       "extractionState": "manual",
       "localizations": {
@@ -1358,6 +1644,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Größer"
+          }
+        }
+      }
+    },
+    "Later Today": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Später heute"
           }
         }
       }
@@ -1417,6 +1714,28 @@
         }
       }
     },
+    "Loading…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird geladen …"
+          }
+        }
+      }
+    },
+    "Mail list": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mailliste"
+          }
+        }
+      }
+    },
     "Mail on your server isn’t counted": {
       "extractionState": "manual",
       "localizations": {
@@ -1439,6 +1758,17 @@
         }
       }
     },
+    "Mark as read": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als gelesen markieren"
+          }
+        }
+      }
+    },
     "Mark messages as read after viewing them": {
       "extractionState": "manual",
       "localizations": {
@@ -1457,6 +1787,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nachricht"
+          }
+        }
+      }
+    },
+    "Messages": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nachrichten"
           }
         }
       }
@@ -1538,6 +1879,17 @@
         }
       }
     },
+    "Move to folder": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Ordner verschieben"
+          }
+        }
+      }
+    },
     "Mute Conversation": {
       "extractionState": "manual",
       "localizations": {
@@ -1604,6 +1956,17 @@
         }
       }
     },
+    "Next Week": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächste Woche"
+          }
+        }
+      }
+    },
     "No AI actions yet": {
       "extractionState": "manual",
       "localizations": {
@@ -1611,6 +1974,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Noch keine KI-Aktionen"
+          }
+        }
+      }
+    },
+    "No accounts yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Accounts"
           }
         }
       }
@@ -1648,6 +2022,28 @@
         }
       }
     },
+    "No snoozed mail": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Mails in der Wiedervorlage"
+          }
+        }
+      }
+    },
+    "No unread mail": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine ungelesenen Mails"
+          }
+        }
+      }
+    },
     "No unsubscribe option in this message": {
       "extractionState": "manual",
       "localizations": {
@@ -1659,6 +2055,17 @@
         }
       }
     },
+    "Not synced yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht synchronisiert"
+          }
+        }
+      }
+    },
     "Nothing scheduled": {
       "extractionState": "manual",
       "localizations": {
@@ -1666,6 +2073,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nichts geplant"
+          }
+        }
+      }
+    },
+    "Nothing waiting on you": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts wartet auf dich"
           }
         }
       }
@@ -1688,6 +2106,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nummerierte Liste"
+          }
+        }
+      }
+    },
+    "OLDEST": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ÄLTESTE"
+          }
+        }
+      }
+    },
+    "ON THIS MAC": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AUF DIESEM MAC"
           }
         }
       }
@@ -1758,6 +2198,17 @@
         }
       }
     },
+    "Optimize search index": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suchindex optimieren"
+          }
+        }
+      }
+    },
     "Or press + to add Gmail, iCloud, Outlook, Yahoo, Fastmail or any IMAP account.": {
       "extractionState": "manual",
       "localizations": {
@@ -1765,6 +2216,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Oder tippe auf +, um Gmail, iCloud, Outlook, Yahoo, Fastmail oder einen beliebigen IMAP-Account hinzuzufügen."
+          }
+        }
+      }
+    },
+    "Other": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonstiges"
           }
         }
       }
@@ -1952,6 +2414,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Erinnern, falls keine Antwort kommt"
+          }
+        }
+      }
+    },
+    "Remind me if no reply by…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erinnern, falls bis … keine Antwort kommt"
           }
         }
       }
@@ -2203,6 +2676,17 @@
         }
       }
     },
+    "SIZE": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GRÖSSE"
+          }
+        }
+      }
+    },
     "SMTP server": {
       "extractionState": "manual",
       "localizations": {
@@ -2269,6 +2753,17 @@
         }
       }
     },
+    "Schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planen"
+          }
+        }
+      }
+    },
     "Scheduled": {
       "extractionState": "manual",
       "localizations": {
@@ -2320,6 +2815,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alles durchsuchen"
+          }
+        }
+      }
+    },
+    "Search index": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suchindex"
           }
         }
       }
@@ -2423,6 +2929,28 @@
         }
       }
     },
+    "Send later…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Später senden …"
+          }
+        }
+      }
+    },
+    "Sender contains": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Absender enthält"
+          }
+        }
+      }
+    },
     "Sending…": {
       "extractionState": "manual",
       "localizations": {
@@ -2467,6 +2995,17 @@
         }
       }
     },
+    "Set Reminder": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erinnerung setzen"
+          }
+        }
+      }
+    },
     "Shortcuts": {
       "extractionState": "manual",
       "localizations": {
@@ -2507,6 +3046,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Markensymbole von Absender-Websites anzeigen"
+          }
+        }
+      }
+    },
+    "Show category": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorie anzeigen"
           }
         }
       }
@@ -2617,6 +3167,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mit S/MIME signieren"
+          }
+        }
+      }
+    },
+    "Sign-in link": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmeldelink"
           }
         }
       }
@@ -2742,6 +3303,17 @@
         }
       }
     },
+    "Snooze until…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedervorlage bis …"
+          }
+        }
+      }
+    },
     "Snoozed": {
       "extractionState": "manual",
       "localizations": {
@@ -2808,6 +3380,17 @@
         }
       }
     },
+    "Subject contains": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Betreff enthält"
+          }
+        }
+      }
+    },
     "Subscriptions": {
       "extractionState": "manual",
       "localizations": {
@@ -2837,6 +3420,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wird zusammengefasst …"
+          }
+        }
+      }
+    },
+    "Syncing…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisiere …"
           }
         }
       }
@@ -2881,6 +3475,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verbindung testen"
+          }
+        }
+      }
+    },
+    "Text contains": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text enthält"
           }
         }
       }
@@ -2951,6 +3556,28 @@
         }
       }
     },
+    "This Evening": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heute Abend"
+          }
+        }
+      }
+    },
+    "This Weekend": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Wochenende"
+          }
+        }
+      }
+    },
     "This message is already being sent.": {
       "extractionState": "manual",
       "localizations": {
@@ -3006,6 +3633,17 @@
         }
       }
     },
+    "To reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu beantworten"
+          }
+        }
+      }
+    },
     "To: %@": {
       "extractionState": "manual",
       "localizations": {
@@ -3013,6 +3651,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "An: %@"
+          }
+        }
+      }
+    },
+    "Today": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heute"
           }
         }
       }
@@ -3035,6 +3684,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gelesen/Ungelesen umschalten"
+          }
+        }
+      }
+    },
+    "Tomorrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Morgen"
           }
         }
       }
@@ -3237,6 +3897,39 @@
         }
       }
     },
+    "Updated %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert um %@"
+          }
+        }
+      }
+    },
+    "Updated %lld min ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vor %lld Min. aktualisiert"
+          }
+        }
+      }
+    },
+    "Updated just now": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerade aktualisiert"
+          }
+        }
+      }
+    },
     "Updates": {
       "extractionState": "manual",
       "localizations": {
@@ -3292,6 +3985,17 @@
         }
       }
     },
+    "Verification code": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestätigungscode"
+          }
+        }
+      }
+    },
     "View as": {
       "extractionState": "manual",
       "localizations": {
@@ -3299,6 +4003,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Darstellung"
+          }
+        }
+      }
+    },
+    "View email": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-Mail ansehen"
           }
         }
       }
@@ -3325,6 +4040,17 @@
         }
       }
     },
+    "Yesterday": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestern"
+          }
+        }
+      }
+    },
     "Your name": {
       "extractionState": "manual",
       "localizations": {
@@ -3332,6 +4058,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dein Name"
+          }
+        }
+      }
+    },
+    "code": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code"
           }
         }
       }
@@ -3406,6 +4143,39 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "link": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link"
+          }
+        }
+      }
+    },
+    "to": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "an"
+          }
+        }
+      }
+    },
+    "to %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "an %@"
           }
         }
       }

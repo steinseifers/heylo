@@ -107,12 +107,12 @@ enum SnoozeChoice: CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .laterToday: return "Later Today"
-        case .thisEvening: return "This Evening"
-        case .tomorrow: return "Tomorrow"
-        case .friday: return "Friday"
-        case .weekend: return "This Weekend"
-        case .nextWeek: return "Next Week"
+        case .laterToday: return tr("Later Today")
+        case .thisEvening: return tr("This Evening")
+        case .tomorrow: return tr("Tomorrow")
+        case .friday: return tr("Friday")
+        case .weekend: return tr("This Weekend")
+        case .nextWeek: return tr("Next Week")
         }
     }
 
@@ -135,7 +135,7 @@ enum SnoozeChoice: CaseIterable, Identifiable {
     }
 
     var subtitle: String {
-        let f = DateFormatter(); f.dateFormat = self == .laterToday || self == .thisEvening ? "h:mm a" : "EEE h:mm a"
+        let f = DateFormatter(); f.setLocalizedDateFormatFromTemplate(self == .laterToday || self == .thisEvening ? "jmm" : "EEEjmm")
         return f.string(from: date)
     }
 }
@@ -150,9 +150,12 @@ struct SnoozeMenu: View {
     }
 }
 
+/// Looks a runtime string up in the String Catalog (for text that is built in code, not written as a literal in a view).
+func tr(_ s: String) -> String { Bundle.main.localizedString(forKey: s, value: s, table: nil) }
+
 struct DatePickerSheet: View {
-    var title: String
-    var action: String
+    var title: LocalizedStringKey
+    var action: LocalizedStringKey
     var onPick: (Date) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var date = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()

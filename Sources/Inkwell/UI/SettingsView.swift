@@ -5,16 +5,16 @@ import ServiceManagement
 struct SettingsView: View {
     @Bindable var store: MailStore
     var body: some View {
-        TabView {
-            AccountsSettings(store: store).tabItem { Label("Accounts", systemImage: "at") }
-            GeneralSettings(store: store).tabItem { Label("General", systemImage: "gearshape") }
-            SignaturesSettings(store: store).tabItem { Label("Signatures", systemImage: "signature") }
-            RulesSettings(store: store).tabItem { Label("Rules", systemImage: "line.3.horizontal.decrease.circle") }
-            SubscriptionsSettings(store: store).tabItem { Label("Subscriptions", systemImage: "newspaper") }
-            PopupSettings(store: store).tabItem { Label("Popup", systemImage: "key.viewfinder") }
-            AISettings(store: store).tabItem { Label("AI", systemImage: "sparkles") }
-            StorageSettings(store: store).tabItem { Label("Storage", systemImage: "internaldrive") }
-            ShortcutsSettings(store: store).tabItem { Label("Shortcuts", systemImage: "keyboard") }
+        TabView(selection: $store.settingsTab) {
+            AccountsSettings(store: store).tabItem { Label("Accounts", systemImage: "at") }.tag("accounts")
+            GeneralSettings(store: store).tabItem { Label("General", systemImage: "gearshape") }.tag("general")
+            SignaturesSettings(store: store).tabItem { Label("Signatures", systemImage: "signature") }.tag("signatures")
+            RulesSettings(store: store).tabItem { Label("Rules", systemImage: "line.3.horizontal.decrease.circle") }.tag("rules")
+            SubscriptionsSettings(store: store).tabItem { Label("Subscriptions", systemImage: "newspaper") }.tag("subscriptions")
+            PopupSettings(store: store).tabItem { Label("Popup", systemImage: "key.viewfinder") }.tag("popup")
+            AISettings(store: store).tabItem { Label("AI", systemImage: "sparkles") }.tag("ai")
+            StorageSettings(store: store).tabItem { Label("Storage", systemImage: "internaldrive") }.tag("storage")
+            ShortcutsSettings(store: store).tabItem { Label("Shortcuts", systemImage: "keyboard") }.tag("shortcuts")
         }
         .frame(width: 720, height: 560)
         .tint(Theme.accent(store.settings.accentHex))
@@ -88,7 +88,7 @@ struct AccountsSettings: View {
     @State private var adding = false
 
     var body: some View {
-        HSplitView {
+        HStack(spacing: 0) {
             VStack(spacing: 0) {
                 List(selection: $selected) {
                     ForEach(store.settings.accounts) { a in
@@ -110,7 +110,8 @@ struct AccountsSettings: View {
                 }
                 .buttonStyle(.borderless).padding(8)
             }
-            .frame(minWidth: 200, maxWidth: 240)
+            .frame(width: 220)
+            Divider()
             Group {
                 if let s = selected, let i = store.settings.accounts.firstIndex(where: { $0.id == s }) {
                     AccountEditor(account: $store.settings.accounts[i], store: store)
@@ -121,7 +122,8 @@ struct AccountsSettings: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .sheet(isPresented: $adding) { AddAccountSheet(store: store) { selected = $0 } }
-        .onAppear { selected = selected ?? store.settings.accounts.first?.id; if store.settings.accounts.isEmpty { adding = true } }
+        .onAppear { selected = selected ?? store.settings.accounts.first?.id; if store.settings.accounts.isEmpty || store.addAccountRequested { adding = true; store.addAccountRequested = false } }
+        .onChange(of: store.addAccountRequested) { if store.addAccountRequested { adding = true; store.addAccountRequested = false } }
     }
 }
 
@@ -239,11 +241,11 @@ struct AddAccountSheet: View {
             Text("Add Account").font(.title2.weight(.semibold))
             Picker("Provider", selection: Binding(get: { preset.id }, set: { id in preset = ProviderPreset.all.first { $0.id == id }!; applyPreset() })) {
                 ForEach(ProviderPreset.all) { Text($0.name).tag($0.id) }
-            }.pickerStyle(.segmented).labelsHidden()
+            }.pickerStyle(.menu)
             Text(preset.help).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             Form {
                 TextField("Your name", text: $name)
-                TextField(isOAuth ? "Email (optional hint)" : "Email", text: $email).textContentType(.emailAddress)
+                TextField(isOAuth ? LocalizedStringKey("Email (optional hint)") : LocalizedStringKey("Email"), text: $email).textContentType(.emailAddress)
                 if isOAuth {
                     if OAuth.clientID == nil || ProcessInfo.processInfo.environment["INKWELL_OAUTH_CLIENT_ID"] == nil {
                         TextField("Entra app client ID", text: $clientID)
@@ -268,7 +270,7 @@ struct AddAccountSheet: View {
             HStack {
                 Spacer()
                 Button("Cancel") { dismiss() }.keyboardShortcut(.cancelAction)
-                Button { isOAuth ? addMicrosoft() : add() } label: { if working { ProgressView().controlSize(.small) } else { Text(isOAuth ? "Sign In with Microsoft" : "Sign In") } }
+                Button { isOAuth ? addMicrosoft() : add() } label: { if working { ProgressView().controlSize(.small) } else { Text(isOAuth ? LocalizedStringKey("Sign In with Microsoft") : LocalizedStringKey("Sign In")) } }
                     .keyboardShortcut(.defaultAction)
                     .disabled(isOAuth ? (clientID.isEmpty && OAuth.clientID == nil) || working : (email.isEmpty || password.isEmpty || working))
             }

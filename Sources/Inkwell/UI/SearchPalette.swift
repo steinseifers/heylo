@@ -71,12 +71,12 @@ struct SearchPalette: View {
             }
             .padding(.horizontal, 18).padding(.top, 16).padding(.bottom, 10)
             HStack(spacing: 6) {
-                chip(scope == nil ? "All accounts" : (store.account(scope!)?.label ?? ""), active: true) {
+                chip(scope == nil ? LocalizedStringKey("All accounts") : LocalizedStringKey(store.account(scope!)?.label ?? ""), active: true) {
                     let ids = store.accounts.map(\.id)
                     if let s = scope, let i = ids.firstIndex(of: s) { scope = i + 1 < ids.count ? ids[i + 1] : nil } else { scope = ids.first }
                 }
                 ForEach(["has:attachment", "is:unread", "from:"], id: \.self) { op in
-                    chip(op, active: query.contains(op)) {
+                    chip(LocalizedStringKey(op), active: query.contains(op)) {
                         if !query.contains(op) { query = (query.isEmpty ? "" : query + " ") + op + (op.hasSuffix(":") ? "" : " ") }
                         focused = true
                     }
@@ -91,11 +91,11 @@ struct SearchPalette: View {
                         LazyVStack(alignment: .leading, spacing: 2) {
                             let cmds = Array(commands.prefix(query.isEmpty ? 6 : 6))
                             if !cmds.isEmpty {
-                                sectionHeader(query.isEmpty ? "Commands" : "Commands")
+                                sectionHeader("Commands")
                                 ForEach(Array(cmds.enumerated()), id: \.element.id) { i, c in
                                     row(index: i) {
                                         Image(systemName: c.icon).frame(width: 24).foregroundStyle(.secondary)
-                                        Text(c.title).font(.body)
+                                        Text(LocalizedStringKey(c.title)).font(.body)
                                         Spacer()
                                         Text(c.shortcut).font(.callout).foregroundStyle(.secondary)
                                     } action: { run(c) }
@@ -155,7 +155,7 @@ struct SearchPalette: View {
         }
     }
 
-    private func chip(_ title: String, active: Bool, action: @escaping () -> Void) -> some View {
+    private func chip(_ title: LocalizedStringKey, active: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title).font(.callout.weight(.medium))
                 .foregroundStyle(active ? accent : .secondary)
@@ -189,8 +189,8 @@ struct SearchPalette: View {
 
     private var rowCount: Int { min(commands.count, 6) + min(scoped.count, 60) }
 
-    private func sectionHeader(_ s: String) -> some View {
-        Text(s.uppercased()).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, 10).padding(.top, 6).padding(.bottom, 2)
+    private func sectionHeader(_ s: LocalizedStringKey) -> some View {
+        Text(s).textCase(.uppercase).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, 10).padding(.top, 6).padding(.bottom, 2)
     }
 
     private func row<C: View>(index: Int, @ViewBuilder content: () -> C, action: @escaping () -> Void) -> some View {

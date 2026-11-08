@@ -63,6 +63,10 @@ final class MailStore {
     var copiedCodes: Set<String> = []
     var toast: Toast?
     var searchPresented = false
+    /// Settings tab to show (tag of the TabView in SettingsView); set before opening Settings to jump to a pane.
+    var settingsTab = "accounts"
+    /// Ask the Accounts pane to open its "Add Account" sheet.
+    var addAccountRequested = false
     var paletteQuery = ""
     var drafts: [UUID: OutgoingDraft] = [:]
     var openCompose: ((UUID) -> Void)?

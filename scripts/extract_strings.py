@@ -9,6 +9,15 @@ pats = [(re.compile(r'\b(?:Text|Button|Toggle|Section|Label|TextField|SecureFiel
         (re.compile(r'\.(?:help|navigationTitle|navigationSubtitle|accessibilityLabel|accessibilityHint|badge)\(\s*"((?:[^"\\]|\\.)*)"'), 1),
         (re.compile(r'(?:prompt|description|message):\s*(?:Text\()?"((?:[^"\\]|\\.)*)"'), 1),
         (re.compile(r'\bshowToast\(\s*"((?:[^"\\]|\\.)*)"'), 1)]
+
+# Helpers whose parameters are LocalizedStringKey (literals passed to them are catalog keys).
+S = r'"((?:[^"\\]|\\.)*)"'
+pats += [(re.compile(r'\b(?:legend|sectionLabel|link|pill|action|chip|sectionHeader)\(\s*' + S), 1),
+         (re.compile(r'\bradio\([^"]*' + S + r',\s*' + S), 1),
+         (re.compile(r'\bradio\([^"]*"(?:[^"\\]|\\.)*",\s*' + S), 1),
+         (re.compile(r'\bmailboxRow\([^"]*"(?:[^"\\]|\\.)*",\s*' + S), 1),
+         (re.compile(r'DatePickerSheet\(title:\s*' + S), 1),
+         (re.compile(r'DatePickerSheet\(title:\s*' + S + r',\s*action:\s*' + S), 2)]
 NUM = re.compile(r"(count|seconds|minutes|hours|days|months|total|number|emails|downloaded|\.n\b|Int\()", re.I)
 
 def interp(s):

@@ -125,14 +125,38 @@ EXTRA2 = {
 " · %lld downloaded": " · %lld heruntergeladen", "freed %@": "%@ freigegeben", "every account": "alle Accounts",
 ", on this Mac": ", auf diesem Mac", " + server": " + Server",
 }
+EXTRA3 = {
+"%lld unread": "%lld ungelesen", "(no subject)": "(Kein Betreff)", "All caught up": "Alles erledigt", "All inboxes": "Alle Postfächer",
+"Chat": "Chat", "Classic": "Klassisch", "Click “Add account” to connect Gmail, iCloud, Outlook, Yahoo, Fastmail or any IMAP account.": "Tippe auf „Account hinzufügen“, um Gmail, iCloud, Outlook, Yahoo, Fastmail oder einen beliebigen IMAP-Account zu verbinden.",
+"FILE": "DATEI", "Friday": "Freitag", "Has attachment": "Hat Anhang", "Inbox": "Eingang", "Is mailing list": "Ist Mailingliste", "Just now": "Gerade eben",
+"Later Today": "Später heute", "Loading…": "Wird geladen …", "Mark as read": "Als gelesen markieren", "Move to folder": "In Ordner verschieben", "Next Week": "Nächste Woche",
+"No accounts yet": "Noch keine Accounts", "No snoozed mail": "Keine Mails in der Wiedervorlage", "No unread mail": "Keine ungelesenen Mails",
+"Not synced yet": "Noch nicht synchronisiert", "Nothing waiting on you": "Nichts wartet auf dich", "Sender contains": "Absender enthält",
+"Sign-in link": "Anmeldelink", "Subject contains": "Betreff enthält", "Syncing…": "Synchronisiere …", "Text contains": "Text enthält",
+"This Evening": "Heute Abend", "This Weekend": "Dieses Wochenende", "Today": "Heute", "Tomorrow": "Morgen", "Verification code": "Bestätigungscode",
+"Yesterday": "Gestern", "code": "Code", "link": "Link", "to": "an", "to %@": "an %@", "Can't reach server": "Server nicht erreichbar", "Can't reach servers": "Server nicht erreichbar",
+"Add an account to start": "Füge einen Account hinzu, um zu starten", "Updated just now": "Gerade aktualisiert", "Updated %lld min ago": "Vor %lld Min. aktualisiert",
+"Updated %@": "Aktualisiert um %@", "To: %@": "An: %@", "Encrypt with S/MIME": "Mit S/MIME verschlüsseln",
+"Can't encrypt: no certificate for %@": "Verschlüsseln nicht möglich: kein Zertifikat für %@",
+}
+EXTRA4 = {
+"Also removed from the list and local search. Unread emails are kept": "Wird auch aus der Liste und der lokalen Suche entfernt. Ungelesene Mails bleiben erhalten",
+"BY ACCOUNT": "NACH ACCOUNT", "Bodies and attachments only": "Nur Inhalte und Anhänge", "Category": "Kategorie", "Show category": "Kategorie anzeigen",
+"Clear image cache · %@": "Bildcache leeren · %@", "Commands": "Befehle", "EMAILS": "E-MAILS", "Emails & attachments": "E-Mails & Anhänge",
+"Emails stay in your list and search by subject and sender": "Mails bleiben in der Liste und über Betreff und Absender durchsuchbar",
+"Entire emails": "Komplette E-Mails", "Mail list": "Mailliste", "Messages": "Nachrichten", "OLDEST": "ÄLTESTE", "ON THIS MAC": "AUF DIESEM MAC",
+"Optimize search index": "Suchindex optimieren", "Other": "Sonstiges", "Remind me if no reply by…": "Erinnern, falls bis … keine Antwort kommt",
+"SIZE": "GRÖSSE", "Schedule": "Planen", "Search index": "Suchindex", "Send later…": "Später senden …", "Set Reminder": "Erinnerung setzen",
+"Snooze until…": "Wiedervorlage bis …", "To reply": "Zu beantworten", "View email": "E-Mail ansehen",
+}
 OBSOLETE = [" · %@ downloaded", "from %@ emails", "· %@ emails", "%lld result%lld", "from %@ email%@", "· %@ emails · %@ downloaded", "+%lld", "%lld", "Found on the server · %lld"]
 
 if __name__ == "__main__":
     path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Resources", "Localizable.xcstrings")
     cat = json.load(open(path)); n = 0
-    for k, v in {**D, **EXTRA}.items():
+    for k, v in {**D, **EXTRA, **EXTRA3, **EXTRA4}.items():
         if k not in cat["strings"]:
-            if k in EXTRA: cat["strings"][k] = {"extractionState": "manual", "localizations": {}}
+            if k in EXTRA or k in EXTRA3 or k in EXTRA4: cat["strings"][k] = {"extractionState": "manual", "localizations": {}}
             else: print("unknown key (skipped):", k); continue
         cat["strings"][k]["localizations"] = {"de": {"stringUnit": {"state": "translated", "value": v}}}; n += 1
     for k, v in EXTRA2.items():

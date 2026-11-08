@@ -70,10 +70,10 @@ struct ThreadListView: View {
 
     private var titleText: String {
         switch store.mailbox {
-        case .allInboxes: return "Inbox"
-        case .accountInbox(let id): return store.account(id)?.label ?? "Inbox"
+        case .allInboxes: return tr("Inbox")
+        case .accountInbox(let id): return store.account(id)?.label ?? tr("Inbox")
         case .folder(let id, _): return "\(store.account(id)?.label ?? "") › \(store.mailbox.title)"
-        case .allRole: return "All inboxes › \(store.mailbox.title)"
+        case .allRole: return tr("All inboxes") + " › \(store.mailbox.title)"
         default: return store.mailbox.title
         }
     }
@@ -82,7 +82,7 @@ struct ThreadListView: View {
         let unread = store.threads.filter(\.unread).count
         switch store.mailbox {
         default:
-            return unread > 0 ? "\(unread) unread" : ""
+            return unread > 0 ? String(localized: "\(unread) unread") : ""
         }
     }
 
@@ -99,10 +99,10 @@ struct ThreadListView: View {
     }
 
     private var emptyTitle: String {
-        switch store.mailbox { case .toReply: return "Nothing waiting on you"; case .snoozed: return "No snoozed mail"; default: return store.settings.accounts.isEmpty ? "No accounts yet" : store.unreadOnly ? "No unread mail" : "All caught up" }
+        switch store.mailbox { case .toReply: return tr("Nothing waiting on you"); case .snoozed: return tr("No snoozed mail"); default: return tr(store.settings.accounts.isEmpty ? "No accounts yet" : store.unreadOnly ? "No unread mail" : "All caught up") }
     }
     private var emptyIcon: String { store.settings.accounts.isEmpty ? "person.crop.circle.badge.plus" : "checkmark.circle" }
-    private var emptySubtitle: String { store.settings.accounts.isEmpty ? "Click “Add account” to connect Gmail, iCloud, Outlook, Yahoo, Fastmail or any IMAP account." : "" }
+    private var emptySubtitle: String { store.settings.accounts.isEmpty ? tr("Click “Add account” to connect Gmail, iCloud, Outlook, Yahoo, Fastmail or any IMAP account.") : "" }
 
     @ViewBuilder
     private func contextMenu(for ts: [ThreadSummary]) -> some View {
@@ -162,7 +162,7 @@ struct ThreadRow: View {
             AvatarView(address: counterpart, size: 28)
             VStack(alignment: .leading, spacing: 1) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(m.isFromMe ? "To: \(counterpart.display)" : counterpart.display)
+                    Text(m.isFromMe ? String(localized: "To: \(counterpart.display)") : counterpart.display)
                         .font(.headline.weight(unread ? .semibold : .regular))
                         .lineLimit(1)
                     if thread.count > 1 { Text("\(thread.count)").font(.subheadline).foregroundStyle(.tertiary) }
@@ -171,7 +171,7 @@ struct ThreadRow: View {
                 }
                 HStack(spacing: 5) {
                     if thread.flagged { Image(systemName: "flag.fill").font(.caption).foregroundStyle(.orange) }
-                    Text(m.subject.isEmpty ? "(no subject)" : m.subject)
+                    Text(m.subject.isEmpty ? tr("(no subject)") : m.subject)
                         .font(.subheadline.weight(unread ? .semibold : .regular))
                         .lineLimit(1)
                 }
@@ -200,7 +200,7 @@ struct ThreadRow: View {
                     Sounds.play(.copy)
                     store.copiedCodes.insert(code)
                 } label: {
-                    Text(copied ? "Copied" : "Copy").font(.callout.weight(.semibold)).foregroundStyle(accent)
+                    Text(copied ? LocalizedStringKey("Copied") : LocalizedStringKey("Copy")).font(.callout.weight(.semibold)).foregroundStyle(accent)
                 }
                 .buttonStyle(.borderless)
             }

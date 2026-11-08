@@ -216,7 +216,7 @@ private struct CodePopupView: View {
     private func peek(_ item: CodePopup.Item) -> some View {
         VStack {
             Spacer()
-            Text("+\(model.items.count - 1) · \(item.sender.display) \(item.kind.isCode ? "code" : "link")")
+            Text("+\(model.items.count - 1) · \(item.sender.display) \(tr(item.kind.isCode ? "code" : "link"))")
                 .font(.system(size: 11, weight: .medium)).foregroundStyle(Color(white: 0.68))
                 .lineLimit(1).padding(.bottom, 5).padding(.horizontal, 16)
         }
@@ -242,7 +242,7 @@ private struct PopupCard: View {
                 AvatarView(address: item.sender, size: 26)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(item.sender.display).font(.system(size: 13, weight: .semibold)).foregroundStyle(PopupPalette.primary)
-                    Text("\(item.kind.isCode ? "Verification code" : "Sign-in link") · \(item.date.formatted(.relative(presentation: .named)))")
+                    Text("\(tr(item.kind.isCode ? "Verification code" : "Sign-in link")) · \(item.date.formatted(.relative(presentation: .named)))")
                         .font(.system(size: 12)).foregroundStyle(PopupPalette.secondary)
                 }
                 .lineLimit(1)
@@ -290,7 +290,7 @@ private struct PopupCard: View {
         .environment(\.colorScheme, .dark)
     }
 
-    private func pill(_ title: String, icon: String?, fill: Color, text: Color, action: @escaping () -> Void) -> some View {
+    private func pill(_ title: LocalizedStringKey, icon: String?, fill: Color, text: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 4) {
                 if let icon { Image(systemName: icon).font(.system(size: 11, weight: .bold)) }
@@ -304,7 +304,7 @@ private struct PopupCard: View {
         .buttonStyle(.borderless)
     }
 
-    private func action(_ title: String, _ run: @escaping () -> Void) -> some View {
+    private func action(_ title: LocalizedStringKey, _ run: @escaping () -> Void) -> some View {
         Button(action: run) {
             Text(title).font(.system(size: 12, weight: .medium)).foregroundStyle(PopupPalette.primary)
                 .frame(maxWidth: .infinity, minHeight: 30)

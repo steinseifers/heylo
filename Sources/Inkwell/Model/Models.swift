@@ -10,7 +10,7 @@ enum SMTPSecurity: String, Codable, CaseIterable, Identifiable {
 enum ConversationStyle: String, Codable, CaseIterable, Identifiable {
     case classic, chat
     var id: String { rawValue }
-    var label: String { self == .chat ? "Chat" : "Classic" }
+    var label: String { tr(self == .chat ? "Chat" : "Classic") }
 }
 
 struct Alias: Codable, Hashable, Identifiable {
@@ -198,15 +198,15 @@ enum Mailbox: Hashable {
 
     var title: String {
         switch self {
-        case .allInboxes: return "All Inboxes"
-        case .toReply: return "To Reply"
-        case .snoozed: return "Snoozed"
-        case .scheduled: return "Scheduled"
-        case .flagged: return "Flagged"
-        case .reminders: return "Awaiting Reply"
+        case .allInboxes: return tr("All Inboxes")
+        case .toReply: return tr("To Reply")
+        case .snoozed: return tr("Snoozed")
+        case .scheduled: return tr("Scheduled")
+        case .flagged: return tr("Flagged")
+        case .reminders: return tr("Awaiting Reply")
         case .folder(_, let p): return MUTF7.decode(p).split(separator: "/").last.map(String.init) ?? p
-        case .accountInbox: return "Inbox"
-        case .allRole(let r): return r == .sent ? "Sent" : r == .spam ? "Spam" : r == .trash ? "Trash" : r.rawValue.capitalized
+        case .accountInbox: return tr("Inbox")
+        case .allRole(let r): return tr(r == .sent ? "Sent" : r == .spam ? "Spam" : r == .trash ? "Trash" : r.rawValue.capitalized)
         }
     }
 }
@@ -221,9 +221,9 @@ enum InboxTab: String, CaseIterable, Identifiable {
 
 struct Rule: Codable, Identifiable, Hashable {
     enum Field: String, Codable, CaseIterable, Identifiable { case from, subject, body, hasAttachment, mailingList; var id: String { rawValue }
-        var label: String { ["from": "Sender contains", "subject": "Subject contains", "body": "Text contains", "hasAttachment": "Has attachment", "mailingList": "Is mailing list"][rawValue]! } }
+        var label: String { tr(["from": "Sender contains", "subject": "Subject contains", "body": "Text contains", "hasAttachment": "Has attachment", "mailingList": "Is mailing list"][rawValue]!) } }
     enum Action: String, Codable, CaseIterable, Identifiable { case move, archive, markRead, trash; var id: String { rawValue }
-        var label: String { ["move": "Move to folder", "archive": "Archive", "markRead": "Mark as read", "trash": "Move to Trash"][rawValue]! } }
+        var label: String { tr(["move": "Move to folder", "archive": "Archive", "markRead": "Mark as read", "trash": "Move to Trash"][rawValue]!) } }
     var id = UUID()
     var name: String = "New Rule"
     var enabled = true

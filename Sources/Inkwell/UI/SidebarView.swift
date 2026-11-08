@@ -36,7 +36,7 @@ struct SidebarView: View {
                         ForEach(folderTree(acct)) { n in folderRow(acct, n) }
                     } label: { accountLabel(acct) }
                 }
-                Button { openSettings() } label: { Label("Add account", systemImage: "plus") }.buttonStyle(.borderless).foregroundStyle(.secondary)
+                Button { store.settingsTab = "accounts"; store.addAccountRequested = true; openSettings() } label: { Label("Add account", systemImage: "plus") }.buttonStyle(.borderless).foregroundStyle(.secondary)
             }
         }
         .listStyle(.sidebar)
@@ -82,7 +82,7 @@ struct SidebarView: View {
             Divider()
             Button("Check for New Mail") { store.sync(accountId: acct.id) }
             if let e = store.accountErrors[acct.id] { Text(e) }
-            Button("Account Settings…") { openSettings() }
+            Button("Account Settings…") { store.settingsTab = "accounts"; openSettings() }
         }
     }
 
@@ -112,12 +112,14 @@ struct SidebarView: View {
     }
 
     private func status(at now: Date) -> String {
-        if showSyncing { return "Syncing…" }
-        if !store.accountErrors.isEmpty { return "Can't reach \(store.accountErrors.count == 1 ? "server" : "servers")" }
-        if store.accounts.isEmpty { return "Add an account to start" }
-        guard let last = store.lastSynced else { return store.syncing.isEmpty ? "Not synced yet" : "Syncing…" }
+        if showSyncing { return tr("Syncing…") }
+        if !store.accountErrors.isEmpty { return tr(store.accountErrors.count == 1 ? "Can't reach server" : "Can't reach servers") }
+        if store.accounts.isEmpty { return tr("Add an account to start") }
+        guard let last = store.lastSynced else { return tr(store.syncing.isEmpty ? "Not synced yet" : "Syncing…") }
         let mins = Int(now.timeIntervalSince(last) / 60)
-        return mins < 1 ? "Updated just now" : mins < 60 ? "Updated \(mins) min ago" : "Updated \(last.formatted(date: .omitted, time: .shortened))"
+        if mins < 1 { return tr("Updated just now") }
+        if mins < 60 { return String(localized: "Updated \(mins) min ago") }
+        return String(localized: "Updated \(last.formatted(date: .omitted, time: .shortened))")
     }
 
     // MARK: folders

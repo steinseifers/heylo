@@ -122,7 +122,7 @@ final class EditorController {
 // MARK: Recipient field with autocomplete
 
 struct RecipientField: View {
-    var label: String
+    var label: LocalizedStringKey
     @Binding var text: String
     var db: Database
     @State private var suggestions: [EmailAddress] = []
@@ -267,7 +267,7 @@ struct ComposeView: View {
             }
             return true
         }
-        .navigationTitle(draft.subject.isEmpty ? "New Message" : draft.subject)
+        .navigationTitle(draft.subject.isEmpty ? tr("New Message") : draft.subject)
         .onAppear(perform: load)
         .onChange(of: draft) { scheduleSave() }
         .onChange(of: editor.text) { scheduleSave() }
@@ -298,7 +298,7 @@ struct ComposeView: View {
                 }
                 .labelsHidden().pickerStyle(.menu).fixedSize()
                 Spacer()
-                Button(showCc ? "Hide Cc/Bcc" : "Cc/Bcc") { showCc.toggle() }.buttonStyle(.link).font(.caption)
+                Button(showCc ? LocalizedStringKey("Hide Cc/Bcc") : LocalizedStringKey("Cc/Bcc")) { showCc.toggle() }.buttonStyle(.link).font(.caption)
             }
             RecipientField(label: "To", text: $draft.to, db: store.db)
             if showCc || !draft.cc.isEmpty || !draft.bcc.isEmpty {
@@ -376,7 +376,7 @@ struct ComposeView: View {
                 .toggleStyle(.button).buttonStyle(.borderless).help("Sign with S/MIME")
             Toggle(isOn: Binding(get: { plan.encrypt }, set: { draft.smimeEncrypt = $0 })) { Image(systemName: plan.encrypt ? "lock.fill" : "lock.open") }
                 .toggleStyle(.button).buttonStyle(.borderless).disabled(!plan.canEncrypt)
-                .help(plan.canEncrypt ? "Encrypt with S/MIME" : "Can't encrypt: no certificate for \(plan.missingCertificates.joined(separator: ", "))")
+                .help(plan.canEncrypt ? tr("Encrypt with S/MIME") : String(localized: "Can't encrypt: no certificate for \(plan.missingCertificates.joined(separator: ", "))"))
         }
     }
 

@@ -63,7 +63,7 @@ struct ConversationView: View {
             }
         }
         .toolbar(id: "conversation") { conversationToolbar }
-        .navigationTitle(thread.latest.subject.isEmpty ? "(no subject)" : thread.latest.subject)
+        .navigationTitle(thread.latest.subject.isEmpty ? tr("(no subject)") : thread.latest.subject)
         .navigationSubtitle(account?.label ?? "")
         .task(id: thread.id + "\(thread.latest.id)") { await load() }
         .sheet(isPresented: $customSnooze) {
@@ -124,8 +124,8 @@ struct ConversationView: View {
             Button { Task { await store.trash([thread]) } } label: { Label("Move to Trash", systemImage: "trash") }.help("Move to Trash (#)")
         }
         ToolbarItem(id: "flag", placement: .primaryAction) {
-            Button { Task { await store.toggleFlag([thread]) } } label: { Label(thread.flagged ? "Unflag" : "Flag", systemImage: thread.flagged ? "flag.fill" : "flag") }
-                .help(thread.flagged ? "Unflag (F)" : "Flag (F)")
+            Button { Task { await store.toggleFlag([thread]) } } label: { Label(thread.flagged ? LocalizedStringKey("Unflag") : LocalizedStringKey("Flag"), systemImage: thread.flagged ? "flag.fill" : "flag") }
+                .help(thread.flagged ? LocalizedStringKey("Unflag (F)") : LocalizedStringKey("Flag (F)"))
         }
         ToolbarSpacer(.fixed, placement: .primaryAction)
         ToolbarItem(id: "snooze", placement: .primaryAction) {
@@ -153,7 +153,7 @@ struct ConversationView: View {
             Button("Forward") { forward(m) }
             Divider()
         }
-        Button(thread.unread ? "Mark as Read" : "Mark as Unread") { Task { await store.toggleRead([thread]) } }
+        Button(thread.unread ? LocalizedStringKey("Mark as Read") : LocalizedStringKey("Mark as Unread")) { Task { await store.toggleRead([thread]) } }
         Button("Mute Conversation") { Task { await store.mute([thread]) } }
         if let m = latestInbound {
             if !m.listUnsubscribe.isEmpty { Button("Unsubscribe") { Task { await store.unsubscribe(m) } } }
@@ -271,7 +271,7 @@ struct ConversationView: View {
                         .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(mine ? .clear : Theme.stroke(scheme)))
                     }
                 } else {
-                    Text(m.snippet.isEmpty ? "Loading…" : m.snippet).font(.body).foregroundStyle(.secondary)
+                    Text(m.snippet.isEmpty ? tr("Loading…") : m.snippet).font(.body).foregroundStyle(.secondary)
                         .padding(.horizontal, 18).padding(.vertical, 13)
                         .background(Theme.bubbleIn(scheme), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
                 }
@@ -287,7 +287,7 @@ struct ConversationView: View {
             }
             Menu { messageMenu(m) } label: {
                 HStack(spacing: 4) {
-                    Text(timeLabel(m) + (mine ? "" : " · to \(recipientLabel(m))"))
+                    Text(timeLabel(m) + (mine ? "" : " · " + String(localized: "to \(recipientLabel(m))")))
                     if mine { Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(accent) }
                     else { Image(systemName: "chevron.down").font(.caption.weight(.semibold)) }
                 }
@@ -300,9 +300,9 @@ struct ConversationView: View {
 
     private func timeLabel(_ m: MessageRecord) -> String {
         let cal = Calendar.current
-        if Date().timeIntervalSince(m.date) < 90 { return "Just now" }
-        if cal.isDateInToday(m.date) { return "Today " + m.date.formatted(date: .omitted, time: .shortened) }
-        if cal.isDateInYesterday(m.date) { return "Yesterday " + m.date.formatted(date: .omitted, time: .shortened) }
+        if Date().timeIntervalSince(m.date) < 90 { return tr("Just now") }
+        if cal.isDateInToday(m.date) { return tr("Today") + " " + m.date.formatted(date: .omitted, time: .shortened) }
+        if cal.isDateInYesterday(m.date) { return tr("Yesterday") + " " + m.date.formatted(date: .omitted, time: .shortened) }
         return m.date.formatted(date: .abbreviated, time: .shortened)
     }
 
@@ -348,7 +348,7 @@ struct ConversationView: View {
                         Text(m.from.display).font(.body.weight(.semibold)).foregroundStyle(Theme.ink).lineLimit(1)
                         Text(m.from.email).font(.callout).foregroundStyle(Theme.faint).lineLimit(1)
                     }
-                    Text(expanded ? "to " + recipientLine(m) : m.snippet)
+                    Text(expanded ? tr("to") + " " + recipientLine(m) : m.snippet)
                         .font(.callout).foregroundStyle(Theme.muted).lineLimit(1)
                 }
                 Spacer(minLength: 8)
@@ -382,7 +382,7 @@ struct ConversationView: View {
         Button("Forward") { forward(m) }
         Divider()
         Button(showQuoted.contains(m.id) ? "Show as Bubble" : "Show Original") { showQuoted.formSymmetricDifference([m.id]) }
-        Button(m.seen ? "Mark as Unread" : "Mark as Read") { Task { await store.setSeen([m], !m.seen) } }
+        Button(m.seen ? LocalizedStringKey("Mark as Unread") : LocalizedStringKey("Mark as Read")) { Task { await store.setSeen([m], !m.seen) } }
         Button("Copy Sender Address") { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(m.from.email, forType: .string); Sounds.play(.copy) }
         Divider()
         Text("From: \(m.from.formatted)")
@@ -399,7 +399,7 @@ struct ConversationView: View {
                             Image(nsImage: img).resizable().aspectRatio(contentMode: .fill).frame(width: 34, height: 40).clipShape(RoundedRectangle(cornerRadius: 5))
                         } else {
                             let ext = (a.filename as NSString).pathExtension.uppercased()
-                            Text(ext.isEmpty ? "FILE" : String(ext.prefix(4))).font(.caption.weight(.bold))
+                            Text(ext.isEmpty ? tr("FILE") : String(ext.prefix(4))).font(.caption.weight(.bold))
                                 .foregroundStyle(Color(hex: "#A33A2E"))
                                 .frame(width: 34, height: 40)
                                 .background(Color(hex: "#F6E2E0").opacity(scheme == .dark ? 0.25 : 1), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
@@ -640,7 +640,7 @@ struct InviteCard: View {
                             .buttonStyle(.bordered)
                             .tint(responded == r ? .accentColor : nil)
                         }
-                        Button(added ? "Added" : "Add to Calendar") { addToCalendar() }.disabled(added)
+                        Button(added ? LocalizedStringKey("Added") : LocalizedStringKey("Add to Calendar")) { addToCalendar() }.disabled(added)
                     }
                     .controlSize(.small).padding(.top, 4)
                 }
