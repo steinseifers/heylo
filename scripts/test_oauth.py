@@ -8,9 +8,10 @@ for port, expires, mode in [(14340, 3600, "long"), (14341, 1, "short")]:
     srv = subprocess.Popen([sys.executable, os.path.join(here, "fake_oauth.py"), str(port), str(expires)], stdout=subprocess.DEVNULL)
     time.sleep(0.5)
     try:
-        env = dict(os.environ, INKWELL_OAUTH_BASE=f"http://127.0.0.1:{port}", INKWELL_OAUTH_CLIENT_ID="test-client", INKWELL_HOME=os.popen("mktemp -d").read().strip())
+        env = dict(os.environ, INKWELL_OAUTH_BASE=f"http://127.0.0.1:{port}", INKWELL_OAUTH_CLIENT_ID="test-client", INKWELL_GRAPH_BASE=f"http://127.0.0.1:{port}/v1.0", INKWELL_HOME=os.popen("mktemp -d").read().strip())
         r = subprocess.run([binary, "--oauthtest", str(port), mode], env=env, timeout=60); rc |= r.returncode
-        print("server saw:", json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/stats")))
+        st = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/stats")); print("server saw:", {k: v for k, v in st.items() if k != "graph_last"})
+        if mode == "long" and ("Bcc: hidden@example.invalid" not in st["graph_last"] or st["graph_sent"] != 1): print("✗ Graph server did not receive the message with its Bcc header exactly once"); rc |= 1
     finally:
         srv.terminate()
 sys.exit(rc)

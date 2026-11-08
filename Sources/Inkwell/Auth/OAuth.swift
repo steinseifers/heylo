@@ -7,8 +7,17 @@ import CryptoKit
 enum OAuth {
     static let redirectScheme = "de.steinseifers.steinsmail"
     static var redirectURI: String { redirectScheme + "://oauth" }
-    static let scopes = ["https://outlook.office.com/IMAP.AccessAsUser.All", "https://outlook.office.com/SMTP.Send",
-                         "offline_access", "openid", "email", "profile"]
+    /// Reading goes through IMAP (Exchange Online resource), sending through Microsoft Graph (`Mail.Send`): Exchange Online
+    /// switches SMTP AUTH off for many tenants, Graph sendMail does not depend on that. One consent covers both; every
+    /// access token belongs to ONE resource, so each resource gets its own token from the same refresh token.
+    enum Resource: String { case imap, graph }
+    static let imapScope = "https://outlook.office.com/IMAP.AccessAsUser.All"
+    static let graphScope = "https://graph.microsoft.com/Mail.Send"
+    static let identityScopes = ["offline_access", "openid", "email", "profile"]
+    /// Asked for at sign-in (consent for both resources in one go).
+    static let scopes = [imapScope, graphScope] + identityScopes
+    /// A token request may only name scopes of a single resource.
+    static func scopes(for r: Resource) -> [String] { [r == .imap ? imapScope : graphScope] + identityScopes }
     /// Tokens are renewed this long before they expire.
     static var refreshMargin: TimeInterval = 60
 
@@ -81,13 +90,13 @@ enum OAuth {
     static func exchange(code: String, verifier: String, tenant: String) async throws -> Tokens {
         guard let id = clientID else { throw OAuthError.noClientID }
         return try await tokenRequest(tenant: tenant, form: [("client_id", id), ("grant_type", "authorization_code"), ("code", code),
-                                                             ("redirect_uri", redirectURI), ("code_verifier", verifier), ("scope", scopes.joined(separator: " "))])
+                                                             ("redirect_uri", redirectURI), ("code_verifier", verifier), ("scope", scopes(for: .imap).joined(separator: " "))])
     }
 
-    static func refresh(_ refreshToken: String, tenant: String) async throws -> Tokens {
+    static func refresh(_ refreshToken: String, tenant: String, resource: Resource = .imap) async throws -> Tokens {
         guard let id = clientID else { throw OAuthError.noClientID }
         return try await tokenRequest(tenant: tenant, form: [("client_id", id), ("grant_type", "refresh_token"), ("refresh_token", refreshToken),
-                                                             ("scope", scopes.joined(separator: " "))])
+                                                             ("scope", scopes(for: resource).joined(separator: " "))])
     }
 
     /// Claims of an ID token (payload only; used to learn the user's address and tenant, not for trust decisions).
@@ -102,29 +111,35 @@ enum OAuth {
 
     static func refreshKey(_ account: Account) -> String { "oauth-refresh-\(account.id.uuidString)" }
 
-    /// Keeps the refresh token in the Keychain and the short-lived access token in memory.
+    /// Keeps the refresh token in the Keychain and the short-lived access token in memory (the sign-in token is an IMAP token).
     static func store(_ t: Tokens, for account: Account) {
         if let r = t.refresh { _ = Keychain.set(r, for: refreshKey(account)) }
-        Task { await cache.put(account.id, t) }
+        Task { await cache.put(account.id, .imap, t) }
     }
 
     private actor Cache {
-        var tokens: [UUID: Tokens] = [:]
+        var tokens: [String: Tokens] = [:]
         var inflight: [UUID: Task<Tokens, Error>] = [:]
-        func put(_ id: UUID, _ t: Tokens) { tokens[id] = t }
+        var inflightResource: [UUID: Resource] = [:]
+        private func key(_ id: UUID, _ r: Resource) -> String { id.uuidString + "|" + r.rawValue }
+        func put(_ id: UUID, _ r: Resource, _ t: Tokens) { tokens[key(id, r)] = t }
         func clear() { tokens = [:] }
 
-        func token(for account: Account) async throws -> String {
-            if let t = tokens[account.id], t.expires.timeIntervalSinceNow > OAuth.refreshMargin { return t.access }
-            // One refresh at a time per account: refresh tokens rotate, parallel use would invalidate each other.
-            if let running = inflight[account.id] { return try await running.value.access }
+        func token(for account: Account, resource: Resource) async throws -> String {
+            if let t = tokens[key(account.id, resource)], t.expires.timeIntervalSinceNow > OAuth.refreshMargin { return t.access }
+            // One refresh at a time per account (all resources): refresh tokens rotate, parallel use would invalidate each other.
+            while let running = inflight[account.id] {
+                if inflightResource[account.id] == resource { return try await running.value.access }   // same resource: share the result
+                _ = try? await running.value; await Task.yield()                                          // other resource: wait, then go on
+                if let t = tokens[key(account.id, resource)], t.expires.timeIntervalSinceNow > OAuth.refreshMargin { return t.access }
+            }
             guard let refresh = Keychain.get(OAuth.refreshKey(account)) else { throw OAuthError.denied("Not signed in on this Mac. Sign in again in Settings.") }
-            let task = Task { try await OAuth.refresh(refresh, tenant: account.oauthTenant ?? "organizations") }
-            inflight[account.id] = task
-            defer { inflight[account.id] = nil }
+            let task = Task { try await OAuth.refresh(refresh, tenant: account.oauthTenant ?? "organizations", resource: resource) }
+            inflight[account.id] = task; inflightResource[account.id] = resource
+            defer { inflight[account.id] = nil; inflightResource[account.id] = nil }
             let t = try await task.value
             if let r = t.refresh { _ = Keychain.set(r, for: OAuth.refreshKey(account)) }
-            tokens[account.id] = t
+            tokens[key(account.id, resource)] = t
             return t.access
         }
     }
@@ -132,13 +147,13 @@ enum OAuth {
     /// Tests only.
     static func dropCache() async { await cache.clear() }
 
-    static func accessToken(for account: Account) async throws -> String { try await cache.token(for: account) }
+    static func accessToken(for account: Account, resource: Resource = .imap) async throws -> String { try await cache.token(for: account, resource: resource) }
 
     /// For the connection queues (never call on the main thread).
-    static func accessTokenBlocking(for account: Account) throws -> String {
+    static func accessTokenBlocking(for account: Account, resource: Resource = .imap) throws -> String {
         final class Box: @unchecked Sendable { var result: Result<String, Error> = .failure(OAuthError.badResponse("no result")) }
         let box = Box(), sem = DispatchSemaphore(value: 0)
-        Task { box.result = await Result { try await accessToken(for: account) }; sem.signal() }
+        Task { box.result = await Result { try await accessToken(for: account, resource: resource) }; sem.signal() }
         sem.wait()
         return try box.result.get()
     }

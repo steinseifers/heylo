@@ -146,15 +146,20 @@ extension MailStore {
         let (acct, to, cc, bcc, from, mid) = (built.acct, built.to, built.cc, built.bcc, built.from, built.mid)
         let plan = SMIMESending.plan(for: d, from: from.email, recipients: (to + cc + bcc).map(\.email))
         let data = try SMIMESending.apply(built.data, sign: plan.sign, encrypt: plan.encrypt, from: from.email, recipients: (to + cc + bcc).map(\.email))
-        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
-            DispatchQueue.global().async {
-                do {
-                    let smtp = try SMTPClient(host: acct.smtpHost, port: acct.smtpPort, security: acct.smtpSecurity)
-                    try smtp.login(account: acct)
-                    try smtp.sendMail(from: from.email, recipients: (to + cc + bcc).map(\.email), data: data)
-                    smtp.quit()
-                    cont.resume()
-                } catch { cont.resume(throwing: error) }
+        if GraphMail.uses(acct) {
+            // Microsoft 365: Graph sendMail (SMTP AUTH is switched off in many tenants). Bcc goes in the MIME headers.
+            try await GraphMail.send(account: acct, mime: GraphMail.withBcc(data, bcc: bcc.map(\.email).joined(separator: ", ")))
+        } else {
+            try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+                DispatchQueue.global().async {
+                    do {
+                        let smtp = try SMTPClient(host: acct.smtpHost, port: acct.smtpPort, security: acct.smtpSecurity)
+                        try smtp.login(account: acct)
+                        try smtp.sendMail(from: from.email, recipients: (to + cc + bcc).map(\.email), data: data)
+                        smtp.quit()
+                        cont.resume()
+                    } catch { cont.resume(throwing: error) }
+                }
             }
         }
         // Gmail and Microsoft file sent mail automatically.

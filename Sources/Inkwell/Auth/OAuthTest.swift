@@ -16,7 +16,7 @@ enum OAuthTest {
             let q = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
             func v(_ n: String) -> String? { q.first { $0.name == n }?.value }
             check(v("code_challenge_method") == "S256" && v("response_type") == "code" && v("login_hint") == "me@example.invalid"
-                  && (v("scope") ?? "").contains("IMAP.AccessAsUser.All") && (v("scope") ?? "").contains("SMTP.Send") && (v("scope") ?? "").contains("offline_access"), "authorize URL carries PKCE, scopes and login hint")
+                  && (v("scope") ?? "").contains("IMAP.AccessAsUser.All") && (v("scope") ?? "").contains("graph.microsoft.com/Mail.Send") && (v("scope") ?? "").contains("offline_access"), "authorize URL carries PKCE, scopes and login hint")
             var acct = Account(label: "T", displayName: "Me", email: "me@example.invalid", username: "me@example.invalid", imapHost: "127.0.0.1", smtpHost: "127.0.0.1")
             acct.oauth = true
             defer { Keychain.delete(OAuth.refreshKey(acct)) }
@@ -31,6 +31,18 @@ enum OAuthTest {
                 let a2 = try await OAuth.accessToken(for: acct)
                 if short { check(a1 != "access-1" && a2 != a1, "expired tokens are refreshed on use") }
                 else { check(a1 == "access-1" && a2 == "access-1", "valid token is served from cache without a request") }
+                // Graph: its own token (other resource) from the same refresh token; sending uses it.
+                let g1 = try await OAuth.accessToken(for: acct, resource: .graph)
+                check(g1.hasPrefix("graph-") && g1 != a1, "Graph access token is a separate token for the Graph resource")
+                let mime = Data("From: me@example.invalid\r\nTo: you@example.invalid\r\nSubject: hi\r\n\r\nbody\r\n".utf8)
+                do { try await GraphMail.send(account: acct, mime: GraphMail.withBcc(mime, bcc: "hidden@example.invalid")); check(true, "Graph sendMail accepts the MIME message (202)") }
+                catch { check(false, "Graph sendMail failed: \(error)") }
+                do { try await GraphMail.send(account: acct, mime: Data("Subject: FAIL400\r\n\r\nx".utf8)); check(false, "client error must throw") }
+                catch GraphMail.SendError.rejected(let code, _) { check(code == 403, "client error (403) means certainly not sent") }
+                catch { check(false, "wrong error \(error)") }
+                do { try await GraphMail.send(account: acct, mime: Data("Subject: FAIL500\r\n\r\nx".utf8)); check(false, "server error must throw") }
+                catch GraphMail.SendError.unknown { check(true, "server error (500) is treated as possibly sent") }
+                catch { check(false, "wrong error \(error)") }
                 // Parallel callers share a single refresh (refresh tokens rotate; two refreshes would break each other).
                 OAuth.refreshMargin = 100_000
                 let tokens = try await withThrowingTaskGroup(of: String.self) { g in

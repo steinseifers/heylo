@@ -90,6 +90,11 @@ final class AccountConnection {
                     let c = try IMAPClient(host: account.imapHost, port: account.imapPort)
                     if account.oauth { try c.login(account: account) } else { try c.login(user: account.username, password: password) }
                     c.close()
+                    if GraphMail.uses(account) {
+                        // Sending goes through Graph: check that a Mail.Send token can be obtained (no SMTP involved).
+                        _ = try OAuth.accessTokenBlocking(for: account, resource: .graph)
+                        cont.resume(); return
+                    }
                     let s = try SMTPClient(host: account.smtpHost, port: account.smtpPort, security: account.smtpSecurity)
                     if account.oauth { try s.login(account: account) } else { try s.login(user: account.username, password: password) }
                     s.quit()

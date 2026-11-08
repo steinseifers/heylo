@@ -102,6 +102,12 @@ extension MailStore {
                     let final: Data
                     do { final = try SMIMESending.applyMarker(to: env.message, from: env.from, recipients: env.recipients) }
                     catch { throw ScheduledSend.NotSent(underlying: error) }  // e.g. no certificate on this Mac: another Mac may send it
+                    if GraphMail.uses(acct) {
+                        // Microsoft 365 via Graph: a client error or missing token proves nothing was sent (NotSent);
+                        // a timeout or server error may have delivered the message (stays claimed, never retried).
+                        try GraphMail.sendBlocking(account: acct, mime: GraphMail.withBcc(final, bcc: MIME.parse(raw).header("Bcc")))
+                        return
+                    }
                     let smtp: SMTPClient
                     do { smtp = try SMTPClient(host: acct.smtpHost, port: acct.smtpPort, security: acct.smtpSecurity); try smtp.login(account: acct) }
                     catch { throw ScheduledSend.NotSent(underlying: error) }
