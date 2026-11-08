@@ -3,124 +3,119 @@ import AppKit
 import UniformTypeIdentifiers
 
 // MARK: Rich text editor
+//
+// Standard SwiftUI `TextEditor` bound to an `AttributedString` with an `AttributedTextSelection`. Formatting is applied with
+// `transformAttributes(in:)`; for the stored draft (RTF/HTML) the text is converted to and from `NSAttributedString`.
 
+@MainActor @Observable
 final class EditorController {
-    weak var textView: NSTextView?
+    var text = AttributedString()
+    var selection = AttributedTextSelection()
+    /// Set from the view's environment so SwiftUI fonts can be resolved (bold/italic/size) when exporting.
+    @ObservationIgnored var fontContext = EnvironmentValues().fontResolutionContext
+    static let baseSize: CGFloat = 14
 
-    func toggleTrait(_ trait: NSFontTraitMask) {
-        guard let tv = textView, let storage = tv.textStorage else { return }
-        let range = tv.selectedRange()
-        let fm = NSFontManager.shared
-        if range.length == 0 {
-            var attrs = tv.typingAttributes
-            let f = (attrs[.font] as? NSFont) ?? .systemFont(ofSize: 14)
-            attrs[.font] = fm.traits(of: f).contains(trait) ? fm.convert(f, toNotHaveTrait: trait) : fm.convert(f, toHaveTrait: trait)
-            tv.typingAttributes = attrs
-            return
+    // MARK: conversion
+
+    func setNS(_ ns: NSAttributedString) {
+        var out = AttributedString()
+        ns.enumerateAttributes(in: NSRange(location: 0, length: ns.length)) { attrs, r, _ in
+            var run = AttributedString(ns.attributedSubstring(from: r).string)
+            if let f = attrs[.font] as? NSFont {
+                let t = NSFontManager.shared.traits(of: f)
+                var font = Font.system(size: f.pointSize)
+                if t.contains(.boldFontMask) { font = font.bold() }
+                if t.contains(.italicFontMask) { font = font.italic() }
+                run.font = font
+            }
+            if let u = attrs[.underlineStyle] as? Int, u != 0 { run.underlineStyle = .single }
+            if let l = attrs[.link] as? URL { run.link = l } else if let l = attrs[.link] as? String { run.link = URL(string: l) }
+            out += run
         }
-        let first = (storage.attribute(.font, at: range.location, effectiveRange: nil) as? NSFont) ?? .systemFont(ofSize: 14)
-        let remove = fm.traits(of: first).contains(trait)
-        storage.beginEditing()
-        storage.enumerateAttribute(.font, in: range) { v, r, _ in
-            let f = (v as? NSFont) ?? .systemFont(ofSize: 14)
-            storage.addAttribute(.font, value: remove ? fm.convert(f, toNotHaveTrait: trait) : fm.convert(f, toHaveTrait: trait), range: r)
-        }
-        storage.endEditing()
-        tv.didChangeText()
+        text = out
+        selection = AttributedTextSelection(insertionPoint: out.endIndex)
     }
 
+    func setPlain(_ s: String) { setNS(NSAttributedString(string: s)) }
+
+    var ns: NSAttributedString {
+        let out = NSMutableAttributedString()
+        let ctx = fontContext
+        for run in text.runs {
+            let piece = String(text[run.range].characters)
+            var attrs: [NSAttributedString.Key: Any] = [:]
+            var bold = false, italic = false, size = Self.baseSize
+            if let f = run.font { let r = f.resolve(in: ctx); bold = r.isBold; italic = r.isItalic; size = r.pointSize }
+            if let i = run.inlinePresentationIntent { bold = bold || i.contains(.stronglyEmphasized); italic = italic || i.contains(.emphasized) }
+            var nf = NSFont.systemFont(ofSize: size)
+            let fm = NSFontManager.shared
+            if bold { nf = fm.convert(nf, toHaveTrait: .boldFontMask) }
+            if italic { nf = fm.convert(nf, toHaveTrait: .italicFontMask) }
+            attrs[.font] = nf
+            attrs[.foregroundColor] = NSColor.textColor
+            if run.underlineStyle != nil { attrs[.underlineStyle] = NSUnderlineStyle.single.rawValue }
+            if let l = run.link { attrs[.link] = l }
+            out.append(NSAttributedString(string: piece, attributes: attrs))
+        }
+        return out
+    }
+
+    // MARK: formatting
+
+    private func resolved(_ c: AttributeContainer) -> Font.Resolved { (c.font ?? .system(size: Self.baseSize)).resolve(in: fontContext) }
+
+    private func restyle(bold: Bool? = nil, italic: Bool? = nil, size: CGFloat? = nil) {
+        text.transformAttributes(in: &selection) { c in
+            let r = resolved(c)
+            var f = Font.system(size: size ?? r.pointSize)
+            if bold ?? r.isBold { f = f.bold() }
+            if italic ?? r.isItalic { f = f.italic() }
+            c.font = f
+        }
+    }
+
+    private var firstRun: (bold: Bool, italic: Bool, size: CGFloat, underline: Bool) {
+        var out = (bold: false, italic: false, size: Self.baseSize, underline: false)
+        text.transformAttributes(in: &selection) { c in
+            let r = resolved(c)
+            out = (r.isBold, r.isItalic, r.pointSize, c.underlineStyle != nil)
+        }
+        return out
+    }
+
+    func toggleBold() { restyle(bold: !firstRun.bold) }
+    func toggleItalic() { restyle(italic: !firstRun.italic) }
     func toggleUnderline() {
-        guard let tv = textView, let storage = tv.textStorage else { return }
-        let range = tv.selectedRange()
-        guard range.length > 0 else { return }
-        let has = (storage.attribute(.underlineStyle, at: range.location, effectiveRange: nil) as? Int ?? 0) != 0
-        storage.addAttribute(.underlineStyle, value: has ? 0 : NSUnderlineStyle.single.rawValue, range: range)
-        tv.didChangeText()
+        let on = firstRun.underline
+        text.transformAttributes(in: &selection) { $0.underlineStyle = on ? nil : .single }
     }
+    func resize(by delta: CGFloat) { restyle(size: max(9, min(36, firstRun.size + delta))) }
 
-    func resize(by delta: CGFloat) {
-        guard let tv = textView, let storage = tv.textStorage else { return }
-        let range = tv.selectedRange().length > 0 ? tv.selectedRange() : NSRange(location: 0, length: storage.length)
-        storage.beginEditing()
-        storage.enumerateAttribute(.font, in: range) { v, r, _ in
-            let f = (v as? NSFont) ?? .systemFont(ofSize: 14)
-            storage.addAttribute(.font, value: NSFontManager.shared.convert(f, toSize: max(9, min(36, f.pointSize + delta))), range: r)
-        }
-        storage.endEditing()
-        tv.didChangeText()
-    }
-
+    /// Prefix/unprefix the selected lines with "• " or "1. ".
     func list(numbered: Bool) {
-        guard let tv = textView, let storage = tv.textStorage else { return }
-        let ns = storage.string as NSString
-        let pr = ns.paragraphRange(for: tv.selectedRange())
+        let ns = self.ns
+        func offset(_ i: AttributedString.Index) -> Int { String(text[text.startIndex..<i].characters).utf16.count }
+        let sel: NSRange
+        switch selection.indices(in: text) {
+        case .insertionPoint(let i): sel = NSRange(location: offset(i), length: 0)
+        case .ranges(let rs):
+            if let r = rs.ranges.first { sel = NSRange(location: offset(r.lowerBound), length: String(text[r].characters).utf16.count) }
+            else { sel = NSRange(location: ns.length, length: 0) }
+        @unknown default: sel = NSRange(location: ns.length, length: 0)
+        }
+        let str = ns.string as NSString
+        let pr = str.paragraphRange(for: sel)
         var lines: [String] = []
-        ns.substring(with: pr).enumerateLines { l, _ in lines.append(l) }
+        str.substring(with: pr).enumerateLines { l, _ in lines.append(l) }
         if lines.isEmpty { lines = [""] }
         let isList = lines.allSatisfy { $0.hasPrefix("• ") || $0.range(of: "^\\d+\\. ", options: .regularExpression) != nil }
         let new = lines.enumerated().map { i, l -> String in
             if isList { return l.replacingOccurrences(of: "^(• |\\d+\\. )", with: "", options: .regularExpression) }
             return (numbered ? "\(i + 1). " : "• ") + l
-        }.joined(separator: "\n") + (ns.substring(with: pr).hasSuffix("\n") ? "\n" : "")
-        if tv.shouldChangeText(in: pr, replacementString: new) {
-            storage.replaceCharacters(in: pr, with: NSAttributedString(string: new, attributes: tv.typingAttributes))
-            tv.didChangeText()
-        }
-    }
-
-    func insert(_ s: String) {
-        guard let tv = textView else { return }
-        tv.insertText(s, replacementRange: tv.selectedRange())
-    }
-}
-
-struct RichTextEditor: NSViewRepresentable {
-    @Binding var text: NSAttributedString
-    var controller: EditorController
-    var onFiles: ([URL]) -> Void
-
-    func makeCoordinator() -> Coordinator { Coordinator(self) }
-
-    func makeNSView(context: Context) -> NSScrollView {
-        let scroll = NSTextView.scrollableTextView()
-        let tv = scroll.documentView as! NSTextView
-        tv.isRichText = true
-        tv.allowsUndo = true
-        tv.importsGraphics = false
-        tv.isAutomaticSpellingCorrectionEnabled = true
-        tv.isContinuousSpellCheckingEnabled = true
-        tv.isAutomaticLinkDetectionEnabled = true
-        tv.isAutomaticQuoteSubstitutionEnabled = true
-        tv.font = .systemFont(ofSize: 14)
-        tv.textContainerInset = NSSize(width: 14, height: 12)
-        tv.typingAttributes = [.font: NSFont.systemFont(ofSize: 14), .foregroundColor: NSColor.textColor]
-        tv.drawsBackground = false
-        scroll.drawsBackground = false
-        tv.delegate = context.coordinator
-        tv.textStorage?.setAttributedString(text)
-        tv.registerForDraggedTypes([.fileURL])
-        controller.textView = tv
-        DispatchQueue.main.async { tv.window?.makeFirstResponder(tv); tv.setSelectedRange(NSRange(location: 0, length: 0)) }
-        return scroll
-    }
-
-    func updateNSView(_ scroll: NSScrollView, context: Context) {
-        guard let tv = scroll.documentView as? NSTextView else { return }
-        if !context.coordinator.editing && tv.attributedString() != text {
-            tv.textStorage?.setAttributedString(text)
-        }
-    }
-
-    final class Coordinator: NSObject, NSTextViewDelegate {
-        var parent: RichTextEditor
-        var editing = false
-        init(_ p: RichTextEditor) { parent = p }
-        func textDidChange(_ n: Notification) {
-            guard let tv = n.object as? NSTextView else { return }
-            editing = true
-            parent.text = tv.attributedString()
-            DispatchQueue.main.async { self.editing = false }
-        }
+        }.joined(separator: "\n") + (str.substring(with: pr).hasSuffix("\n") ? "\n" : "")
+        let m = NSMutableAttributedString(attributedString: ns)
+        m.replaceCharacters(in: pr, with: NSAttributedString(string: new, attributes: [.font: NSFont.systemFont(ofSize: Self.baseSize), .foregroundColor: NSColor.textColor]))
+        setNS(m)
     }
 }
 
@@ -203,7 +198,11 @@ struct ComposeView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var draft = OutgoingDraft()
-    @State private var body_ = NSAttributedString(string: "")
+    @Environment(\.fontResolutionContext) private var fontContext
+    private var body_: NSAttributedString {
+        get { editor.ns }
+        nonmutating set { editor.setNS(newValue) }
+    }
     @State private var loaded = false
     @State private var showCc = false
     @State private var showQuoted = false
@@ -221,7 +220,7 @@ struct ComposeView: View {
     /// Content last mirrored to the server, without the server id, so a change to the id alone
     /// doesn't trigger yet another upload.
     @State private var serverSaved: OutgoingDraft?
-    private let editor = EditorController()
+    @State private var editor = EditorController()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -235,7 +234,10 @@ struct ComposeView: View {
                 .padding(.horizontal, 14).padding(.top, 6)
             }
             if showFormatBar { formatBar }
-            RichTextEditor(text: $body_, controller: editor) { addAttachments($0) }
+            TextEditor(text: $editor.text, selection: $editor.selection)
+                .font(.system(size: EditorController.baseSize))
+                .scrollContentBackground(.hidden)
+                .padding(.horizontal, 10)
                 .frame(minHeight: 200)
             if !draft.quotedHTML.isEmpty {
                 DisclosureGroup(isExpanded: $showQuoted) {
@@ -268,7 +270,8 @@ struct ComposeView: View {
         .navigationTitle(draft.subject.isEmpty ? "New Message" : draft.subject)
         .onAppear(perform: load)
         .onChange(of: draft) { scheduleSave() }
-        .onChange(of: body_) { scheduleSave() }
+        .onChange(of: editor.text) { scheduleSave() }
+        .onChange(of: fontContext, initial: true) { editor.fontContext = fontContext }
         .onDisappear(perform: closing)
         .sheet(isPresented: $customSendAt) {
             DatePickerSheet(title: "Send later…", action: "Schedule") { d in draft.sendAt = d; send() }
@@ -313,8 +316,8 @@ struct ComposeView: View {
     private var formatBar: some View {
         HStack(spacing: 2) {
             Group {
-                Button { editor.toggleTrait(.boldFontMask) } label: { Image(systemName: "bold") }.help("Bold ⌘B")
-                Button { editor.toggleTrait(.italicFontMask) } label: { Image(systemName: "italic") }.help("Italic ⌘I")
+                Button { editor.toggleBold() } label: { Image(systemName: "bold") }.help("Bold ⌘B")
+                Button { editor.toggleItalic() } label: { Image(systemName: "italic") }.help("Italic ⌘I")
                 Button { editor.toggleUnderline() } label: { Image(systemName: "underline") }.help("Underline ⌘U")
                 Divider().frame(height: 14)
                 Button { editor.list(numbered: false) } label: { Image(systemName: "list.bullet") }.help("Bulleted list")
@@ -424,9 +427,9 @@ struct ComposeView: View {
         loaded = true
         draft = store.drafts[draftId] ?? store.localDrafts().first { $0.id == draftId } ?? OutgoingDraft(id: draftId)
         if let rtf = draft.rtfData, let a = NSAttributedString(rtf: rtf, documentAttributes: nil) {
-            body_ = a
+            editor.setNS(a)
         } else {
-            body_ = NSAttributedString(string: draft.plain, attributes: [.font: NSFont.systemFont(ofSize: 14), .foregroundColor: NSColor.textColor])
+            editor.setPlain(draft.plain)
         }
         showCc = !draft.cc.isEmpty || !draft.bcc.isEmpty
     }
@@ -557,7 +560,7 @@ struct ComposeView: View {
             defer { rewriting = false }
             do {
                 let out = try await AIService.rewrite(text, style: style, language: language)
-                body_ = NSAttributedString(string: out, attributes: [.font: NSFont.systemFont(ofSize: 14), .foregroundColor: NSColor.textColor])
+                editor.setPlain(out)
             } catch { aiError = error.localizedDescription }
         }
     }

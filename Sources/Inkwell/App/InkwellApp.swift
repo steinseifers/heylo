@@ -59,8 +59,8 @@ struct AppCommands: Commands {
             Button("Unread Only") { store.unreadOnly.toggle() }.keyboardShortcut("u", modifiers: [.command, .option])
         }
         CommandMenu("Format") {
-            Button("Bold") { compose?.editor.toggleTrait(.boldFontMask) }.keyboardShortcut("b").disabled(compose == nil)
-            Button("Italic") { compose?.editor.toggleTrait(.italicFontMask) }.keyboardShortcut("i").disabled(compose == nil)
+            Button("Bold") { compose?.editor.toggleBold() }.keyboardShortcut("b").disabled(compose == nil)
+            Button("Italic") { compose?.editor.toggleItalic() }.keyboardShortcut("i").disabled(compose == nil)
             Button("Underline") { compose?.editor.toggleUnderline() }.keyboardShortcut("u").disabled(compose == nil)
             Divider()
             Button("Bulleted list") { compose?.editor.list(numbered: false) }.disabled(compose == nil)
