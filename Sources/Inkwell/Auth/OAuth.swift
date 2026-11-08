@@ -58,11 +58,12 @@ enum OAuth {
         return (verifier, base64URL(Data(SHA256.hash(data: Data(verifier.utf8)))))
     }
 
-    static func authorizeURL(clientID: String, tenant: String, challenge: String, state: String, loginHint: String?) -> URL {
+    static func authorizeURL(clientID: String, tenant: String, challenge: String, state: String, loginHint: String?,
+                             scopes: [String]? = nil, prompt: String = "select_account") -> URL {
         var c = URLComponents(string: "\(baseURL)/\(tenant)/oauth2/v2.0/authorize")!
         var q = [("client_id", clientID), ("response_type", "code"), ("redirect_uri", redirectURI), ("response_mode", "query"),
-                 ("scope", scopes.joined(separator: " ")), ("code_challenge", challenge), ("code_challenge_method", "S256"),
-                 ("state", state), ("prompt", "select_account")]
+                 ("scope", (scopes ?? OAuth.scopes).joined(separator: " ")), ("code_challenge", challenge), ("code_challenge_method", "S256"),
+                 ("state", state), ("prompt", prompt)]
         if let h = loginHint, !h.isEmpty { q.append(("login_hint", h)) }
         c.queryItems = q.map { URLQueryItem(name: $0.0, value: $0.1) }
         return c.url!
@@ -87,10 +88,10 @@ enum OAuth {
         return Tokens(access: access, refresh: json["refresh_token"] as? String, expires: Date().addingTimeInterval(life), idToken: json["id_token"] as? String)
     }
 
-    static func exchange(code: String, verifier: String, tenant: String) async throws -> Tokens {
+    static func exchange(code: String, verifier: String, tenant: String, resource: Resource = .imap) async throws -> Tokens {
         guard let id = clientID else { throw OAuthError.noClientID }
         return try await tokenRequest(tenant: tenant, form: [("client_id", id), ("grant_type", "authorization_code"), ("code", code),
-                                                             ("redirect_uri", redirectURI), ("code_verifier", verifier), ("scope", scopes(for: .imap).joined(separator: " "))])
+                                                             ("redirect_uri", redirectURI), ("code_verifier", verifier), ("scope", scopes(for: resource).joined(separator: " "))])
     }
 
     static func refresh(_ refreshToken: String, tenant: String, resource: Resource = .imap) async throws -> Tokens {
