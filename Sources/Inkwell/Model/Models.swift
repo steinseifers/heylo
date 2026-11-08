@@ -68,14 +68,14 @@ struct ProviderPreset: Identifiable {
     let help: String
 
     static let all: [ProviderPreset] = [
+        .init(id: "m365", name: "Microsoft 365", imapHost: "outlook.office365.com", imapPort: 993, smtpHost: "smtp.office365.com", smtpPort: 587, smtpSecurity: .starttls,
+              help: "Work or school account. Signs in with Microsoft (OAuth), no password is stored. Customer tenants may need their admin's approval the first time."),
         .init(id: "gmail", name: "Gmail", imapHost: "imap.gmail.com", imapPort: 993, smtpHost: "smtp.gmail.com", smtpPort: 465, smtpSecurity: .ssl,
               help: "Use an App Password: myaccount.google.com → Security → 2-Step Verification → App passwords."),
         .init(id: "icloud", name: "iCloud", imapHost: "imap.mail.me.com", imapPort: 993, smtpHost: "smtp.mail.me.com", smtpPort: 587, smtpSecurity: .starttls,
               help: "Use an app-specific password from account.apple.com → Sign-In and Security. Username is your iCloud email (or the part before @icloud.com)."),
-        .init(id: "outlook", name: "Outlook / Microsoft 365", imapHost: "outlook.office365.com", imapPort: 993, smtpHost: "smtp-mail.outlook.com", smtpPort: 587, smtpSecurity: .starttls,
-              help: "Needs an app password (account.microsoft.com → Security → Advanced). Some work accounts disable IMAP basic auth."),
-        .init(id: "m365", name: "Microsoft 365", imapHost: "outlook.office365.com", imapPort: 993, smtpHost: "smtp.office365.com", smtpPort: 587, smtpSecurity: .starttls,
-              help: "Work or school account. Signs in with Microsoft (OAuth), no password is stored. Customer tenants may need their admin's approval the first time."),
+        .init(id: "outlook", name: "Outlook.com / Hotmail", imapHost: "outlook.office365.com", imapPort: 993, smtpHost: "smtp-mail.outlook.com", smtpPort: 587, smtpSecurity: .starttls,
+              help: "Personal Outlook.com or Hotmail account with an app password (account.microsoft.com → Security → Advanced). For work or school accounts use “Microsoft 365”, which signs in with OAuth."),
         .init(id: "yahoo", name: "Yahoo", imapHost: "imap.mail.yahoo.com", imapPort: 993, smtpHost: "smtp.mail.yahoo.com", smtpPort: 465, smtpSecurity: .ssl,
               help: "Generate an app password in Yahoo Account Security."),
         .init(id: "fastmail", name: "Fastmail", imapHost: "imap.fastmail.com", imapPort: 993, smtpHost: "smtp.fastmail.com", smtpPort: 465, smtpSecurity: .ssl,
